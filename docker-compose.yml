@@ -1,0 +1,36 @@
+version: '3.3'
+
+services:
+  app:
+    container_name: app_container
+    build:
+      context: .
+      dockerfile: Dockerfile
+    volumes:
+      - ./logs:/usr/src/app/logs
+      - ./public/uploads:/usr/src/app/public/uploads
+    ports:
+      - 8081:8081
+    environment:
+      - PORT=8081
+      - DATABASE_URL=mongodb://database_server/teachingaidsman
+    depends_on:
+      - mongo
+    networks:
+      - back-tier
+
+  mongo:
+    image: mongo:3.6
+    container_name: db_container
+    volumes:
+      - ./mongo:/data/db
+    ports:
+      - 27018:27017
+    networks:
+      back-tier:
+        aliases:
+          - "database_server"
+
+networks:
+  back-tier:
+    driver: bridge
