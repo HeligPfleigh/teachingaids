@@ -33,6 +33,14 @@ const ProfileSchema = new Schema({
   _id: false,
 });
 
+const EmployeeInfoSchema = new Schema({
+  group: String,
+  teacherCode: String,
+  professionalAssignment: String
+}, {
+  _id: false,
+});
+
 const UserSchema = new Schema({
   username: {
     type: String,
@@ -46,6 +54,7 @@ const UserSchema = new Schema({
   },
   emails: EmailSchema,
   profile: ProfileSchema,
+  employeeInfo: EmployeeInfoSchema,
   isAdmin: {
     type: Boolean,
     required: true,
@@ -56,6 +65,11 @@ const UserSchema = new Schema({
     required: true,
     default: true,
   },
+  role: {
+    type: String,
+    required: true,
+    default: 'teacher',
+  }
 });
 
 // plugins
