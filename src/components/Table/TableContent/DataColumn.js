@@ -8,6 +8,7 @@ import HardwareKeyboardArrowRight from 'material-ui/svg-icons/hardware/keyboard-
 import { grey500, grey200 } from 'material-ui/styles/colors';
 import { TableRowColumn } from 'material-ui/Table';
 import { generate as idRandom } from 'shortid';
+import get from 'lodash/get';
 
 const styles = {
   editButton: {
@@ -99,7 +100,7 @@ const COL_TYPE = ['normal', 'add', 'edit', 'delete', 'active', 'redirect', 'grou
 const columnResults = {
   [COL_TYPE[0]]: (field, empty = null, item) => (
     // Cot hien thi du lieu
-    <TableRowColumn style={field.style}>{item[field.key] || 'xxx'}</TableRowColumn>
+    <TableRowColumn style={field.style}>{get(item, field.key) || 'xxx'}</TableRowColumn>
   ),
   [COL_TYPE[1]]: (field, event) => (
     // Cot khoi tao button add

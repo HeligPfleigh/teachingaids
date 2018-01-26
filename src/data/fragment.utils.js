@@ -1,26 +1,22 @@
 import gql from 'graphql-tag';
 
 const Fragment = {
-  AdminUserView: gql`
-    fragment AdminUserView on AdminUserSchema {
+  UserView: gql`
+    fragment UserView on User {
       _id,
       username,
       profile {
         avatar,
         firstName,
         lastName,
+        fullName,
         phone,
         birthDay,
       }
       email {
         address,
       }
-    }
-  `,
-
-  PageInfoView: gql`fragment PageInfoView on PageInfoSchema {
-      endCursor
-      hasNextPage
+      isActive
     }
   `,
 };

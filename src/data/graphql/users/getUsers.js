@@ -1,0 +1,69 @@
+import { UserModel } from '../../models/index.js';
+
+export const schema = [
+  `
+  type User {
+    _id: String
+    username: String
+    email: EmailSchema
+    profile: UserProfile
+    roles: [String]
+    isActive: String
+    updatedAt: String
+    createdAt: String
+  }
+
+  type EmailSchema {
+    address: String
+    verified: Boolean
+  }
+
+  type UserProfile {
+    avatar: String
+    firstName: String
+    lastName: String
+    fullName: String
+    gender: Boolean
+    phone: String
+    birthDay: Date
+    address: String
+  }
+`,
+];
+
+export const queries = [
+  `
+  # current user
+  me: User
+
+  # list all user in db
+  getUsers: [User]
+
+  # find user by email
+  getUserByEmail(email: String!): User
+`,
+];
+
+export const resolvers = {
+  RootQuery: {
+    async me({ request }) {
+      return UserModel.findOne({ _id: request.user.id });
+    },
+    async getUsers() {
+      return UserModel.find();
+    },
+    async getUserByEmail(parent, { email }) {
+      return UserModel.findOne({ 'email.address': email });
+    },
+  },
+  UserProfile: {
+    fullName(profile) {
+      return `${(profile && profile.firstName) || 'no'} ${(profile && profile.lastName) || 'name'}`;
+    },
+  },
+  User: {
+    isActive(user) {
+      return user && user.isActive ? 'Active' : 'InActive';
+    },
+  },
+};

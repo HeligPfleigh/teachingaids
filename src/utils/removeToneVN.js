@@ -32,7 +32,7 @@ function splitWord(word) {
   return result;
 }
 
-export function generateSearchFieldForBuilding(building) {
+export function generateUserSearchField(user) {
   let search = '';
   if (user && user.profile && user.profile.firstName) {
     search += `${user.profile.firstName.trim()} `;
@@ -47,6 +47,7 @@ export function generateSearchFieldForBuilding(building) {
   }
   // split to one word
   const os = search.split(' ').filter((item, pos, self) => self.indexOf(item) === pos);
+
   for (let i = 0; i < os.length; i++) {
     search += ` ${splitWord(os[i])}`;
   }

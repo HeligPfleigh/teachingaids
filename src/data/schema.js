@@ -1,15 +1,52 @@
+import merge from 'lodash/merge';
+import { makeExecutableSchema } from 'graphql-tools';
+
 import {
-  GraphQLSchema as Schema,
-  GraphQLObjectType as ObjectType,
-} from 'graphql';
+  schema as schemaType,
+  resolvers as resolversType,
+} from './types';
 
-import queries from './queries';
+import {
+  schema as databaseSchema,
+  resolvers as databaseResolvers,
+  mutations as databaseMutations,
+  queries as databaseQueries,
+} from './graphql/schema';
 
-const schema = new Schema({
-  query: new ObjectType({
-    name: 'RootQuery',
-    fields: queries,
-  }),
+const queries = [
+  `type RootQuery {
+    ${databaseQueries}
+  }`,
+];
+
+const mutation = [
+  `type Mutation {
+    ${databaseMutations}
+  }`,
+];
+
+const schema = [
+  `schema {
+    query: RootQuery
+    mutation: Mutation
+  }`,
+];
+
+// Merge all of the resolver objects together
+// Put schema together into one array of schema strings
+const typeDefs = [
+  ...schema,
+  ...queries,
+  ...mutation,
+
+  ...databaseSchema,
+
+  ...schemaType,
+];
+
+const resolvers = merge(databaseResolvers, resolversType);
+
+export default makeExecutableSchema({
+  typeDefs,
+  resolvers,
 });
-
-export default schema;

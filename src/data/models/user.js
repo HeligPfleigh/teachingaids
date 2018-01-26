@@ -7,6 +7,10 @@ mongoose.Promise = global.Promise;
 
 const { Schema } = mongoose;
 
+function rolesvalidator(v) {
+  return v.every(val => !!~['user'].indexOf(val));
+}
+
 const EmailSchema = new Schema({
   address: {
     type: String,
@@ -16,6 +20,11 @@ const EmailSchema = new Schema({
   verified: {
     type: Boolean,
     required: true,
+  },
+  code: String,
+  updatedAt: {
+    type: Date,
+    default: new Date(),
   },
 }, {
   _id: false,
@@ -36,7 +45,7 @@ const ProfileSchema = new Schema({
 const EmployeeInfoSchema = new Schema({
   group: String,
   teacherCode: String,
-  professionalAssignment: String
+  professionalAssignment: String,
 }, {
   _id: false,
 });
@@ -52,13 +61,14 @@ const UserSchema = new Schema({
     required: true,
     trim: true,
   },
-  emails: EmailSchema,
+  email: EmailSchema,
   profile: ProfileSchema,
   employeeInfo: EmployeeInfoSchema,
-  isAdmin: {
-    type: Boolean,
+  roles: {
     required: true,
-    default: false,
+    type: [String],
+    validate: rolesvalidator,
+    default: ['user'],
   },
   isActive: {
     type: Boolean,
@@ -69,8 +79,10 @@ const UserSchema = new Schema({
     type: String,
     required: true,
     default: 'teacher',
-  }
+  },
 });
+
+UserSchema.index({ search: 'text' });
 
 // plugins
 UserSchema.plugin(timestamps);

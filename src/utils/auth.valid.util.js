@@ -1,6 +1,6 @@
 import _ from 'lodash';
 
-export default role => (route) => {
+export const requireRole = role => (route) => {
   const newRoute = {
     ...route,
     async action(param) {

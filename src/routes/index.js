@@ -5,6 +5,7 @@ export default {
   children: [
     require('./home').default,
     require('./login').default,
+    require('./users').default,
     // require('./register').default,
 
     // Wildcard routes, e.g. { path: '*', ... } (must go last)

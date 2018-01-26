@@ -46,7 +46,7 @@ passport.use(new LocalStrategy({
     return done(null, {
       id: user._id || '',
       profile: user.profile || {},
-      email: user.emails.address || '',
+      email: user.email.address || '',
       roles: user.roles || [],
     });
   };
