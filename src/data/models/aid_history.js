@@ -9,14 +9,14 @@ const ObjectId = Schema.Types.ObjectId;
 const borrowerHistorySchema = new Schema({
   userId: ObjectId,
   name: String,
-  teacherCode: String
+  teacherCode: String,
 }, {
   _id: false,
 });
 
 const lenderHistorySchema = new Schema({
   userId: ObjectId,
-  name: String
+  name: String,
 }, {
   _id: false,
 });
@@ -25,7 +25,7 @@ const equipmentHistorySchema = new Schema({
   equipmentTypeId: ObjectId,
   equipmentId: ObjectId,
   name: String,
-  barCode: String
+  barCode: String,
 }, {
   _id: false,
 });
@@ -35,7 +35,7 @@ const AidHistorySchema = new Schema({
   borrower: borrowerHistorySchema,
   borrowTime: Date,
   returnTime: Date,
-  equipment: equipmentHistorySchema
+  equipment: equipmentHistorySchema,
 });
 
 // plugins
