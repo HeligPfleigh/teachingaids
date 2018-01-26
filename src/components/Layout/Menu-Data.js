@@ -45,7 +45,7 @@ const data = {
       icon: <Assessment />,
       link: '#',
       children: [
-        { text: 'Thêm mới', icon: <MapsAddLocation />, link: '/locations/create' },
+        { text: 'Thêm mới', icon: <MapsAddLocation />, link: '/users/create' },
         { text: 'Danh sách người dùng', icon: <MapsLayers />, link: '/users' },
       ],
     },
