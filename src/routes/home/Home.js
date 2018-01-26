@@ -5,6 +5,9 @@ import FloatingActionButton from 'material-ui/FloatingActionButton';
 import ContentCreate from 'material-ui/svg-icons/content/create';
 import ContentAdd from 'material-ui/svg-icons/content/add';
 import { pink500, grey200, grey500 } from 'material-ui/styles/colors';
+import { Toolbar, ToolbarGroup, ToolbarTitle } from 'material-ui/Toolbar';
+import RaisedButton from 'material-ui/RaisedButton';
+
 import s from './Home.scss';
 
 const styles = {
@@ -54,6 +57,15 @@ class Home extends React.Component {
   render() {
     return (
       <div>
+        <Toolbar>
+          <ToolbarGroup>
+            <ToolbarTitle text="Options" />
+          </ToolbarGroup>
+          <ToolbarGroup lastChild>
+            <RaisedButton label="Create Broadcast" primary />
+          </ToolbarGroup>
+        </Toolbar>
+
         <FloatingActionButton style={styles.floatingActionButton} backgroundColor={pink500}>
           <ContentAdd />
         </FloatingActionButton>
