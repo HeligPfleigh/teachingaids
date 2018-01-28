@@ -13,12 +13,12 @@ import ActionBook from 'material-ui/svg-icons/action/book';
 const data = {
   menus: [
     {
-      text: 'Danh mục chung',
+      text: 'Quản trị hệ thống',
       icon: <HomeIcon />,
-      link: '/',
+      link: '#',
       children: [
-        { text: 'Danh mục tổ', icon: <ActionBook />, link: '/' },
-        { text: 'Danh mục môn học', icon: <GridOn />, link: '/districts' },
+        { text: 'Cấu hình', icon: <ActionBook />, link: '/' },
+        { text: 'Danh mục chung', icon: <GridOn />, link: '/managements/subjects' },
       ],
     },
     {

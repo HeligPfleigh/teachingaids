@@ -15,6 +15,7 @@
     "max-len": 0,
     "prefer-const": "off",
     "jsx-a11y/no-static-element-interactions": 0,
-    "no-return-await": "off"
+    "no-return-await": "off",
+    "consistent-return": "off"
   }
 }
