@@ -8,20 +8,26 @@
  */
 
 import React from 'react';
-import Subject from './Subject';
+import Home from './Home';
 import Layout from '../../components/Layout';
 import { checkAuth } from '../../utils/auth.valid.util';
 
 export default {
-  path: '/subjects',
-  action({ store }) {
-    const redirect = checkAuth(store);
+  path: '/managements',
+  async action({ store }) {
+    const redirect = await checkAuth(store);
     if (redirect) return redirect;
-
-    return {
-      title: 'Danh mục môn học',
-      component: <Layout><Subject /></Layout>,
-    };
   },
+  children: [
+    {
+      path: '/subjects',
+      action() {
+        return {
+          title: 'Trang quản lý danh mục chung',
+          component: <Layout><Home /></Layout>,
+        };
+      },
+    },
+  ],
 
 };

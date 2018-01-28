@@ -2,7 +2,7 @@ import path from 'path';
 import express from 'express';
 import cookieParser from 'cookie-parser';
 import bodyParser from 'body-parser';
-import expressJwt from 'express-jwt';
+import expressJwt, { UnauthorizedError as Jwt401Error } from 'express-jwt';
 import expressGraphQL from 'express-graphql';
 import jwt from 'jsonwebtoken';
 import React from 'react';
@@ -57,6 +57,17 @@ app.use(expressJwt({
   getToken: req => req.cookies.id_token,
 }));
 
+// Error handler for express-jwt
+app.use((err, req, res, next) => {
+  // eslint-disable-line no-unused-vars
+  if (err instanceof Jwt401Error) {
+    // `clearCookie`, otherwise user can't use web-app until cookie expires
+    res.clearCookie('id_token');
+  }
+  req.user = null;
+  next(err);
+});
+
 if (__DEV__) {
   app.enable('trust proxy');
 }
@@ -70,7 +81,7 @@ app.post('/login', (req, res, next) => {
     return req.logIn(user, (error) => {
       if (error) { return res.status(401).json({ ok: false }); }
 
-      const expiresIn = 60 * 30; // 30 minutes
+      const expiresIn = 60 * 60 * 24 * 180; // 180 days
       const token = jwt.sign(req.user, auth.jwt.secret, { expiresIn });
       res.cookie('id_token', token, { maxAge: 1000 * expiresIn });
       res.status(200).json({ ok: true });

@@ -114,7 +114,7 @@ const config = {
           {
             loader: 'postcss-loader?pack=sass',
             options: {
-              plugins: () => [require('autoprefixer')],
+              config: './tools/postcss.config.js',
             },
           },
           'sass-loader',

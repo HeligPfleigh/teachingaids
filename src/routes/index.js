@@ -7,6 +7,8 @@ export default {
     require('./login').default,
     require('./users').default,
     require('./createUser').default,
+    require('./managements').default,
+
     // require('./register').default,
 
     // Wildcard routes, e.g. { path: '*', ... } (must go last)

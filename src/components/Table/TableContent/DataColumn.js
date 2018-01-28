@@ -4,6 +4,7 @@ import FloatingActionButton from 'material-ui/FloatingActionButton';
 import ContentCreate from 'material-ui/svg-icons/content/create';
 import ActionNoteAdd from 'material-ui/svg-icons/action/note-add';
 import ActionDelete from 'material-ui/svg-icons/action/delete';
+import ActionSettings from 'material-ui/svg-icons/action/settings';
 import HardwareKeyboardArrowRight from 'material-ui/svg-icons/hardware/keyboard-arrow-right';
 import { grey500, grey200 } from 'material-ui/styles/colors';
 import { TableRowColumn } from 'material-ui/Table';
@@ -37,7 +38,7 @@ GenButton.propTypes = {
   children: PropTypes.node.isRequired,
 };
 
-const BTN_TYPE = ['add', 'edit', 'delete', 'active'];
+const BTN_TYPE = ['add', 'edit', 'delete', 'active', 'config'];
 
 const btnCollection = {
   [BTN_TYPE[0]]: (field, event) => (
@@ -55,6 +56,10 @@ const btnCollection = {
   [BTN_TYPE[3]]: (field, event) => (
     // Cot khoi tao button set active
     <GenButton event={event}><ContentCreate /></GenButton>
+  ),
+  [BTN_TYPE[4]]: (field, event) => (
+    // Cot khoi tao button config
+    <GenButton event={event}><ActionSettings /></GenButton>
   ),
 };
 
