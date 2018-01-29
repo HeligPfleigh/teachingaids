@@ -9,14 +9,32 @@
 
 import React from 'react';
 import PropTypes from 'prop-types';
+import isEmpty from 'lodash/isEmpty';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import MuiThemeProvider from 'material-ui/styles/MuiThemeProvider';
+import ReactTooltip from 'react-tooltip';
 
 import themeDefault from './Material-Theme';
 import Data from './Menu-Data';
 import Header from '../Header';
 import LeftDrawer from '../LeftDrawer';
 import s from './Layout.scss';
+
+const getCookie = (cname) => {
+  let name = `${cname}=`;
+  let decodedCookie = decodeURIComponent(document.cookie);
+  let ca = decodedCookie.split(';');
+  for (let i = 0; i < ca.length; i++) {
+    let c = ca[i];
+    while (c.charAt(0) === ' ') {
+      c = c.substring(1);
+    }
+    if (c.indexOf(name) === 0) {
+      return c.substring(name.length, c.length);
+    }
+  }
+  return '';
+};
 
 class Layout extends React.Component {
 
@@ -25,6 +43,21 @@ class Layout extends React.Component {
     this.state = {
       navDrawerOpen: true,
     };
+  }
+
+  componentDidMount() {
+    document.addEventListener('click', this.myHandler);
+  }
+
+  componentWillUnmount() {
+    document.removeEventListener('click', this.myHandler);
+  }
+
+  myHandler = () => {
+    const tokenClient = getCookie('id_token');
+    if (isEmpty(tokenClient)) {
+      location.href = '/logout';
+    }
   }
 
   handleChangeRequestNavDrawer = () => {
@@ -62,6 +95,7 @@ class Layout extends React.Component {
           <div style={styles.container}>
             {this.props.children}
           </div>
+          <ReactTooltip />
         </div>
       </MuiThemeProvider>
     );
