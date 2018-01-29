@@ -8,7 +8,7 @@ const ObjectId = Schema.Types.ObjectId;
 
 const EquipmentSchema = new Schema({
   barCode: String,
-  equipmentTypeId: ObjectId,
+  equipmentTypeId: String,
   status: String,
   lender: ObjectId,
   borrower: ObjectId,

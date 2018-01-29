@@ -19,9 +19,9 @@ const EquipmentTypeSchema = new Schema({
     required: true
   },
   equipmentInfo: EquipmentInfoSchema,
-  totalNumber: Number,
+  totalNumber: String,
   unit: String,
-  order: Number
+  order: String
 });
 
 // plugins
