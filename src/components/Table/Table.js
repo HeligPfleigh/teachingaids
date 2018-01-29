@@ -1,5 +1,6 @@
 import React from 'react';
 import PropTypes from 'prop-types';
+import isEmpty from 'lodash/isEmpty';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
 import { Table as TableUI, TableHeader } from 'material-ui/Table';
 
@@ -11,6 +12,14 @@ import s from './Table.scss';
 class Table extends React.Component {
   render() {
     const { fields, items } = this.props;
+
+    if (isEmpty(items)) {
+      return (
+        <div style={{ textAlign: 'center', padding: 20 }}>
+          <span style={{ color: 'red', fontSize: 18 }}>Không có dữ liệu hiển thị</span>
+        </div>
+      );
+    }
 
     return (
       <TableUI>
