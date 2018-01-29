@@ -7,20 +7,16 @@ export default {
   },
   columns: {
     uniqueName: {
-      width: '20%',
+      width: '15%',
     },
     name: {
-      width: '12%',
-      paddingLeft: 0,
-      textAlign: 'center',
-    },
-    btnRedirect: {
-      width: '12%',
-      paddingLeft: 0,
-      textAlign: 'center',
+      width: '20%',
     },
     buttonGroup: {
-      width: '13%',
+      width: '10%',
+    },
+    edit: {
+      width: '5%',
     },
   },
   btnIcon: {

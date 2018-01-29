@@ -10,6 +10,17 @@ async function getSubjects() {
   return await SubjectModel.find();
 }
 
+async function checkSubjectExist(name) {
+  const query = { $regex: new RegExp(`^${name.toLowerCase()}$`, 'i') };
+  const sub = await SubjectModel.find({
+    $or: [
+      { name: query },
+      { uniqueName: query },
+    ],
+  });
+  return !isEmpty(sub);
+}
+
 async function createSubject(name) {
   if (isEmpty(name)) {
     throw new Error('subject name is undefined');
@@ -38,7 +49,7 @@ async function updateSubject(subId, name) {
   await SubjectModel.update({ _id: subId }, {
     $set: {
       name,
-      uniqueName: removeToneVN(name),
+      uniqueName: removeToneVN(name).toUpperCase(),
     },
   });
 
@@ -68,4 +79,5 @@ export default {
   createSubject,
   updateSubject,
   deleteSubject,
+  checkSubjectExist,
 };
