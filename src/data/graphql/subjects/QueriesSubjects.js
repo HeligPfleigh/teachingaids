@@ -12,6 +12,9 @@ export const schema = [
 
 export const queries = [
   `
+  # check subject exist
+  checkSubjectExist(name: String!): Boolean
+
   # find subject by primary key
   getSubjectById(_id: String!): Subject
 
@@ -22,6 +25,9 @@ export const queries = [
 
 export const resolvers = {
   RootQuery: {
+    async checkSubjectExist(parent, { name }) {
+      return await SubjectService.checkSubjectExist(name);
+    },
     async getSubjects() {
       return await SubjectService.getSubjects();
     },
