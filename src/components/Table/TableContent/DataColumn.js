@@ -105,7 +105,7 @@ const COL_TYPE = ['normal', 'add', 'edit', 'delete', 'active', 'redirect', 'grou
 const columnResults = {
   [COL_TYPE[0]]: (field, empty = null, item) => (
     // Cot hien thi du lieu
-    <TableRowColumn style={field.style}>{get(item, field.key) || 'xxx'}</TableRowColumn>
+    <TableRowColumn style={field.style}>{field.init || get(item, field.key) || 'xxx'}</TableRowColumn>
   ),
   [COL_TYPE[1]]: (field, event) => (
     // Cot khoi tao button add

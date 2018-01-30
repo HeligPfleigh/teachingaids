@@ -1,95 +1,60 @@
-
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import {
-  Table,
-  TableBody,
-  TableHeader,
-  TableHeaderColumn,
-  TableRow,
-  TableRowColumn,
-} from 'material-ui/Table';
-import IconButton from 'material-ui/IconButton';
-import ActionDetail from 'material-ui/svg-icons/image/details';
 import { Toolbar, ToolbarGroup, ToolbarTitle } from 'material-ui/Toolbar';
 import Paper from 'material-ui/Paper';
-
 import { graphql } from 'react-apollo';
 import gql from 'graphql-tag';
+
 import history from '../../core/history';
+import Table from '../../components/Table';
+import styles from './styles';
 
 class ListAids extends Component {
-  state = {
-    enableSelectAll: false,
-    showCheckboxes: false,
+
+  eventHandler = () => {
+    // console.log('Hello world');
+  };
+
+  redirectPage = (item) => {
+    // history.push(`/districts/${item._id}`);
+    history.replace(`/equipments/detail/${item._id}`);
   };
 
   render() {
     const { data: { error, loading, getAllEquipment } } = this.props;
+
+    const fields = [
+      // Config columns
+      { key: 'name', value: 'Tên thiết bị', style: styles.columns.name, public: true, action: 'normal', event: this.eventHandler },
+      { key: 'equipmentInfo.grade', value: 'Khối', style: styles.columns.type, public: true, action: 'normal', event: this.eventHandler },
+      { key: 'equipmentInfo.khCode', value: 'Mã KH', style: styles.columns.type, public: true, action: 'normal', event: this.eventHandler },
+      { key: 'totalNumber', value: 'Số lượng', style: styles.columns.counter, public: true, action: 'normal', event: this.eventHandler },
+      { key: 'btnRedirect', value: 'Chi tiết', style: styles.columns.btnRedirect, public: true, action: 'redirect', event: this.redirectPage },
+    ];
+
     if (loading) {
       return <div>Đang tải dữ liệu ... </div>;
     }
 
     if (error) {
-      console.log(error);
       return <div>Một lỗi ngoài dự kiến đã xảy ra. Liên hệ với người quản trị để được giúp đỡ!</div>;
     }
 
-    const tableData = getAllEquipment;
-
     return (
-      <div>
-        <Paper>
-          <Toolbar>
-            <ToolbarGroup>
-              <ToolbarTitle
-                text="Bảng danh sách thiết bị"
-              />
-            </ToolbarGroup>
-          </Toolbar>
-          <Table
-            height="300px"
-            fixedHeader
-            selectable
-          >
-            <TableHeader
-              displaySelectAll={this.state.showCheckboxes}
-              adjustForCheckbox={this.state.showCheckboxes}
-              enableSelectAll={this.state.enableSelectAll}
-            >
-              <TableRow>
-                <TableHeaderColumn tooltip="Tên thiết bị">Tên thiết bị</TableHeaderColumn>
-                <TableHeaderColumn tooltip="Khối lớp tương ứng">Khối</TableHeaderColumn>
-                <TableHeaderColumn tooltip="Mã KH">Mã KH</TableHeaderColumn>
-                <TableHeaderColumn tooltip="Số lượng thiết bị hiện có">Số lượng</TableHeaderColumn>
-                <TableHeaderColumn tooltip="Thông tin chi tiết các dụng cụ cùng loại">Chi tiết</TableHeaderColumn>
-              </TableRow>
-            </TableHeader>
-            <TableBody
-              displayRowCheckbox={false}
-              deselectOnClickaway
-              showRowHover={false}
-              stripedRows={false}
-            >
-              {tableData.map(row => (
-                <TableRow key={Math.random()}>
-                  <TableRowColumn>{row.name}</TableRowColumn>
-                  <TableRowColumn>{row.equipmentInfo.grade}</TableRowColumn>
-                  <TableRowColumn>{row.equipmentInfo.khCode}</TableRowColumn>
-                  <TableRowColumn>{row.totalNumber}</TableRowColumn>
-                  <TableRowColumn>
-                    <IconButton
-                      onClick={() => history.replace(`/equipments/detail/${row._id}`)}
-                    >
-                      <ActionDetail />
-                    </IconButton>
-                  </TableRowColumn>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </Paper>
-      </div>
+      <Paper>
+        <Toolbar style={styles.subheader}>
+          <ToolbarGroup>
+            <ToolbarTitle
+              text="Danh sách thiết bị"
+              style={styles.textWhiteColor}
+            />
+          </ToolbarGroup>
+        </Toolbar>
+        {
+          !loading && getAllEquipment &&
+          <Table items={getAllEquipment || []} fields={fields} />
+        }
+      </Paper>
     );
   }
 }
