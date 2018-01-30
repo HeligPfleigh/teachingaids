@@ -16,8 +16,17 @@ const data = {
       icon: <HomeIcon />,
       link: '#',
       children: [
-        { text: 'Cấu hình', icon: <ActionBook />, link: '/' },
+        { text: 'Thông tin chung', icon: <ActionBook />, link: '/' },
         { text: 'Danh mục chung', icon: <GridOn />, link: '/managements/subjects' },
+      ],
+    },
+    {
+      text: 'Mượn - Trả',
+      icon: <Web />,
+      link: '#',
+      children: [
+        { text: 'Danh sách mượn - trả', icon: <GridOn />, link: '/buildings' },
+        { text: 'Danh sách nhắc nhở', icon: <ContentAddBox />, link: '/buildings/create' },
       ],
     },
     {
@@ -28,15 +37,6 @@ const data = {
         { text: 'Thêm mới thiết bị', icon: <MapsAddLocation />, link: '/equipments/create' },
         { text: 'Danh sách thiết bị', icon: <MapsLayers />, link: '/equipments' },
         { text: 'Thống kê thiết bị', icon: <MapsLayers />, link: '/equipments/statistic' },
-      ],
-    },
-    {
-      text: 'Mượn - Trả',
-      icon: <Web />,
-      link: '#',
-      children: [
-        { text: 'Danh sách mượn - trả', icon: <GridOn />, link: '/buildings' },
-        { text: 'Danh sách nhắc nhở', icon: <ContentAddBox />, link: '/buildings/create' },
       ],
     },
     {
