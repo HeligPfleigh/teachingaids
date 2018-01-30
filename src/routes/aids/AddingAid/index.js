@@ -4,7 +4,7 @@ import RaisedButton from 'material-ui/RaisedButton';
 import FlatButton from 'material-ui/FlatButton';
 import Paper from 'material-ui/Paper';
 import AutoComplete from 'material-ui/AutoComplete';
-import { graphql } from 'react-apollo';
+import { graphql, compose } from 'react-apollo';
 import gql from 'graphql-tag';
 import PropTypes from 'prop-types';
 
@@ -43,12 +43,24 @@ class AddingAid extends Component {
       return null;
     }
     // handle get data here
-    const { data: { getAllEquipment } } = this.props;
+    const { data: { getAllEquipment }, mutationCreate, mutationUpdateQuantity } = this.props;
     const allEquipments = getAllEquipment.map(value => value.name);
     if (allEquipments.indexOf(aidType) === -1) {
       this.setState({ error: 'Loại thiết bị bạn chọn chưa có trong cơ sở dữ liệu. Hãy thêm trong mục Advanced trước!' });
       return null;
     }
+
+    const allEquipmentsID = getAllEquipment.map(value => value._id);
+    const equipmentTypeId = allEquipmentsID[allEquipments.indexOf(aidType)];
+
+    const _id = equipmentTypeId;
+    const totalNumber = (parseInt(getAllEquipment[allEquipments.indexOf(aidType)].totalNumber, 10) + 1).toString();
+
+    mutationCreate({ variables: { barcode, equipmentTypeId } })
+    .then(() => {
+      mutationUpdateQuantity({ variables: { _id, totalNumber } });
+    })
+    .catch(err => this.setState({ error: err.message }));
 
     // reset data
     this.refs.aidType.setState({ searchText: '' });
@@ -123,7 +135,7 @@ class AddingAid extends Component {
               fullWidth
             />
           </form>
-          {this.state.error === '' ? null : <div>{this.state.error}</div>}
+          {this.state.error === '' ? null : this.state.error}
         </Paper>
         <br /><br />
         <FlatButton label="Advanced" fullWidth onClick={this.handleOpenAdvanced} />
@@ -141,9 +153,11 @@ class AddingAid extends Component {
 AddingAid.propTypes = {
   data: PropTypes.objectOf({
     error: PropTypes.any,
-    getAllEquipment: PropTypes.any,
+    getAllEquipment: PropTypes.array,
     loading: PropTypes.bool,
   }),
+  mutationCreate: PropTypes.func,
+  mutationUpdateQuantity: PropTypes.func,
 };
 
 const query = gql`
@@ -151,10 +165,35 @@ const query = gql`
     getAllEquipment{
       _id
       name
+      totalNumber
     }
   }
 `;
 
-const AddingAidWithData = graphql(query)(AddingAid);
+const mutationCreate = gql`
+  mutation createEquipment($barcode: String!, $equipmentTypeId: String!) {
+    createEquipment(barcode: $barcode, equipmentTypeId: $equipmentTypeId) {
+      _id
+      barcode
+      equipmentTypeId
+    }
+  }
+`;
+
+const mutationUpdateQuantity = gql`
+  mutation updateTotalNumberEquipmentInfo($_id: String!, $totalNumber: String!){
+    updateTotalNumberEquipmentInfo(_id:$_id, totalNumber: $totalNumber){
+      _id
+      name
+      totalNumber
+    }
+  }
+`;
+
+const AddingAidWithData = compose(
+  graphql(query),
+  graphql(mutationCreate, { name: 'mutationCreate' }),
+  graphql(mutationUpdateQuantity, { name: 'mutationUpdateQuantity' }),
+)(AddingAid);
 
 export default AddingAidWithData;

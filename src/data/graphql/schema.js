@@ -37,6 +37,16 @@ import {
   resolvers as mutationSubResolver,
 } from './subjects/MutationSubject';
 
+import {
+  mutation as equipDetailMutation,
+  resolvers as mutationEquipDetailResolver,
+} from './equipmentsInfo/mutationEquipDetail';
+
+import {
+  mutation as equipInfoMutation,
+  resolvers as mutationEquipInfoResolver,
+} from './equipmentsInfo/mutationEquipInfo';
+
 export const schema = [
   ...userSchema,
   ...mutationUserSchema,
@@ -55,6 +65,8 @@ export const queries = [
 export const mutations = [
   ...userMutation,
   ...subjectMutation,
+  ...equipDetailMutation,
+  ...equipInfoMutation,
 ];
 
 export const resolvers = merge(
@@ -64,4 +76,6 @@ export const resolvers = merge(
   mutationSubResolver,
   equipmentTypeResolver,
   equipmentResolver,
+  mutationEquipDetailResolver,
+  mutationEquipInfoResolver,
 );
