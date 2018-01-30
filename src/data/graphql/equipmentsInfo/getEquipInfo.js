@@ -23,6 +23,9 @@ export const queries = [
   `
   # list all equipment type in db
   getAllEquipment: [EquipmentType]
+
+  # get name from equipment id
+  getNameFromID(_id: String): EquipmentType
 `,
 ];
 
@@ -31,5 +34,8 @@ export const resolvers = {
     async getAllEquipment() {
       return EquipmentTypeModel.find();
     },
+    async getNameFromID(parent, {_id}){
+      return EquipmentTypeModel.findOne({_id: _id});
+    }
   },
 };

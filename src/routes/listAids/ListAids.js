@@ -11,22 +11,13 @@ import {
 } from 'material-ui/Table';
 import TextField from 'material-ui/TextField';
 import IconButton from 'material-ui/IconButton';
-import ActionList from 'material-ui/svg-icons/action/list';
+import ActionDetail from 'material-ui/svg-icons/image/details';
+import { Toolbar, ToolbarGroup, ToolbarTitle } from 'material-ui/Toolbar';
+import Paper from 'material-ui/Paper';
 
 import { graphql, compose } from 'react-apollo';
 import gql from 'graphql-tag';
-
-const styles = {
-  smallIcon: {
-    width: 36,
-    height: 36,
-  },
-  small: {
-    width: 72,
-    height: 72,
-    padding: 16,
-  },
-}
+import history from '../../core/history';
 
 class ListAids extends Component {
   state = {
@@ -48,53 +39,56 @@ class ListAids extends Component {
 
     return (
       <div>
-        <Table
-          height='300px'
-          fixedHeader={true}
-          selectable={true}
-        >
-          <TableHeader
-            displaySelectAll={this.state.showCheckboxes}
-            adjustForCheckbox={this.state.showCheckboxes}
-            enableSelectAll={this.state.enableSelectAll}
+        <Paper>
+          <Toolbar>
+            <ToolbarGroup>
+              <ToolbarTitle
+                text="Bảng danh sách thiết bị"
+              />
+            </ToolbarGroup>
+          </Toolbar>
+          <Table
+            height='300px'
+            fixedHeader={true}
+            selectable={true}
           >
-            <TableRow>
-              <TableHeaderColumn colSpan="5" tooltip="Super Header" style={{textAlign: 'center'}}>
-                Bảng danh sách thiết bị
-              </TableHeaderColumn>
-            </TableRow>
-            <TableRow>
-              <TableHeaderColumn tooltip="Tên thiết bị">Tên thiết bị</TableHeaderColumn>
-              <TableHeaderColumn tooltip="Khối lớp tương ứng">Khối</TableHeaderColumn>
-              <TableHeaderColumn tooltip="Mã KH">Mã KH</TableHeaderColumn>
-              <TableHeaderColumn tooltip="Số lượng thiết bị hiện có">Số lượng</TableHeaderColumn>
-              <TableHeaderColumn tooltip="Thông tin chi tiết các dụng cụ cùng loại">Chi tiết</TableHeaderColumn>
-            </TableRow>
-          </TableHeader>
-          <TableBody
-            displayRowCheckbox={false}
-            deselectOnClickaway={true}
-            showRowHover={false}
-            stripedRows={false}
-          >
-            {tableData.map( (row, index) => (
-              <TableRow key={index}>
-                <TableRowColumn>{row.name}</TableRowColumn>
-                <TableRowColumn>{row.equipmentInfo.grade}</TableRowColumn>
-                <TableRowColumn>{row.equipmentInfo.khCode}</TableRowColumn>
-                <TableRowColumn>{row.totalNumber}</TableRowColumn>
-                <TableRowColumn>
-                  <IconButton
-                    iconStyle={styles.smallIcon}
-                    style={styles.small}
-                  >
-                    <ActionList />
-                  </IconButton>
-                </TableRowColumn>
+            <TableHeader
+              displaySelectAll={this.state.showCheckboxes}
+              adjustForCheckbox={this.state.showCheckboxes}
+              enableSelectAll={this.state.enableSelectAll}
+            >
+              <TableRow>
+                <TableHeaderColumn tooltip="Tên thiết bị">Tên thiết bị</TableHeaderColumn>
+                <TableHeaderColumn tooltip="Khối lớp tương ứng">Khối</TableHeaderColumn>
+                <TableHeaderColumn tooltip="Mã KH">Mã KH</TableHeaderColumn>
+                <TableHeaderColumn tooltip="Số lượng thiết bị hiện có">Số lượng</TableHeaderColumn>
+                <TableHeaderColumn tooltip="Thông tin chi tiết các dụng cụ cùng loại">Chi tiết</TableHeaderColumn>
               </TableRow>
+            </TableHeader>
+            <TableBody
+              displayRowCheckbox={false}
+              deselectOnClickaway={true}
+              showRowHover={false}
+              stripedRows={false}
+            >
+              {tableData.map((row, index) => (
+                <TableRow key={index}>
+                  <TableRowColumn>{row.name}</TableRowColumn>
+                  <TableRowColumn>{row.equipmentInfo.grade}</TableRowColumn>
+                  <TableRowColumn>{row.equipmentInfo.khCode}</TableRowColumn>
+                  <TableRowColumn>{row.totalNumber}</TableRowColumn>
+                  <TableRowColumn>
+                    <IconButton
+                      onClick={() => history.replace(`/equipments/detail/${row._id}`)}
+                    >
+                      <ActionDetail />
+                    </IconButton>
+                  </TableRowColumn>
+                </TableRow>
               ))}
-          </TableBody>
-        </Table>
+            </TableBody>
+          </Table>
+        </Paper>
       </div>
     );
   }

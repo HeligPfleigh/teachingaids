@@ -19,6 +19,12 @@ import {
   resolvers as equipmentTypeResolver,
 } from './equipmentsInfo/getEquipInfo';
 
+import {
+  schema as equipmentSchema,
+  queries as equipmentQueries,
+  resolvers as equipmentResolver,
+} from './equipmentsInfo/getEquipDetail';
+
 /** * Mutations ** */
 import {
   schema as mutationUserSchema,
@@ -36,12 +42,14 @@ export const schema = [
   ...mutationUserSchema,
   ...subjectSchema,
   ...equipmentTypeSchema,
+  ...equipmentSchema,
 ];
 
 export const queries = [
   ...userQueries,
   ...subjectQueries,
   ...equipmentTypeQueries,
+  ...equipmentQueries,
 ];
 
 export const mutations = [
@@ -55,4 +63,5 @@ export const resolvers = merge(
   subjectResolver,
   mutationSubResolver,
   equipmentTypeResolver,
+  equipmentResolver,
 );
