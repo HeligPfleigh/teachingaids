@@ -7,7 +7,7 @@ export default {
     require('./login').default,
     require('./users').default,
     require('./managements').default,
-    require('./aid/history').default,
+    require('./aid').default,
     // require('./register').default,
     require('./aids').default,
 
