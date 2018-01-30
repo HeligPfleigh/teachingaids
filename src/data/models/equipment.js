@@ -7,8 +7,8 @@ const { Schema } = mongoose;
 const ObjectId = Schema.Types.ObjectId;
 
 const EquipmentSchema = new Schema({
-  barCode: String,
-  equipmentTypeId: ObjectId,
+  barcode: String,
+  equipmentTypeId: String,
   status: String,
   lender: ObjectId,
   borrower: ObjectId,
