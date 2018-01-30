@@ -8,7 +8,6 @@ import MapsAddLocation from 'material-ui/svg-icons/maps/add-location';
 import MapsLayers from 'material-ui/svg-icons/maps/layers';
 import ContentAddBox from 'material-ui/svg-icons/content/add-box';
 import ActionBook from 'material-ui/svg-icons/action/book';
-// import MapsMap from 'material-ui/svg-icons/maps/map';
 
 const data = {
   menus: [
@@ -26,9 +25,8 @@ const data = {
       icon: <Assessment />,
       link: '#',
       children: [
-        { text: 'Thêm mới thiết bị', icon: <MapsAddLocation />, link: '/locations/create' },
-        { text: 'Danh sách thiết bị', icon: <MapsLayers />, link: '/locations' },
-        { text: 'Thống kê thiết bị', icon: <MapsLayers />, link: '/locations' },
+        { text: 'Thông tin chung', icon: <ActionBook />, link: '/' },
+        { text: 'Danh mục chung', icon: <GridOn />, link: '/managements/subjects' },
       ],
     },
     {
@@ -38,6 +36,16 @@ const data = {
       children: [
         { text: 'Danh sách mượn - trả', icon: <GridOn />, link: '/buildings' },
         { text: 'Danh sách nhắc nhở', icon: <ContentAddBox />, link: '/buildings/create' },
+      ],
+    },
+    {
+      text: 'Trang thiết bị',
+      icon: <Assessment />,
+      link: '#',
+      children: [
+        { text: 'Danh sách thiết bị', icon: <MapsLayers />, link: '/equipments' },
+        { text: 'Thêm mới thiết bị', icon: <MapsAddLocation />, link: '/equipments/create' },
+        { text: 'Thống kê thiết bị', icon: <MapsLayers />, link: '/equipments/statistic' },
       ],
     },
     {

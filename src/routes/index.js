@@ -9,6 +9,7 @@ export default {
     require('./createUser').default,
     require('./managements').default,
     // require('./register').default,
+    require('./aids').default,
 
     // Wildcard routes, e.g. { path: '*', ... } (must go last)
     require('./notFound').default,
