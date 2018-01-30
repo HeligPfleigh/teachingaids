@@ -1,4 +1,4 @@
-import React, { PropTypes, Component } from 'react';
+import React, { Component } from 'react';
 import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
 import FlatButton from 'material-ui/FlatButton';
@@ -12,30 +12,30 @@ const styles = {
     height: 'auto',
     paddingLeft: 100,
     paddingRight: 100,
-    paddingTop: 30
+    paddingTop: 30,
   },
   paper: {
     padding: 20,
     overflow: 'auto',
   },
-}
+};
 
-class AddingAid extends Component{
-  constructor(props){
+class AddingAid extends Component {
+  constructor(props) {
     super(props);
     this.state = {
       barcode: '',
       aidType: '',
       error: '',
       openAdvanced: false,
-    }
+    };
   }
 
   onSubmit = (e) => {
     e.preventDefault();
     const { barcode, aidType } = this.state;
-    if(barcode === '' || aidType === ''){
-      this.setState({error: 'Hãy nhập đủ thông tin!'});
+    if (barcode === '' || aidType === '') {
+      this.setState({ error: 'Hãy nhập đủ thông tin!' });
       return null;
     }
 
@@ -51,13 +51,13 @@ class AddingAid extends Component{
 
   handleOpenAdvanced = () => {
     this.setState({
-      openAdvanced: !this.state.openAdvanced
-    })
+      openAdvanced: !this.state.openAdvanced,
+    });
   }
 
-  render(){
+  render() {
     const { openAdvanced } = this.state;
-    return(
+    return (
       <div style={styles.container} onSubmit={this.onSubmit}>
         <Paper style={styles.paper}>
           <form autoComplete="off">
@@ -65,37 +65,37 @@ class AddingAid extends Component{
               name="barcode"
               hintText="Quét mã vạch"
               floatingLabelText="Barcode"
-              fullWidth={true}
-              floatingLabelFixed={true}
+              fullWidth
+              floatingLabelFixed
               onChange={this.handleChange}
             />
             <TextField
               name="aidType"
               hintText="Nhập loại thiết bị"
               floatingLabelText="Loại thiết bị"
-              fullWidth={true}
-              floatingLabelFixed={true}
+              fullWidth
+              floatingLabelFixed
               onChange={this.handleChange}
             />
             <RaisedButton
               type="submit"
               label="Lưu"
               primary
-              fullWidth={true}
+              fullWidth
             />
           </form>
           {this.state.error === '' ? null : <div>{this.state.error}</div>}
         </Paper>
         <br /><br />
-        <FlatButton label="Advanced" fullWidth={true} onClick={this.handleOpenAdvanced}/>
+        <FlatButton label="Advanced" fullWidth onClick={this.handleOpenAdvanced} />
         <br /><br />
-        {openAdvanced ? 
+        {openAdvanced ?
           <Paper style={styles.paper}>
             <AddingAidType />
           </Paper> : null
         }
       </div>
-    )
+    );
   }
 }
 

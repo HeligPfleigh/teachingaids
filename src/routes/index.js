@@ -8,9 +8,7 @@ export default {
     require('./users').default,
     require('./managements').default,
     // require('./register').default,
-    require('./addAid').default,
-    require('./listAids').default,
-    require('./listDetailAids').default,
+    require('./aids').default,
 
     // Wildcard routes, e.g. { path: '*', ... } (must go last)
     require('./notFound').default,
