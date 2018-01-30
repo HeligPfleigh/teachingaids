@@ -1,33 +1,28 @@
-import React, { PropTypes, Component } from 'react';
+import React, { Component } from 'react';
 import TextField from 'material-ui/TextField';
 import RaisedButton from 'material-ui/RaisedButton';
-import FlatButton from 'material-ui/FlatButton';
-import Paper from 'material-ui/Paper';
 
-export default class AddingAidType extends Component{
-  constructor(props){
+export default class AddingAidType extends Component {
+  constructor(props) {
     super(props);
     this.state = {
-      equipment_name: '',
-      made_from: '',
+      equipmentName: '',
+      madeFrom: '',
       grade: '',
       kh_code: '',
       error: null,
-    }
+    };
   }
   onSubmit = (e) => {
     e.preventDefault();
-    const { equipment_name, made_from, grade, kh_code } = this.state;
-    if( equipment_name === '' ||
-        made_from === ''||
+    const { equipmentName, madeFrom, grade, khCode } = this.state;
+    if (equipmentName === '' ||
+        madeFrom === '' ||
         grade === '' ||
-        kh_code === '')
-    {
-      this.setState({error: "Hãy thêm đủ thông tin các trường"});
+        khCode === '') {
+      this.setState({ error: 'Hãy thêm đủ thông tin các trường' });
       return null;
     }
-
-    
   }
 
   handleChange = (e) => {
@@ -35,11 +30,10 @@ export default class AddingAidType extends Component{
     this.setState({
       [e.target.name]: value,
     });
-    
   }
 
-  render(){
-    return(
+  render() {
+    return (
       <div>
         <div>Thêm loại thiết bị</div>
         <form autoComplete="off" onSubmit={this.onSubmit}>
@@ -47,39 +41,46 @@ export default class AddingAidType extends Component{
           <TextField
             name="equipment_name"
             floatingLabelText="Loại thiết bị"
-            fullWidth={true}
-            floatingLabelFixed={true}
+            fullWidth
+            floatingLabelFixed
             onChange={this.handleChange}
           />
           <TextField
             name="made_from"
             floatingLabelText="Xuất xứ"
-            fullWidth={true}
-            floatingLabelFixed={true}
+            fullWidth
+            floatingLabelFixed
             onChange={this.handleChange}
           />
           <TextField
             name="grade"
             floatingLabelText="Khối"
-            fullWidth={true}
-            floatingLabelFixed={true}
+            fullWidth
+            floatingLabelFixed
             onChange={this.handleChange}
           />
           <TextField
             name="kh_code"
             floatingLabelText="Mã KH"
-            fullWidth={true}
-            floatingLabelFixed={true}
+            fullWidth
+            floatingLabelFixed
+            onChange={this.handleChange}
+          />
+          <TextField
+            name="unit"
+            floatingLabelText="Đơn vị tính(cái, chiếc, ...)"
+            fullWidth
+            floatingLabelFixed
             onChange={this.handleChange}
           />
           <RaisedButton
             type="submit"
             label="Thêm"
             primary
-            fullWidth={true}
+            fullWidth
           />
         </form>
       </div>
-    )
+    );
   }
 }

@@ -17,6 +17,7 @@
     "jsx-a11y/no-static-element-interactions": 0,
     "no-return-await": "off",
     "consistent-return": "off",
-    "no-alert": "off"
+    "no-alert": "off",
+    "react/no-string-refs": "off"
   }
 }

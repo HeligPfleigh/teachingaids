@@ -1,21 +1,20 @@
 
-import React, {Component} from 'react';
+import React, { Component } from 'react';
+import PropTypes from 'prop-types';
 import {
   Table,
   TableBody,
-  TableFooter,
   TableHeader,
   TableHeaderColumn,
   TableRow,
   TableRowColumn,
 } from 'material-ui/Table';
-import TextField from 'material-ui/TextField';
 import IconButton from 'material-ui/IconButton';
 import ActionDetail from 'material-ui/svg-icons/image/details';
 import { Toolbar, ToolbarGroup, ToolbarTitle } from 'material-ui/Toolbar';
 import Paper from 'material-ui/Paper';
 
-import { graphql, compose } from 'react-apollo';
+import { graphql } from 'react-apollo';
 import gql from 'graphql-tag';
 import history from '../../core/history';
 
@@ -26,16 +25,17 @@ class ListAids extends Component {
   };
 
   render() {
-    if(this.props.data.loading){
-      return <div>Đang tải dữ liệu ... </div>
+    const { data: { error, loading, getAllEquipment } } = this.props;
+    if (loading) {
+      return <div>Đang tải dữ liệu ... </div>;
     }
 
-    if(this.props.data.error){
-      console.log(this.props.data.error)
-      return <div>Một lỗi ngoài dự kiến đã xảy ra. Liên hệ với người quản trị để được giúp đỡ!</div>
+    if (error) {
+      console.log(error);
+      return <div>Một lỗi ngoài dự kiến đã xảy ra. Liên hệ với người quản trị để được giúp đỡ!</div>;
     }
-    
-    const tableData = this.props.data.getAllEquipment;
+
+    const tableData = getAllEquipment;
 
     return (
       <div>
@@ -48,9 +48,9 @@ class ListAids extends Component {
             </ToolbarGroup>
           </Toolbar>
           <Table
-            height='300px'
-            fixedHeader={true}
-            selectable={true}
+            height="300px"
+            fixedHeader
+            selectable
           >
             <TableHeader
               displaySelectAll={this.state.showCheckboxes}
@@ -67,12 +67,12 @@ class ListAids extends Component {
             </TableHeader>
             <TableBody
               displayRowCheckbox={false}
-              deselectOnClickaway={true}
+              deselectOnClickaway
               showRowHover={false}
               stripedRows={false}
             >
-              {tableData.map((row, index) => (
-                <TableRow key={index}>
+              {tableData.map(row => (
+                <TableRow key={Math.random()}>
                   <TableRowColumn>{row.name}</TableRowColumn>
                   <TableRowColumn>{row.equipmentInfo.grade}</TableRowColumn>
                   <TableRowColumn>{row.equipmentInfo.khCode}</TableRowColumn>
@@ -93,6 +93,14 @@ class ListAids extends Component {
     );
   }
 }
+
+ListAids.propTypes = {
+  data: PropTypes.objectOf({
+    error: PropTypes.any,
+    getAllEquipment: PropTypes.any,
+    loading: PropTypes.bool,
+  }),
+};
 
 const query = gql`
   query {
