@@ -15,7 +15,7 @@ async function createEquipment(equipmentTypeId, quantity) {
 
     // barcode string
     let str = `${sequenceNum}`;
-    let pad = '000000';
+    let pad = '0000000';
     let ans = pad.substring(0, pad.length - str.length) + str;
     let barcode = `C2TS-${ans}`;
 
