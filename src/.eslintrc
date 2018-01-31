@@ -19,6 +19,7 @@
     "consistent-return": "off",
     "no-alert": "off",
     "react/no-string-refs": "off",
-    "no-return-assign": "off"
+    "no-return-assign": "off",
+    "react/no-array-index-key": "off"
   }
 }
