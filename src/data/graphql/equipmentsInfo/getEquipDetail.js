@@ -5,7 +5,7 @@ export const schema = [
   type Equipments {
     _id: String
     barcode: String
-    equipmentTypeId: EquipmentInfo
+    equipmentTypeId: String
   }
 `,
 ];
@@ -19,8 +19,8 @@ export const queries = [
 
 export const resolvers = {
   RootQuery: {
-    async getAllPerTypeEquipment(parent, {equipmentTypeId}) {
-      return EquipmentModel.find({'equipmentTypeId': equipmentTypeId});
+    async getAllPerTypeEquipment(parent, { equipmentTypeId }) {
+      return EquipmentModel.find({ equipmentTypeId });
     },
   },
 };
