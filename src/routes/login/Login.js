@@ -15,6 +15,7 @@ import RaisedButton from 'material-ui/RaisedButton';
 import { white } from 'material-ui/styles/colors';
 import TextField from 'material-ui/TextField';
 import isEmpty from 'lodash/isEmpty';
+import ActionBook from 'material-ui/svg-icons/action/book';
 
 import themeDefault from '../../components/Layout/Material-Theme';
 // import history from '../../core/history';
@@ -39,8 +40,9 @@ const styles = {
   titleForm: {
     paddingBottom: 15,
     fontSize: '25px',
-    color: '#00BCD4',
+    color: 'black',
     textAlign: 'center',
+    float: 'left'
   },
   errorForm: {
     paddingBottom: 10,
@@ -50,6 +52,7 @@ const styles = {
   },
   btnGroup: {
     paddingTop: 15,
+    marginTop: 15
   },
   loginBtn: {
     float: 'right',
@@ -141,25 +144,29 @@ class Login extends Component {
       <MuiThemeProvider muiTheme={themeDefault}>
         <div style={styles.loginContainer}>
           <Paper style={styles.paper}>
-            <div style={styles.titleForm}>Đăng nhập hệ thống</div>
+            <div className="wrapper">
+              <image  src="logo_truonghoc.png"/>
+            </div>
+            <div style={styles.titleForm}>Đăng nhập</div>
             {this.state.error === true &&
               <div style={styles.errorForm}>Sai tên đăng nhập hoặc mật khẩu</div>
             }
             <form autoComplete="off" onSubmit={this.onSubmit}>
               <TextField
+                className="form"
                 name="username"
                 autoFocus
                 hintText="Tên đăng nhập"
-                floatingLabelText={<span style={{ fontSize: 25 }}>Tên đăng nhập</span>}
                 fullWidth
                 errorText={nameErrorText}
                 onChange={this.handleChange}
                 onBlur={this.handleChange}
               />
               <TextField
+                className="form"
                 name="password"
+                autoFocus                
                 hintText="Mật khẩu"
-                floatingLabelText={<span style={{ fontSize: 25 }}>Mật khẩu</span>}
                 fullWidth
                 type="password"
                 errorText={pwdErrorText}
