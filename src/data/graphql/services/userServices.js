@@ -19,6 +19,7 @@ async function getUser(userId) {
 async function checkExistUser({ userId, query }) {
   // Case 1: Only check exist user by key
   // -> use verify user with key
+  console.log(userId, query);
   if (userId && !query) {
     try {
       const user = await UserModel.findById(userId);
@@ -36,7 +37,7 @@ async function checkExistUser({ userId, query }) {
   const options = {
     $or: [
       { username: query },
-      { 'phone.number': query },
+      { 'profile.phone': query },
       { 'email.address': query },
     ],
   };
@@ -95,7 +96,7 @@ async function createUser(params) {
       address: emailAddress,
     },
   } = params;
-
+  console.log(params);
   if (isUndefined(username)) {
     throw new Error('username is undefined');
   }
