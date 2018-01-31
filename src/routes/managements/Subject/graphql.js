@@ -9,9 +9,11 @@ export const getSubjects = gql`query getSubjects {
   }
 }`;
 
-export const checkSubjectExist = gql`query checkSubjectExist ($name: String!) {
-  checkSubjectExist (name: $name)
-}`;
+export const checkSubjectExist = gql`
+  query checkSubjectExist ($name: String!) {
+    checkSubjectExist (name: $name)
+  }
+`;
 
 export const addSubjectMutation = gql`
   mutation createSubject($name: String!) {

@@ -1,13 +1,30 @@
 import React from 'react';
-import withStyles from 'isomorphic-style-loader/lib/withStyles';
+import PropTypes from 'prop-types';
+import gql from 'graphql-tag';
+import { graphql } from 'react-apollo';
 import { Card, CardHeader, CardText } from 'material-ui/Card';
-import { blue600, fullWhite } from 'material-ui/styles/colors';
+import { cyan900, fullWhite } from 'material-ui/styles/colors';
 
+import Fragment from '../../data/fragment.utils';
 import UserProfile from './UserProfile';
 import ChangePassword from './ChangePassword';
 import ChangeEmail from './ChangeEmail';
-import s from './Account.scss';
+import styles from './styles';
 
+const getUserInfo = gql`
+  query getUserInfo {
+    me {
+      ...UserView
+    }
+  }
+  ${Fragment.UserView}
+`;
+
+@graphql(getUserInfo, {
+  options: {
+    fetchPolicy: 'network-only',
+  },
+})
 class Account extends React.Component {
   constructor(props) {
     super(props);
@@ -25,23 +42,34 @@ class Account extends React.Component {
       title={<strong>{title}</strong>}
       actAsExpander
       showExpandableButton
-      style={{ backgroundColor: blue600 }}
+      style={{ backgroundColor: cyan900 }}
       titleStyle={{ color: fullWhite }}
+      iconStyle={{ color: fullWhite }}
     />
   )
 
   render() {
     const { panel } = this.state;
+    const { data: { loading, error, me, refetch } } = this.props;
+
+    if (loading) {
+      return <div>Đang tải dữ liệu ... </div>;
+    }
+
+    if (error) {
+      return <h1>Một lỗi ngoài dự kiến đã xảy ra. Liên hệ với người quản trị để được giúp đỡ!</h1>;
+    }
 
     return (
       <div>
+        <h3 style={styles.navigation}>Trang chủ / Trang thông tin cá nhân</h3>
         <Card
           expanded={panel === 1}
           onExpandChange={() => this.onExpandChange(1)}
         >
           {this.cardHeaderGenerate('Thông tin cá nhân')}
           <CardText expandable>
-            <UserProfile />
+            <UserProfile initialValues={{ ...me }} refetch={refetch} />
           </CardText>
         </Card>
 
@@ -49,9 +77,15 @@ class Account extends React.Component {
           expanded={panel === 2}
           onExpandChange={() => this.onExpandChange(2)}
         >
-          {this.cardHeaderGenerate('Đổi mật khẩu')}
+          {this.cardHeaderGenerate('Cập nhật email')}
           <CardText expandable>
-            <ChangePassword />
+            <ChangeEmail
+              refetch={refetch}
+              initialValues={{
+                oldEmail: me.email.address,
+                newEmail: me.email.address,
+              }}
+            />
           </CardText>
         </Card>
 
@@ -59,9 +93,9 @@ class Account extends React.Component {
           expanded={panel === 3}
           onExpandChange={() => this.onExpandChange(3)}
         >
-          {this.cardHeaderGenerate('Cập nhật email')}
+          {this.cardHeaderGenerate('Đổi mật khẩu')}
           <CardText expandable>
-            <ChangeEmail />
+            <ChangePassword />
           </CardText>
         </Card>
       </div>
@@ -69,4 +103,8 @@ class Account extends React.Component {
   }
 }
 
-export default withStyles(s)(Account);
+Account.propTypes = {
+  data: PropTypes.any,
+};
+
+export default Account;
