@@ -16,7 +16,7 @@ export default {
       path: '/',
       action() {
         return {
-          title: 'Thêm thiết bị',
+          title: 'Danh sách thiết bị',
           component: <Layout><ListAids /></Layout>,
         };
       },
@@ -25,7 +25,7 @@ export default {
       path: '/detail/:equipmentID',
       action({ params }) {
         return {
-          title: 'Thêm thiết bị',
+          title: 'Danh sách thiết bị',
           component: <Layout><ListDetailAids equipmentID={params.equipmentID} /></Layout>,
         };
       },
