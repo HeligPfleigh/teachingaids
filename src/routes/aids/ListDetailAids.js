@@ -46,6 +46,7 @@ class ListDetailAids extends Component {
         }
       />,
       <ReactToPrint
+        copyStyles={false}
         content={() => this.componentRef}
         trigger={() => <FlatButton primary label="In mã vạch" />}
       />,
@@ -59,10 +60,16 @@ class ListDetailAids extends Component {
     } = this.props;
     const equipmentName = getNameFromID.name;
 
-    const itemNameStyle = {
-      color: '#000',
-      font: 'bold 28px monospace, Arial',
-      marginBottom: '-2px',
+    const modalContentStyle = {
+      container: {
+        padding: 20,
+        textAlign: 'center',
+      },
+      title: {
+        color: '#000',
+        font: 'bold 28px monospace, Arial',
+        marginBottom: '-2px',
+      },
     };
 
     return (<Modal
@@ -70,14 +77,14 @@ class ListDetailAids extends Component {
       title="Hộp thoại in mã vạch"
       actions={actions}
     >
-      <div ref={el => (this.componentRef = el)} style={{ textAlign: 'center', padding: 20 }}>
-        <div style={itemNameStyle}>{equipmentName}</div>
+      <div ref={el => (this.componentRef = el)} style={modalContentStyle.container}>
+        <div style={modalContentStyle.title}>{equipmentName}</div>
         <Barcode
           width={3}
           height={175}
           fontSize={28}
           format="CODE128"
-          value={`C2TS-${selectItem.barcode}117`}
+          value={selectItem.barcode}
         />
       </div>
     </Modal>);
