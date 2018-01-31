@@ -109,7 +109,7 @@ export const chartFirstRequired = value => (
     : undefined
 );
 
-export default {
+export const formValid = {
   normal: (value) => {
     if (validator.isEmpty(value)) {
       return 'Không được để trống';
