@@ -1,85 +1,34 @@
 import gql from 'graphql-tag';
 import { isEmpty } from 'lodash';
 import createApolloClient from '../../../core/createApolloClient/createApolloClient.client';
+import Fragment from '../../../data/fragment.utils';
 
 const apolloClient = createApolloClient();
 
 const getAidHistoriesOfEquipmentType = gql`
   query getAidHistoriesOfEquipmentType($equipmentTypeId: String!) {
     getAidHistoriesOfEquipmentType(equipmentTypeId: $equipmentTypeId) {
-      _id
-      lender {
-        userId
-        name
-      }
-      borrower {
-        userId
-        name
-        teacherCode
-      }
-      borrowTime
-      returnTime
-      equipment {
-        equipmentTypeId
-        equipmentId
-        name
-        barCode
-      }
-      status
+      ...AidHistoryView
     }
   }
-`;
+  ${Fragment.AidHistoryView}`;
 
 const getAidHistoriesOfTeacher = gql`
   query getAidHistoriesOfTeacher($teacherId: String) {
     getAidHistoriesOfTeacher(teacherId: $teacherId) {
-      _id
-      lender {
-        userId
-        name
-      }
-      borrower {
-        userId
-        name
-        teacherCode
-      }
-      borrowTime
-      returnTime
-      equipment {
-        equipmentTypeId
-        equipmentId
-        name
-        barCode
-      }
-      status
+      ...AidHistoryView
     }
   }
+  ${Fragment.AidHistoryView}
 `;
 
 const getAidHistories = gql`
   query {
     getAidHistories{
-      _id
-      lender {
-        userId
-        name
-      }
-      borrower {
-        userId
-        name
-        teacherCode
-      }
-      borrowTime
-      returnTime
-      equipment {
-        equipmentTypeId
-        equipmentId
-        name
-        barCode
-      }
-      status
+      ...AidHistoryView
     }
   }
+  ${Fragment.AidHistoryView}
 `;
 
 export const getAidHistoriesOfTeacherFunc = async (teacherId) => {
