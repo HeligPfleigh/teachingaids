@@ -1,6 +1,5 @@
 import React from 'react';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
-import { RadioButton, RadioButtonGroup } from 'material-ui/RadioButton';
 import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
 import isEmpty from 'lodash/isEmpty';
@@ -14,7 +13,7 @@ import PropTypes from 'prop-types';
 import { graphql, compose } from 'react-apollo';
 import { Field, reduxForm } from 'redux-form';
 import { InputField, RadioGroupField } from '../../components/ReduxForm';
-import { required, longLength, email, phoneNumber } from '../../utils/form.validator.util';
+import { required, longLength, email as emailValid, phoneNumber } from '../../utils/form.validator.util';
 import { checkUserExist, addUserMutation } from './graphql';
 import createApolloClient from '../../core/createApolloClient/createApolloClient.client';
 
@@ -99,7 +98,7 @@ class CreateUser extends React.Component {
     this.state = {
       radioButtonValue: 'male',
       selectFieldvalue: 0,
-      surnameErrorText: '',
+      lastnameErrorText: '',
       firstnameErrorText: '',
       emailErrorText: '',
       phoneErrorText: '',
@@ -115,12 +114,12 @@ class CreateUser extends React.Component {
   };
 
   handleSubmit = (values) => {
-    console.log(values);
-    const { email, firstname, phone, surname } = values;
-    const profile = { firstname, surname, phone };
-    console.log(profile);
+    const { email, firstName, phone, lastName, gender } = values;
+    const profile = { firstName, lastName, gender, phone };
+    const user = { email: { address: email }, profile };
+    console.log(user);
     this.props.addUser({
-      variables: { email, profile },
+      variables: { user },
     }).then(({ data }) => {
       const { CreateUser: { query } } = data;
       alert(`Thêm mới thành công ${query}`);
@@ -159,7 +158,7 @@ class CreateUser extends React.Component {
             <div className={classNames('row')}>
               <div className={classNames('col-xs-6 col-sm-4 col-md-4')}>
                 <Field
-                  name="surname"
+                  name="lastName"
                   label="Họ*"
                   component={InputField}
                   validate={[required]}
@@ -167,7 +166,7 @@ class CreateUser extends React.Component {
               </div>
               <div className={classNames('col-xs-6 col-sm-4 col-md-4 col-md-offset-0.5')}>
                 <Field
-                  name="firstname"
+                  name="firstName"
                   label="Tên*"
                   component={InputField}
                   validate={[required]}
@@ -183,23 +182,15 @@ class CreateUser extends React.Component {
               <div className={classNames('col-xs-6 col-sm-4 col-md-4 col-md-offset-0.1')} style={{ marginTop: 10 }}>
                 {/* <RadioButtonGroup name="shipSpeed" defaultSelected="male" valueSelected={this.state.radioButtonValue}> */}
                 <Field
-                  name="option"
+                  fullWidth
+                  name="gender"
                   component={RadioGroupField}
-                  value={this.state.radioButtonValue}
-                >
-                  <RadioButton
-                    value="male"
-                    label="Nam"
-                    style={{ display: 'inline-block', width: '50px' }}
-                    onClick={this.handleRadioButtonChange}
-                  />
-                  <RadioButton
-                    value="female"
-                    label="Nữ"
-                    style={{ display: 'inline-block', width: '50px', marginLeft: '50px' }}
-                    onClick={this.handleRadioButtonChange}
-                  />
-                </Field>
+                  options={[
+                  { value: true, label: 'Nam' },
+                  { value: false, label: 'Nữ' },
+                  ]}
+                />
+
                 {/* </RadioButtonGroup> */}
               </div>
             </div>
@@ -227,7 +218,7 @@ class CreateUser extends React.Component {
                   name="email"
                   label="Email*"
                   component={InputField}
-                  validate={[required, email]}
+                  validate={[required, emailValid]}
                 />
               </div>
             </div>

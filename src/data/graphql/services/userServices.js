@@ -90,20 +90,17 @@ async function updateProfile(userId, profile) {
 async function createUser(params) {
   const {
     username,
-    password,
+    password = 'Mtt2016a@',
     profile: { phone },
     email: {
       address: emailAddress,
     },
   } = params;
-  console.log(params);
+
   if (isUndefined(username)) {
-    throw new Error('username is undefined');
+    params.username = 'hellokiukiu';
   }
 
-  if (isUndefined(password)) {
-    throw new Error('password is undefined');
-  }
 
   if (isUndefined(emailAddress)) {
     throw new Error('email is undefined');
@@ -125,6 +122,7 @@ async function createUser(params) {
 
   const activeCode = idRandom();
   params.email.code = activeCode;
+  params.email.verified = true;
 
   params.profile.avatar = params.profile.avatar || '/avatar-default.jpg';
 
