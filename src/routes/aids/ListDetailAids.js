@@ -2,101 +2,92 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Toolbar, ToolbarGroup, ToolbarTitle } from 'material-ui/Toolbar';
 import Paper from 'material-ui/Paper';
-import {
-  Table,
-  TableBody,
-  TableHeader,
-  TableHeaderColumn,
-  TableRow,
-  TableRowColumn,
-} from 'material-ui/Table';
 import IconButton from 'material-ui/IconButton';
-import ActionRemove from 'material-ui/svg-icons/action/delete';
-import ActionEdit from 'material-ui/svg-icons/content/create';
-import ActionBack from 'material-ui/svg-icons/content/backspace';
+import ActionBack from 'material-ui/svg-icons/navigation/arrow-back';
 import { graphql } from 'react-apollo';
 import gql from 'graphql-tag';
+import ReactTooltip from 'react-tooltip';
 
 import history from '../../core/history';
+import Table from '../../components/Table';
+import styles from './styles';
 
 class ListDetailAids extends Component {
-  state = {
-    enableSelectAll: false,
-    showCheckboxes: false,
+
+  eventHandler = () => {
+    // console.log('Hello world');
+  };
+
+  redirectPage = (item) => {
+    console.log(item);
+    // history.push(`/districts/${item._id}`);
+    // history.replace(`/equipments/detail/${item._id}`);
   };
 
   render() {
-    if (this.props.data.loading) {
+    const {
+      data: {
+        error,
+        loading,
+        getNameFromID,
+        getAllPerTypeEquipment,
+      },
+    } = this.props;
+
+    if (loading) {
       return <div>Đang tải dữ liệu ... </div>;
     }
 
-    if (this.props.data.error) {
-      console.log(this.props.data.error);
+    if (error) {
       return <div>Một lỗi ngoài dự kiến đã xảy ra. Liên hệ với người quản trị để được giúp đỡ!</div>;
     }
 
-    const tableData = this.props.data.getAllPerTypeEquipment;
-    const equipmentName = this.props.data.getNameFromID.name;
+    const tableData = getAllPerTypeEquipment;
+    const equipmentName = getNameFromID.name;
+
+    const fields = [
+      // Config columns
+      { key: 'init', value: 'Tên thiết bị', init: equipmentName, style: styles.columns.name, public: true, action: 'normal', event: this.eventHandler },
+      { key: 'barcode', value: 'Mã barcode', style: styles.columns.type, public: true, action: 'normal', event: this.eventHandler },
+      // Config button group
+      { key: 'buttonGroup',
+        value: 'Hành động',
+        style: styles.columns.buttonGroup,
+        public: true,
+        action: 'group',
+        event: this.eventHandler,
+        children: [
+        { key: 'btnEdit', value: 'Sửa', style: styles.columns.edit, public: true, action: 'edit', event: this.eventHandler },
+        { key: 'btnDelete', value: 'Xóa', style: styles.columns.edit, public: true, action: 'delete', event: this.eventHandler },
+        ],
+      },
+    ];
 
     return (
-      <div>
-        {/* <div>Hello {this.props.equipmentID}</div> */}
-        <Paper>
-          <Toolbar>
-            <ToolbarGroup>
-              <ToolbarTitle
-                text="Danh sách"
-              />
-            </ToolbarGroup>
-            <ToolbarGroup>
-              <IconButton
-                data-tip="Thêm mới môn học"
-                onClick={() => history.replace('/equipments')}
-              >
-                <ActionBack />
-              </IconButton>
-            </ToolbarGroup>
-          </Toolbar>
-          <Table
-            height="300px"
-            fixedHeader
-            selectable
-          >
-            <TableHeader
-              displaySelectAll={this.state.showCheckboxes}
-              adjustForCheckbox={this.state.showCheckboxes}
-              enableSelectAll={this.state.enableSelectAll}
+      <Paper>
+        <Toolbar style={styles.subheader}>
+          <ToolbarGroup>
+            <ToolbarTitle
+              text="Danh sách thiết bị"
+              style={styles.textWhiteColor}
+            />
+          </ToolbarGroup>
+          <ToolbarGroup>
+            <IconButton
+              iconStyle={styles.textWhiteColor}
+              data-tip="Quay lại trang trước"
+              onClick={() => history.replace('/equipments')}
             >
-              <TableRow>
-                <TableHeaderColumn tooltip="Tên thiết bị">Tên thiết bị</TableHeaderColumn>
-                <TableHeaderColumn tooltip="Mã barcode">Mã barcode</TableHeaderColumn>
-                <TableHeaderColumn tooltip="Chọn để sửa hoặc xoá thiết bị">Thao tác khác</TableHeaderColumn>
-              </TableRow>
-            </TableHeader>
-            <TableBody
-              displayRowCheckbox={false}
-              deselectOnClickaway
-              showRowHover={false}
-              stripedRows={false}
-            >
-              {tableData.map(row => (
-                <TableRow key={Math.random()}>
-                  <TableRowColumn>{equipmentName}</TableRowColumn>
-                  <TableRowColumn>{row.barcode}</TableRowColumn>
-                  <TableRowColumn>
-                    <IconButton>
-                      <ActionEdit />
-                    </IconButton>
-                    <IconButton>
-                      <ActionRemove />
-                    </IconButton>
-                  </TableRowColumn>
-                </TableRow>
-              ))}
-            </TableBody>
-          </Table>
-        </Paper>
-      </div>
+              <ActionBack />
+            </IconButton>
+          </ToolbarGroup>
+        </Toolbar>
+        {
+          !loading && tableData &&
+          <Table items={tableData || []} fields={fields} />
+        }
+        <ReactTooltip />
+      </Paper>
     );
   }
 }
