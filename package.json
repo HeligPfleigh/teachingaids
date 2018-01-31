@@ -54,7 +54,6 @@
     "react": "^15.6.2",
     "react-apollo": "^0.11.2",
     "react-barcode": "^1.3.2",
-    "react-dom": "^15.4.2",
     "react-dom": "^15.6.2",
     "react-infinite-scroller": "^1.0.12",
     "react-redux": "^5.0.2",

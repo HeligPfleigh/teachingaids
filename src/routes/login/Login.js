@@ -18,7 +18,7 @@ import isEmpty from 'lodash/isEmpty';
 
 import themeDefault from '../../components/Layout/Material-Theme';
 // import history from '../../core/history';
-import validator from '../../utils/form.validator.util';
+import * as validator from '../../utils/form.validator.util';
 import s from './Login.scss';
 
 const styles = {
