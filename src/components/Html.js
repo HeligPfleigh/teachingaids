@@ -1,6 +1,9 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import serialize from 'serialize-javascript';
+import window from 'global/window';
+
+global.window = window;
 
 class Html extends Component {
   static propTypes = {

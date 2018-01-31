@@ -5,6 +5,7 @@ import ContentCreate from 'material-ui/svg-icons/content/create';
 import ActionNoteAdd from 'material-ui/svg-icons/action/note-add';
 import ActionDelete from 'material-ui/svg-icons/action/delete';
 import ActionSettings from 'material-ui/svg-icons/action/settings';
+import ActionPrinter from 'material-ui/svg-icons/action/print';
 import HardwareKeyboardArrowRight from 'material-ui/svg-icons/hardware/keyboard-arrow-right';
 import { grey500, grey200 } from 'material-ui/styles/colors';
 import { TableRowColumn } from 'material-ui/Table';
@@ -38,7 +39,7 @@ GenButton.propTypes = {
   children: PropTypes.node.isRequired,
 };
 
-const BTN_TYPE = ['add', 'edit', 'delete', 'active', 'config'];
+const BTN_TYPE = ['add', 'edit', 'delete', 'active', 'config', 'print'];
 
 const btnCollection = {
   [BTN_TYPE[0]]: (field, event) => (
@@ -60,6 +61,10 @@ const btnCollection = {
   [BTN_TYPE[4]]: (field, event) => (
     // Cot khoi tao button config
     <GenButton event={event}><ActionSettings /></GenButton>
+  ),
+  [BTN_TYPE[5]]: (field, event) => (
+    // Cot khoi tao button print
+    <GenButton event={event}><ActionPrinter /></GenButton>
   ),
 };
 
@@ -100,7 +105,7 @@ GenColumn.propTypes = {
 };
 
 // field = { key: 'ID', value: 'Khoa chinh', style: {}, public: true, action: 'edit', event=func }
-const COL_TYPE = ['normal', 'add', 'edit', 'delete', 'active', 'redirect', 'group'];
+const COL_TYPE = ['normal', 'add', 'edit', 'delete', 'active', 'redirect', 'print', 'group'];
 
 const columnResults = {
   [COL_TYPE[0]]: (field, empty = null, item) => {
@@ -131,7 +136,11 @@ const columnResults = {
     // Cot khoi tao button set active
     <GenColumn field={field} event={event}><HardwareKeyboardArrowRight /></GenColumn>
   ),
-  [COL_TYPE[6]]: (field, event, item) => (
+  [COL_TYPE[6]]: (field, event) => (
+    // Cot khoi tao button set print
+    <GenColumn field={field} event={event}><ActionPrinter /></GenColumn>
+  ),
+  [COL_TYPE[7]]: (field, event, item) => (
     // Cot khoi tao group button
     <GenColumn field={field} item={item} event={event} />
   ),

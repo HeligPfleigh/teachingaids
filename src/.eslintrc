@@ -18,6 +18,7 @@
     "no-return-await": "off",
     "consistent-return": "off",
     "no-alert": "off",
-    "react/no-string-refs": "off"
+    "react/no-string-refs": "off",
+    "no-return-assign": "off"
   }
 }
