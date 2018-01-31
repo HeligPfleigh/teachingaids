@@ -180,4 +180,17 @@ textarea {
   h3 {
     page-break-after: avoid;
   }
+
+
+  /* hidden header & footer printer page*/
+  @page {
+    margin: 0;
+    padding: 0;
+    size: 2in 1.2in;
+  }
+
+  /* hiden html content */
+  #app {
+    visibility: hidden;
+  }
 }
