@@ -36,7 +36,7 @@ async function checkExistUser({ userId, query }) {
   const options = {
     $or: [
       { username: query },
-      { 'phone.number': query },
+      { 'profile.phone': query },
       { 'email.address': query },
     ],
   };
@@ -210,6 +210,74 @@ async function changePassword({ username, password, oldPassword }) {
   return result;
 }
 
+async function changeUserEmail({ userId, password, email }) {
+  if (isUndefined(password)) {
+    return {
+      user: {},
+      type: 'error',
+      status: 'Bạn chưa cung cấp mật khẩu hiện tại',
+    };
+  }
+
+  if (isUndefined(email)) {
+    return {
+      user: {},
+      type: 'error',
+      status: 'Bạn chưa cung cấp địa chỉ email',
+    };
+  }
+
+  const currentUser = await UserModel.findById(userId);
+
+  if (!currentUser) {
+    return {
+      user: {},
+      type: 'error',
+      status: 'Người dùng không tồn tại trên hệ thống',
+    };
+  }
+
+  if (!isEmpty(currentUser.password)) {
+    const validPassword = await bcrypt.compare(password, currentUser.password);
+    if (!validPassword) {
+      return {
+        user: {},
+        type: 'error',
+        status: 'Mật khẩu hiện tại không đúng',
+      };
+    }
+  }
+
+  const user = await UserModel.findOne({
+    $and: [
+      { _id: { $ne: userId } },
+      { 'email.address': email },
+    ],
+  });
+
+  if (user) {
+    return {
+      user: {},
+      type: 'error',
+      status: 'Địa chỉ email đã được sử dụng bởi một tài khoản khác',
+    };
+  }
+
+  const result = await UserModel.findOneAndUpdate({ _id: userId }, {
+    $set: {
+      'email.code': '',
+      'email.address': email,
+      'email.verified': true,
+    },
+  });
+
+  return {
+    user: result,
+    type: 'success',
+    status: 'Thay đổi địa chỉ email thành công',
+  };
+}
+
 export default {
   checkExistUser,
   activeUser,
@@ -217,4 +285,5 @@ export default {
   createUser,
   updateProfile,
   changePassword,
+  changeUserEmail,
 };

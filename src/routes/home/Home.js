@@ -1,109 +1,92 @@
 import React from 'react';
-import withStyles from 'isomorphic-style-loader/lib/withStyles';
-import { Table, TableBody, TableHeader, TableHeaderColumn, TableRow, TableRowColumn } from 'material-ui/Table';
-import FloatingActionButton from 'material-ui/FloatingActionButton';
-import ContentCreate from 'material-ui/svg-icons/content/create';
-import ContentAdd from 'material-ui/svg-icons/content/add';
-import { pink500, grey200, grey500 } from 'material-ui/styles/colors';
-import { Toolbar, ToolbarGroup, ToolbarTitle } from 'material-ui/Toolbar';
-import RaisedButton from 'material-ui/RaisedButton';
+import Assessment from 'material-ui/svg-icons/action/assessment';
+import Face from 'material-ui/svg-icons/action/face';
+import ThumbUp from 'material-ui/svg-icons/action/thumb-up';
+import ShoppingCart from 'material-ui/svg-icons/action/shopping-cart';
+import { typography } from 'material-ui/styles';
+import { grey600, cyan600, pink600, purple600, orange600 } from 'material-ui/styles/colors';
 
-import s from './Home.scss';
+import InfoBox from './dashboard/InfoBox';
+import NewOrders from './dashboard/NewOrders';
+import BrowserUsage from './dashboard/BrowserUsage';
+import Data from './data';
 
 const styles = {
-  floatingActionButton: {
-    margin: 0,
-    top: 'auto',
-    right: 20,
-    bottom: 20,
-    left: 'auto',
-    position: 'fixed',
+  navigation: {
+    fontSize: 15,
+    fontWeight: typography.fontWeightLight,
+    color: grey600,
+    paddingBottom: 15,
+    display: 'block',
   },
-  editButton: {
-    fill: grey500,
+  title: {
+    fontSize: 24,
+    fontWeight: typography.fontWeightLight,
+    marginBottom: 20,
   },
-  columns: {
-    id: {
-      width: '10%',
-    },
-    name: {
-      width: '40%',
-    },
-    price: {
-      width: '20%',
-    },
-    category: {
-      width: '20%',
-    },
-    edit: {
-      width: '10%',
-    },
+  paper: {
+    padding: 30,
+  },
+  clear: {
+    clear: 'both',
   },
 };
 
-const items = [
-  { id: 1, name: 'Product 1', price: '$50.00', category: 'Category 1' },
-  { id: 2, name: 'Product 2', price: '$150.00', category: 'Category 2' },
-  { id: 3, name: 'Product 3', price: '$250.00', category: 'Category 3' },
-  { id: 4, name: 'Product 4', price: '$70.00', category: 'Category 4' },
-  { id: 5, name: 'Product 5', price: '$450.00', category: 'Category 5' },
-  { id: 6, name: 'Product 6', price: '$950.00', category: 'Category 6' },
-  { id: 7, name: 'Product 7', price: '$550.00', category: 'Category 7' },
-  { id: 8, name: 'Product 8ccc', price: '$750.00', category: 'Category 8' },
-];
+const DashboardPage = () => (
+  <div>
+    <h3 style={styles.navigation}>Trang chủ / Màn hình chính</h3>
 
-class Home extends React.Component {
-
-  render() {
-    return (
-      <div>
-        <Toolbar>
-          <ToolbarGroup>
-            <ToolbarTitle text="Options" />
-          </ToolbarGroup>
-          <ToolbarGroup lastChild>
-            <RaisedButton label="Create Broadcast" primary />
-          </ToolbarGroup>
-        </Toolbar>
-
-        <FloatingActionButton style={styles.floatingActionButton} backgroundColor={pink500}>
-          <ContentAdd />
-        </FloatingActionButton>
-
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHeaderColumn style={styles.columns.id}>ID</TableHeaderColumn>
-              <TableHeaderColumn style={styles.columns.name}>Name</TableHeaderColumn>
-              <TableHeaderColumn style={styles.columns.price}>Price</TableHeaderColumn>
-              <TableHeaderColumn style={styles.columns.category}>Category</TableHeaderColumn>
-              <TableHeaderColumn style={styles.columns.edit}>Edit</TableHeaderColumn>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {items.map(item =>
-              <TableRow key={item.id}>
-                <TableRowColumn style={styles.columns.id}>{item.id}</TableRowColumn>
-                <TableRowColumn style={styles.columns.name}>{item.name}</TableRowColumn>
-                <TableRowColumn style={styles.columns.price}>{item.price}</TableRowColumn>
-                <TableRowColumn style={styles.columns.category}>{item.category}</TableRowColumn>
-                <TableRowColumn style={styles.columns.edit}>
-                  <FloatingActionButton
-                    zDepth={0}
-                    mini
-                    backgroundColor={grey200}
-                    iconStyle={styles.editButton}
-                  >
-                    <ContentCreate />
-                  </FloatingActionButton>
-                </TableRowColumn>
-              </TableRow>,
-            )}
-          </TableBody>
-        </Table>
+    <div className="row">
+      <div className="col-xs-12 col-sm-6 col-md-3 col-lg-3 m-b-15 ">
+        <InfoBox
+          Icon={ShoppingCart}
+          color={pink600}
+          title="Tổng số thiết bị"
+          value="1500k"
+        />
       </div>
-    );
-  }
-}
 
-export default withStyles(s)(Home);
+
+      <div className="col-xs-12 col-sm-6 col-md-3 col-lg-3 m-b-15 ">
+        <InfoBox
+          Icon={ThumbUp}
+          color={cyan600}
+          title="Số thiết bị được mượn"
+          value="4231"
+        />
+      </div>
+
+      <div className="col-xs-12 col-sm-6 col-md-3 col-lg-3 m-b-15 ">
+        <InfoBox
+          Icon={Assessment}
+          color={purple600}
+          title="Số lần mượn"
+          value="460"
+        />
+      </div>
+
+      <div className="col-xs-12 col-sm-6 col-md-3 col-lg-3 m-b-15 ">
+        <InfoBox
+          Icon={Face}
+          color={orange600}
+          title="Số thành viên"
+          value="248"
+        />
+      </div>
+    </div>
+
+    <div className="row">&nbsp;</div>
+
+    <div className="row">
+      <div className="col-xs-12 col-sm-6 col-md-6 col-lg-6 col-md m-b-15">
+        <NewOrders data={Data.newOrders} />
+      </div>
+
+      <div className="col-xs-12 col-sm-6 col-md-6 col-lg-6 m-b-15">
+        <BrowserUsage data={Data.browserUsage} />
+      </div>
+    </div>
+  </div>
+);
+
+export default DashboardPage;

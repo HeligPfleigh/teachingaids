@@ -1,139 +1,110 @@
 import React from 'react';
-import withStyles from 'isomorphic-style-loader/lib/withStyles';
+import PropTypes from 'prop-types';
+import gql from 'graphql-tag';
+import { graphql } from 'react-apollo';
+import { Card, CardHeader, CardText } from 'material-ui/Card';
+import { cyan900, fullWhite } from 'material-ui/styles/colors';
 
-import {
-  Button,
-  Collapse,
-  Col,
-  Label,
-  Form,
-  Row,
-  ListGroupItem,
-  ListGroup,
-  Input,
-} from 'reactstrap';
-import TextFeild from 'material-ui/TextField';
-import DatePicker from 'material-ui/DatePicker';
+import Fragment from '../../data/fragment.utils';
+import UserProfile from './UserProfile';
+import ChangePassword from './ChangePassword';
+import ChangeEmail from './ChangeEmail';
+import styles from './styles';
 
-import s from './Home.scss';
+const getUserInfo = gql`
+  query getUserInfo {
+    me {
+      ...UserView
+    }
+  }
+  ${Fragment.UserView}
+`;
 
+@graphql(getUserInfo, {
+  options: {
+    fetchPolicy: 'network-only',
+  },
+})
 class Account extends React.Component {
   constructor(props) {
     super(props);
     this.state = {
-      toggleProfile: true,
-      togglePassword: false,
-      toggleEmail: false,
+      panel: 1,
     };
   }
-  toggleProfile = () => {
-    this.setState({
-      toggleProfile: !this.state.toggleProfile,
-    });
+
+  onExpandChange = (panel) => {
+    this.setState({ panel });
   }
-  togglePassword = () => {
-    this.setState({
-      togglePassword: !this.state.togglePassword,
-    });
-  }
-  toggleEmail = () => {
-    this.setState({
-      toggleEmail: !this.state.toggleEmail,
-    });
-  }
+
+  cardHeaderGenerate = title => (
+    <CardHeader
+      title={<strong>{title}</strong>}
+      actAsExpander
+      showExpandableButton
+      style={{ backgroundColor: cyan900 }}
+      titleStyle={{ color: fullWhite }}
+      iconStyle={{ color: fullWhite }}
+    />
+  )
+
   render() {
+    const { panel } = this.state;
+    const { data: { loading, error, me, refetch } } = this.props;
+
+    if (loading) {
+      return <div>Đang tải dữ liệu ... </div>;
+    }
+
+    if (error) {
+      return <h1>Một lỗi ngoài dự kiến đã xảy ra. Liên hệ với người quản trị để được giúp đỡ!</h1>;
+    }
+
     return (
-      <ListGroup>
-        <ListGroupItem color="info" className="profile" >
-          <h6 onClick={this.toggleProfile} caret >Profile</h6>
-        </ListGroupItem>
-        <Collapse isOpen={this.state.toggleProfile} >
-          <Form>
-            <Row>
-              <Label sm={{ offset: 1 }} for="firstname" xs="2">First Name</Label>
-              <Col xs="6"><TextFeild name="firstname" placeholder="First name" /></Col>
-            </Row>
-            <Row>
-              <Label sm={{ offset: 1 }} for="lastname" xs="2">Last Name</Label>
-              <Col xs="6"><TextFeild name="lastname" placeholder="Last name" /></Col>
-            </Row>
-            <Row>
-              <Label sm={{ offset: 1 }} for="firstname" xs="2">Gender</Label>
-              <Col>
-                <Label xs="6" check>
-                  <Input type="radio" name="gender" />{'Nam '}&nbsp; &nbsp; &nbsp;
-                  <Input type="radio" name="gender" />{'Nu'}
-                </Label>
-              </Col>
-            </Row>
-            <Row>
-              <Label sm={{ offset: 1 }} for="phone" xs="2">Phone number</Label>
-              <Col xs="6"><TextFeild name="phone" placeholder="Phone number" /></Col>
-            </Row>
-            <Row>
-              <Label sm={{ offset: 1 }} for="birthday" xs="2">Birthday</Label>
-              <Col xs="6"><DatePicker placeholder="Birthday" /></Col>
-            </Row>
-            <Row>
-              <Label sm={{ offset: 1 }} for="address" xs="2">Address</Label>
-              <Col xs="6"><TextFeild name="Address" placeholder="Address" /></Col>
-            </Row>
-            <Row>
-              <Label sm={{ offset: 1 }} xs="2"></Label>
-              <Col xs="6">
-                <Button type="submit" color="success">Đồng ý</Button>{' '}
-                <Button type="reset" color="danger">Hủy</Button>
-              </Col>
-            </Row>
-          </Form>
-        </Collapse>
-        <ListGroupItem color="info" className="password">
-          <h6 onClick={this.togglePassword} >Change Password</h6>
-        </ListGroupItem>
-        <Collapse isOpen={this.state.togglePassword}>
-          <Form>
-            <Row>
-              <Label sm={{ offset: 1 }} xs="2">Current password</Label>
-              <Col xs="6"><TextFeild type="password" placeholder="Current password" /></Col>
-            </Row>
-            <Row>
-              <Label sm={{ offset: 1 }} xs="2">New password</Label>
-              <Col xs="6"><TextFeild type="password" placeholder="New password" /></Col>
-            </Row>
-            <Row>
-              <Label sm={{ offset: 1 }} xs="2">Confirm password</Label>
-              <Col xs="6"><TextFeild type="password" placeholder="Confirm" /></Col>
-            </Row>
-            <Row>
-              <Label sm={{ offset: 1 }} xs="2"></Label>
-              <Col xs="6">
-                <Button type="submit" color="success">Đồng ý</Button>{' '}
-                <Button type="reset" color="danger">Hủy</Button>
-              </Col>
-            </Row>
-          </Form>
-        </Collapse>
-        <ListGroupItem color="info" className="changeEmail">
-          <h6 onClick={this.toggleEmail}>Change Email</h6>
-        </ListGroupItem>
-        <Collapse isOpen={this.state.toggleEmail}>
-          <Form>
-            <Row>
-              <Label sm={{ offset: 1 }} xs="2">New Email</Label>
-              <Col xs="6"><TextFeild placeholder="Email" /></Col>
-            </Row>
-            <Row>
-              <Label sm={{ offset: 1 }} xs="2"></Label>
-              <Col xs="6">
-                <Button type="submit" color="success">Đồng ý</Button>{' '}
-                <Button type="reset" color="danger">Hủy</Button>
-              </Col>
-            </Row>
-          </Form>
-        </Collapse>
-      </ListGroup>
+      <div>
+        <h3 style={styles.navigation}>Trang chủ / Trang thông tin cá nhân</h3>
+        <Card
+          expanded={panel === 1}
+          onExpandChange={() => this.onExpandChange(1)}
+        >
+          {this.cardHeaderGenerate('Thông tin cá nhân')}
+          <CardText expandable>
+            <UserProfile initialValues={{ ...me }} refetch={refetch} />
+          </CardText>
+        </Card>
+
+        <Card
+          expanded={panel === 2}
+          onExpandChange={() => this.onExpandChange(2)}
+        >
+          {this.cardHeaderGenerate('Cập nhật email')}
+          <CardText expandable>
+            <ChangeEmail
+              refetch={refetch}
+              initialValues={{
+                oldEmail: me.email.address,
+                newEmail: me.email.address,
+              }}
+            />
+          </CardText>
+        </Card>
+
+        <Card
+          expanded={panel === 3}
+          onExpandChange={() => this.onExpandChange(3)}
+        >
+          {this.cardHeaderGenerate('Đổi mật khẩu')}
+          <CardText expandable>
+            <ChangePassword />
+          </CardText>
+        </Card>
+      </div>
     );
   }
 }
 
-export default withStyles(s)(Account);
+Account.propTypes = {
+  data: PropTypes.any,
+};
+
+export default Account;

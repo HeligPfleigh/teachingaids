@@ -19,7 +19,7 @@ export default {
     if (redirect) return redirect;
 
     return {
-      title: 'Quản trị hệ thống',
+      title: 'Trang thông tin cá nhân',
       component: <Layout><Account /></Layout>,
     };
   },
