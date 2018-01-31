@@ -1,134 +1,60 @@
 
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
-import { Toolbar, ToolbarGroup, ToolbarTitle } from 'material-ui/Toolbar';
-import Paper from 'material-ui/Paper';
-
-import { graphql } from 'react-apollo';
-import gql from 'graphql-tag';
-import moment from 'moment';
-import Table from '../../../components/Table';
-import styles from './styles';
+import { compose } from 'react-apollo';
+import { connect } from 'react-redux';
+import _ from 'lodash';
+import AidHistoryView from './AidHistoryView';
+import { ROLES } from '../../../constants';
+import { getAidHistoriesOfTeacherFunc, getAidHistoriesOfEquipmentTypeFunc, getAidHistoriesFunc } from './graphql';
 
 class AidHistory extends Component {
+  constructor(props) {
+    super(props);
+    this.state = {
+      loading: true,
+      data: null,
+    };
+  }
+
+  async componentDidMount() {
+    let data = this.state;
+    const { user } = this.props;
+
+    if ((_.intersection(user.roles, [ROLES.ADMINISTRATOR, ROLES.SUPERVISOR, ROLES.LIBRARY_MANAGER, ROLES.LIBRARY_EMPLOYEE])).length > 0) {
+      data = await getAidHistoriesFunc();
+    }
+    if ((_.intersection(user.roles, [ROLES.TEACHER])).length > 0) {
+      data = await getAidHistoriesOfTeacherFunc(user.id);
+    }
+    this.updateView(data);
+  }
+
+  updateView = (data) => {
+    this.setState({
+      loading: data.loading,
+      data: data.result,
+    });
+  }
+
   render() {
-    const { data: { error, loading, getAidHistories } } = this.props;
-
-    const fields = [
-      // Config columns
-      {
-        key: 'lender.name',
-        value: 'Người cho mượn',
-        style: styles.columns.lenderName,
-        public: true,
-        action: 'normal',
-      },
-      {
-        key: 'borrower.name',
-        value: 'Người mượn',
-        style: styles.columns.borrowerName,
-        public: true,
-        action: 'normal',
-      },
-      {
-        key: 'borrower.teacherCode',
-        value: 'Mã giáo viên',
-        style: styles.columns.borrowerTeacherCode,
-        public: true,
-        action: 'normal',
-      },
-      {
-        key: 'borrowTime',
-        value: 'Thời gian mượn',
-        style: styles.columns.borrowTime,
-        public: true,
-        action: 'normal',
-        formatData: item => moment(item).format('D-MM-Y HH:mm'),
-      },
-      {
-        key: 'returnTime',
-        value: 'Thời gian trả',
-        style: styles.columns.returnTime,
-        public: true,
-        action: 'normal',
-        formatData: item => moment(item).format('D-MM-Y H:mm'),
-      },
-      {
-        key: 'equipment.name',
-        value: 'Tên thiết bị',
-        style: styles.columns.equipmentName,
-        public: true,
-        action: 'normal',
-      },
-      {
-        key: 'equipment.barCode',
-        value: 'Barcode',
-        style: styles.columns.equipmentBarCode,
-        public: true,
-        action: 'normal',
-      },
-    ];
-
-    if (loading) {
-      return <div>Đang tải dữ liệu ... </div>;
-    }
-
-    if (error) {
-      return <div>Một lỗi ngoài dự kiến đã xảy ra. Liên hệ với người quản trị để được giúp đỡ!</div>;
-    }
-
+    const { loading, data } = this.state;
     return (
-      <Paper>
-        <Toolbar style={styles.subheader}>
-          <ToolbarGroup>
-            <ToolbarTitle
-              text="Lịch sử mượn trả"
-              style={styles.textWhiteColor}
-            />
-          </ToolbarGroup>
-        </Toolbar>
-        {
-          !loading && getAidHistories &&
-          <Table items={getAidHistories || []} fields={fields} />
-        }
-      </Paper>
+      <AidHistoryView loading={loading} getAidHistories={data} />
     );
   }
 }
 
 AidHistory.propTypes = {
-  data: PropTypes.shape({
-    error: PropTypes.any,
-    getAidHistories: PropTypes.any,
-    loading: PropTypes.bool,
-  }),
+  user: PropTypes.object,
 };
 
-const query = gql`
-  query {
-    getAidHistories{
-      _id
-      lender {
-        userId
-        name
-      }
-      borrower {
-        userId
-        name
-        teacherCode
-      }
-      borrowTime
-      returnTime
-      equipment {
-        equipmentTypeId
-        equipmentId
-        name
-        barCode
-      }
-    }
-  }
-`;
+const mapStateToProps = state => ({
+  user: state.user,
+});
 
-const AidHistoryWithData = graphql(query)(AidHistory);
+const AidHistoryWithData = compose(
+  connect(mapStateToProps),
+)(AidHistory);
 
 export default AidHistoryWithData;

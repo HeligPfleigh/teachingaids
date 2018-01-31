@@ -20,13 +20,27 @@ export default {
   },
   children: [
     {
-      path: '/histories',
+      path: '/',
       action() {
         return {
-          title: 'Trang lịch sử mượn trả',
-          component: <Layout><AidHistory /></Layout>,
+          title: 'Trang quản lý mượn trả thiết bị',
+          component: <Layout>Trang quản lý mượn trả thiết bị</Layout>,
         };
       },
+    },
+    {
+      path: '/histories',
+      children: [
+        {
+          path: '/',
+          action() {
+            return {
+              title: 'Trang lịch sử mượn trả',
+              component: <Layout><AidHistory /></Layout>,
+            };
+          },
+        },
+      ],
     },
   ],
 
