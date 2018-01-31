@@ -103,10 +103,14 @@ GenColumn.propTypes = {
 const COL_TYPE = ['normal', 'add', 'edit', 'delete', 'active', 'redirect', 'group'];
 
 const columnResults = {
-  [COL_TYPE[0]]: (field, empty = null, item) => (
+  [COL_TYPE[0]]: (field, empty = null, item) => {
+    let itemValue = get(item, field.key);
+    if (field.formatData && (typeof field.formatData === 'function')) {
+      itemValue = field.formatData(itemValue);
+    }
     // Cot hien thi du lieu
-    <TableRowColumn style={field.style}>{field.init || get(item, field.key) || 'xxx'}</TableRowColumn>
-  ),
+    return <TableRowColumn style={field.style}>{ field.init || itemValue || 'xxx'}</TableRowColumn>;
+  },
   [COL_TYPE[1]]: (field, event) => (
     // Cot khoi tao button add
     <GenColumn field={field} event={event}><ActionNoteAdd /></GenColumn>

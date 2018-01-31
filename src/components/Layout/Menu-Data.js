@@ -8,6 +8,8 @@ import MapsAddLocation from 'material-ui/svg-icons/maps/add-location';
 import MapsLayers from 'material-ui/svg-icons/maps/layers';
 import ContentAddBox from 'material-ui/svg-icons/content/add-box';
 import ActionBook from 'material-ui/svg-icons/action/book';
+import ActionHistory from 'material-ui/svg-icons/action/history';
+// import MapsMap from 'material-ui/svg-icons/maps/map';
 
 const data = {
   menus: [
@@ -34,8 +36,9 @@ const data = {
       icon: <Web />,
       link: '#',
       children: [
-        { text: 'Danh sách mượn - trả', icon: <GridOn />, link: '/buildings' },
-        { text: 'Danh sách nhắc nhở', icon: <ContentAddBox />, link: '/buildings/create' },
+        { text: 'Danh sách mượn - trả', icon: <GridOn />, link: '/aids' },
+        { text: 'Danh sách nhắc nhở', icon: <ContentAddBox />, link: '/aids/create' },
+        { text: 'Lịch sử mượn trả', icon: <ActionHistory />, link: '/aids/histories' },
       ],
     },
     {

@@ -13,7 +13,7 @@ const EquipmentSchema = new Schema({
   lender: ObjectId,
   borrower: ObjectId,
   borrowTime: Date,
-  returnTime: Date
+  returnTime: Date,
 });
 
 // plugins

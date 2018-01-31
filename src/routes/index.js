@@ -8,6 +8,7 @@ export default {
     require('./users').default,
     require('./createUser').default,
     require('./managements').default,
+    require('./aid').default,
     // require('./register').default,
     require('./aids').default,
 

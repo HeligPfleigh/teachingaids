@@ -37,12 +37,29 @@ import {
   resolvers as mutationSubResolver,
 } from './subjects/MutationSubject';
 
+import {
+  schema as aidHistorySchema,
+  queries as aidHistoryQueries,
+  resolvers as aidHistoryResolver,
+} from './aid_histories/QueriesAidHistories';
+
+import {
+  mutation as equipDetailMutation,
+  resolvers as mutationEquipDetailResolver,
+} from './equipmentsInfo/mutationEquipDetail';
+
+import {
+  mutation as equipInfoMutation,
+  resolvers as mutationEquipInfoResolver,
+} from './equipmentsInfo/mutationEquipInfo';
+
 export const schema = [
   ...userSchema,
   ...mutationUserSchema,
   ...subjectSchema,
   ...equipmentTypeSchema,
   ...equipmentSchema,
+  ...aidHistorySchema,
 ];
 
 export const queries = [
@@ -50,11 +67,14 @@ export const queries = [
   ...subjectQueries,
   ...equipmentTypeQueries,
   ...equipmentQueries,
+  ...aidHistoryQueries,
 ];
 
 export const mutations = [
   ...userMutation,
   ...subjectMutation,
+  ...equipDetailMutation,
+  ...equipInfoMutation,
 ];
 
 export const resolvers = merge(
@@ -64,4 +84,7 @@ export const resolvers = merge(
   mutationSubResolver,
   equipmentTypeResolver,
   equipmentResolver,
+  aidHistoryResolver,
+  mutationEquipDetailResolver,
+  mutationEquipInfoResolver,
 );

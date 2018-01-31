@@ -34,8 +34,8 @@ export const resolvers = {
     async getAllEquipment() {
       return EquipmentTypeModel.find();
     },
-    async getNameFromID(parent, {_id}){
-      return EquipmentTypeModel.findOne({_id: _id});
-    }
+    async getNameFromID(parent, { _id }) {
+      return EquipmentTypeModel.findOne({ _id });
+    },
   },
 };

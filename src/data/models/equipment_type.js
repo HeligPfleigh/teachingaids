@@ -10,18 +10,18 @@ const EquipmentInfoSchema = new Schema({
   grade: String,
   khCode: String,
 }, {
-    _id: false,
+  _id: false,
 });
 
 const EquipmentTypeSchema = new Schema({
   name: {
     type: String,
-    required: true
+    required: true,
   },
   equipmentInfo: EquipmentInfoSchema,
   totalNumber: String,
   unit: String,
-  order: String
+  order: Number,
 });
 
 // plugins
