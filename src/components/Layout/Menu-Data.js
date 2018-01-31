@@ -51,6 +51,7 @@ const data = {
         { text: 'Danh sách người dùng', icon: <MapsLayers />, link: '/users' },
       ],
     },
+    { text: 'Lịch sử mượn trả', icon: <ActionHistory />, link: '/histories', children: [] },
     { text: 'Thông tin tài khoản', icon: <GridOn />, link: '/account', children: [] },
     { text: 'Đăng xuất', icon: <PermIdentity />, link: '/logout', children: [], isRedirect: true },
   ],

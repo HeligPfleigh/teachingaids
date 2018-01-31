@@ -25,6 +25,12 @@ import {
   resolvers as equipmentResolver,
 } from './equipmentsInfo/getEquipDetail';
 
+import {
+  schema as equipmentStatusSchema,
+  queries as equipmentStatusQueries,
+  resolvers as equipmentStatusResolver,
+} from './equipmentStatus/QueriesEquipmentStatus';
+
 /** * Mutations ** */
 import {
   schema as mutationUserSchema,
@@ -53,6 +59,12 @@ import {
   resolvers as mutationEquipInfoResolver,
 } from './equipmentsInfo/mutationEquipInfo';
 
+import {
+  mutation as equipmentStatusMutation,
+  resolvers as mutationEStatusResolver,
+} from './equipmentStatus/MutationEquipmentStatus';
+
+/** * Build graphql schema ** */
 export const schema = [
   ...userSchema,
   ...mutationUserSchema,
@@ -60,6 +72,7 @@ export const schema = [
   ...equipmentTypeSchema,
   ...equipmentSchema,
   ...aidHistorySchema,
+  ...equipmentStatusSchema,
 ];
 
 export const queries = [
@@ -68,6 +81,7 @@ export const queries = [
   ...equipmentTypeQueries,
   ...equipmentQueries,
   ...aidHistoryQueries,
+  ...equipmentStatusQueries,
 ];
 
 export const mutations = [
@@ -75,6 +89,7 @@ export const mutations = [
   ...subjectMutation,
   ...equipDetailMutation,
   ...equipInfoMutation,
+  ...equipmentStatusMutation,
 ];
 
 export const resolvers = merge(
@@ -87,4 +102,6 @@ export const resolvers = merge(
   aidHistoryResolver,
   mutationEquipDetailResolver,
   mutationEquipInfoResolver,
+  equipmentStatusResolver,
+  mutationEStatusResolver,
 );

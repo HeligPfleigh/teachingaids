@@ -4,6 +4,7 @@ import { typography } from 'material-ui/styles';
 import { grey600 } from 'material-ui/styles/colors';
 
 import Subject from './Subject';
+import EquipmentStatus from './EquipmentStatus';
 
 const styles = {
   navigation: {
@@ -27,7 +28,7 @@ class Home extends React.Component {
           </div>
 
           <div className={classNames('col-xs-12 col-sm-6 col-md-6')}>
-            <Subject />
+            <EquipmentStatus />
           </div>
         </div>
       </div>
