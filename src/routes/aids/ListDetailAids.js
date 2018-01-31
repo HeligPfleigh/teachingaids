@@ -116,7 +116,6 @@ class ListDetailAids extends Component {
         action: 'group',
         children: [
           { key: 'btnPrint', value: 'In barcode', style: styles.columns.edit, public: true, action: 'print', event: this.showPrintModal },
-          { key: 'btnEdit', value: 'Sửa', style: styles.columns.edit, public: true, action: 'edit', event: this.redirectPage },
           { key: 'btnDelete', value: 'Xóa', style: styles.columns.edit, public: true, action: 'delete', event: this.redirectPage },
         ],
       },
