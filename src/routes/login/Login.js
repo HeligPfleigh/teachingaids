@@ -18,7 +18,7 @@ import isEmpty from 'lodash/isEmpty';
 
 import themeDefault from '../../components/Layout/Material-Theme';
 // import history from '../../core/history';
-import validator from '../../utils/form.validator.util';
+import { formValid } from '../../utils/form.validator.util';
 import s from './Login.scss';
 
 const styles = {
@@ -116,12 +116,12 @@ class Login extends Component {
     const value = event.target.value;
     const collectionValidator = {
       username: strValue => this.setState({
-        nameErrorText: validator.username(strValue),
-        isDisabled: !isEmpty(validator.username(strValue)),
+        nameErrorText: formValid.username(strValue),
+        isDisabled: !isEmpty(formValid.username(strValue)),
       }),
       password: strValue => this.setState({
-        pwdErrorText: validator.password(strValue),
-        isDisabled: !isEmpty(validator.password(strValue)),
+        pwdErrorText: formValid.password(strValue),
+        isDisabled: !isEmpty(formValid.password(strValue)),
       }),
     };
 

@@ -7,12 +7,21 @@ import ActionBack from 'material-ui/svg-icons/navigation/arrow-back';
 import { graphql } from 'react-apollo';
 import gql from 'graphql-tag';
 import ReactTooltip from 'react-tooltip';
+import FlatButton from 'material-ui/FlatButton';
+import isEmpty from 'lodash/isEmpty';
+import Barcode from 'react-barcode';
+import ReactToPrint from 'react-to-print';
 
 import history from '../../core/history';
+import Modal from '../../components/Modal';
 import Table from '../../components/Table';
 import styles from './styles';
 
 class ListDetailAids extends Component {
+
+  state = {
+    selectItem: null,
+  }
 
   eventHandler = () => {
     // console.log('Hello world');
@@ -23,6 +32,56 @@ class ListDetailAids extends Component {
     // history.push(`/districts/${item._id}`);
     // history.replace(`/equipments/detail/${item._id}`);
   };
+
+  showPrintModal = item => this.setState({ selectItem: item });
+
+  printModal = () => {
+    const actions = [
+      <FlatButton
+        secondary
+        label="Đóng cửa sổ"
+        keyboardFocused
+        onTouchTap={
+          () => this.setState({ selectItem: null })
+        }
+      />,
+      <ReactToPrint
+        content={() => this.componentRef}
+        trigger={() => <FlatButton primary label="In mã vạch" />}
+      />,
+    ];
+
+    const { selectItem } = this.state;
+    const {
+      data: {
+        getNameFromID,
+      },
+    } = this.props;
+    const equipmentName = getNameFromID.name;
+
+    const itemNameStyle = {
+      color: '#000',
+      font: 'bold 28px monospace, Arial',
+      marginBottom: '-2px',
+    };
+
+    return (<Modal
+      isOpen={!isEmpty(selectItem)}
+      title="Hộp thoại in mã vạch"
+      actions={actions}
+    >
+      <div ref={el => (this.componentRef = el)} style={{ textAlign: 'center', padding: 20 }}>
+        <div style={itemNameStyle}>{equipmentName}</div>
+        <Barcode
+          width={3}
+          height={175}
+          fontSize={28}
+          format="CODE128"
+          value={`C2TS-${selectItem.barcode}117`}
+        />
+      </div>
+    </Modal>);
+  }
 
   render() {
     const {
@@ -47,21 +106,22 @@ class ListDetailAids extends Component {
 
     const fields = [
       // Config columns
-      { key: 'init', value: 'Tên thiết bị', init: equipmentName, style: styles.columns.name, public: true, action: 'normal', event: this.eventHandler },
-      { key: 'barcode', value: 'Mã barcode', style: styles.columns.type, public: true, action: 'normal', event: this.eventHandler },
+      { key: 'init', value: 'Tên thiết bị', init: equipmentName, style: styles.columns.name, public: true, action: 'normal' },
+      { key: 'barcode', value: 'Mã barcode', style: styles.columns.type, public: true, action: 'normal' },
       // Config button group
       { key: 'buttonGroup',
         value: 'Hành động',
         style: styles.columns.buttonGroup,
         public: true,
         action: 'group',
-        event: this.eventHandler,
         children: [
-        { key: 'btnEdit', value: 'Sửa', style: styles.columns.edit, public: true, action: 'edit', event: this.eventHandler },
-        { key: 'btnDelete', value: 'Xóa', style: styles.columns.edit, public: true, action: 'delete', event: this.eventHandler },
+          { key: 'btnPrint', value: 'In barcode', style: styles.columns.edit, public: true, action: 'print', event: this.showPrintModal },
+          { key: 'btnDelete', value: 'Xóa', style: styles.columns.edit, public: true, action: 'delete', event: this.redirectPage },
         ],
       },
     ];
+
+    const { selectItem } = this.state;
 
     return (
       <Paper>
@@ -86,6 +146,7 @@ class ListDetailAids extends Component {
           !loading && tableData &&
           <Table items={tableData || []} fields={fields} />
         }
+        { !isEmpty(selectItem) && this.printModal() }
         <ReactTooltip />
       </Paper>
     );
@@ -93,12 +154,7 @@ class ListDetailAids extends Component {
 }
 
 ListDetailAids.propTypes = {
-  data: PropTypes.objectOf({
-    error: PropTypes.any,
-    getAllPerTypeEquipment: PropTypes.any,
-    getNameFromID: PropTypes.any,
-    loading: PropTypes.bool,
-  }),
+  data: PropTypes.object,
 };
 
 const query = gql`

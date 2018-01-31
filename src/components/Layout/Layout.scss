@@ -8,6 +8,7 @@
  */
 
  @global-import 'flexboxgrid/css/flexboxgrid.css';
+ @global-import 'bootstrap/dist/css/bootstrap.css';
 
 /*
  * Base styles
@@ -179,5 +180,18 @@ textarea {
   h2,
   h3 {
     page-break-after: avoid;
+  }
+
+
+  /* hidden header & footer printer page*/
+  @page {
+    margin: 0;
+    padding: 0;
+    size: 2in 1.2in;
+  }
+
+  /* hiden html content */
+  #app {
+    visibility: hidden;
   }
 }

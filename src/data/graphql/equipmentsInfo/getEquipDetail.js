@@ -5,6 +5,7 @@ export const schema = [
   type Equipments {
     _id: String
     barcode: String
+    sequenceNum: Int
     equipmentTypeId: String
   }
 `,

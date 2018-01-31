@@ -25,10 +25,10 @@ class ListAids extends Component {
 
     const fields = [
       // Config columns
-      { key: 'name', value: 'Tên thiết bị', style: styles.columns.name, public: true, action: 'normal', event: this.eventHandler },
-      { key: 'equipmentInfo.grade', value: 'Khối', style: styles.columns.type, public: true, action: 'normal', event: this.eventHandler },
-      { key: 'equipmentInfo.khCode', value: 'Mã KH', style: styles.columns.type, public: true, action: 'normal', event: this.eventHandler },
-      { key: 'totalNumber', value: 'Số lượng', style: styles.columns.counter, public: true, action: 'normal', event: this.eventHandler },
+      { key: 'name', value: 'Tên thiết bị', style: styles.columns.name, public: true, action: 'normal' },
+      { key: 'equipmentInfo.grade', value: 'Khối', style: styles.columns.type, public: true, action: 'normal' },
+      { key: 'equipmentInfo.khCode', value: 'Mã KH', style: styles.columns.type, public: true, action: 'normal' },
+      { key: 'totalNumber', value: 'Số lượng', style: styles.columns.counter, public: true, action: 'normal' },
       { key: 'btnRedirect', value: 'Chi tiết', style: styles.columns.btnRedirect, public: true, action: 'redirect', event: this.redirectPage },
     ];
 
@@ -60,11 +60,7 @@ class ListAids extends Component {
 }
 
 ListAids.propTypes = {
-  data: PropTypes.objectOf({
-    error: PropTypes.any,
-    getAllEquipment: PropTypes.any,
-    loading: PropTypes.bool,
-  }),
+  data: PropTypes.object,
 };
 
 const query = gql`

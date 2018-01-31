@@ -28,17 +28,18 @@ class AddingAid extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      barcode: '',
       aidType: '',
       error: '',
+      quantity: '',
       openAdvanced: false,
     };
   }
 
   onSubmit = (e) => {
     e.preventDefault();
-    const { barcode, aidType } = this.state;
-    if (barcode === '' || aidType === '') {
+    const { aidType } = this.state;
+    const quantity = parseInt(this.state.quantity, 10);
+    if (aidType === '' || isNaN(quantity) || quantity <= 0) {
       this.setState({ error: 'Hãy nhập đủ thông tin!' });
       return null;
     }
@@ -54,9 +55,9 @@ class AddingAid extends Component {
     const equipmentTypeId = allEquipmentsID[allEquipments.indexOf(aidType)];
 
     const _id = equipmentTypeId;
-    const totalNumber = (parseInt(getAllEquipment[allEquipments.indexOf(aidType)].totalNumber, 10) + 1).toString();
+    const totalNumber = (parseInt(getAllEquipment[allEquipments.indexOf(aidType)].totalNumber, 10) + quantity).toString();
 
-    mutationCreate({ variables: { barcode, equipmentTypeId } })
+    mutationCreate({ variables: { equipmentTypeId, quantity } })
     .then(() => {
       mutationUpdateQuantity({ variables: { _id, totalNumber } });
     })
@@ -65,8 +66,8 @@ class AddingAid extends Component {
     // reset data
     this.refs.aidType.setState({ searchText: '' });
     this.setState({
-      barcode: '',
       aidType: '',
+      quantity: '',
     });
   }
 
@@ -107,15 +108,6 @@ class AddingAid extends Component {
       <div style={styles.container} onSubmit={this.onSubmit}>
         <Paper style={styles.paper}>
           <form autoComplete="off">
-            <TextField
-              name="barcode"
-              hintText="Quét mã vạch"
-              floatingLabelText="Barcode"
-              fullWidth
-              floatingLabelFixed
-              onChange={this.handleChange}
-              value={this.state.barcode}
-            />
             <AutoComplete
               name="aidType"
               ref="aidType"
@@ -127,6 +119,15 @@ class AddingAid extends Component {
               fullWidth
               filter={AutoComplete.caseInsensitiveFilter}
               dataSource={allEquipments}
+            />
+            <TextField
+              name="quantity"
+              hintText="Nhập số lượng cần thêm"
+              floatingLabelText="Số lượng"
+              fullWidth
+              floatingLabelFixed
+              onChange={this.handleChange}
+              value={this.state.quantity}
             />
             <RaisedButton
               type="submit"
@@ -171,10 +172,9 @@ const query = gql`
 `;
 
 const mutationCreate = gql`
-  mutation createEquipment($barcode: String!, $equipmentTypeId: String!) {
-    createEquipment(barcode: $barcode, equipmentTypeId: $equipmentTypeId) {
+  mutation createEquipment($equipmentTypeId: String!, $quantity: Int!) {
+    createEquipment(equipmentTypeId: $equipmentTypeId, quantity: $quantity) {
       _id
-      barcode
       equipmentTypeId
     }
   }

@@ -1,30 +1,31 @@
 import React from 'react';
 import PropTypes from 'prop-types';
 import SelectField from 'material-ui/SelectField';
+import MenuItem from 'material-ui/MenuItem';
 
 const renderSelectField = ({
   input,
   label,
   meta: { touched, error },
-  children,
+  options,
   ...props
 }) => (
   <SelectField
+    {...input}
+    {...props}
     floatingLabelText={label}
     errorText={touched && error}
-    {...input}
     onChange={(event, index, value) => input.onChange(value)}
-    // eslint-disable-next-line
-    children={children}
-    {...props}
-  />
+  >
+    {options.map((option, index) => <MenuItem key={index} value={option.value} primaryText={option.label} />)}
+  </SelectField>
 );
 
 renderSelectField.propTypes = {
   label: PropTypes.string,
-  children: PropTypes.any.isRequired,
   input: PropTypes.object.isRequired,
   meta: PropTypes.object.isRequired,
+  options: PropTypes.arrayOf(PropTypes.object).isRequired,
 };
 
 export default renderSelectField;

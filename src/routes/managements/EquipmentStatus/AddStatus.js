@@ -12,15 +12,15 @@ import { cyan600, fullWhite } from 'material-ui/styles/colors';
 import createApolloClient from '../../../core/createApolloClient/createApolloClient.client';
 import { InputField } from '../../../components/ReduxForm';
 import { required, longLength } from '../../../utils/form.validator.util';
-import { checkSubjectExist, addSubjectMutation } from './graphql';
+import { checkEquipmentStatusExist, addEquipmentStatus } from './graphql';
 
 const apolloClient = createApolloClient();
 
-const checkSubjectExistFunc = async (name) => {
+const checkStatusExistFunc = async (name) => {
   if (!isEmpty(name)) {
     try {
-      const { data: { checkSubjectExist: result } } = await apolloClient.query({
-        query: checkSubjectExist,
+      const { data: { checkEquipmentStatusExist: result } } = await apolloClient.query({
+        query: checkEquipmentStatusExist,
         variables: { name },
       });
       return result;
@@ -36,8 +36,8 @@ const asyncValidate = (fields) => {
   const fooBar = async () => {
     try {
       let result = {};
-      if (await checkSubjectExistFunc(name)) {
-        result = { ...result, ...{ name: 'Tên môn học đã tồn tại...' } };
+      if (await checkStatusExistFunc(name)) {
+        result = { ...result, ...{ name: 'Tên trạng thái đã tồn tại...' } };
       }
 
       return result;
@@ -48,7 +48,7 @@ const asyncValidate = (fields) => {
   return fooBar().catch(() => ({ _error: 'Lỗi kết nối...' }));
 };
 
-class AddSubjectModal extends Component {
+class AddStatusModal extends Component {
 
   handleClose = () => {
     this.props.reset();
@@ -75,15 +75,15 @@ class AddSubjectModal extends Component {
 
   titleGenerate = () => (
     <h1 style={{ color: fullWhite, backgroundColor: cyan600, marginBottom: 0 }}>
-      <ActionExtension style={{ color: fullWhite }} /> Thêm mới môn học
+      <ActionExtension style={{ color: fullWhite }} /> Thêm mới trạng thái thiết bị
     </h1>
   );
 
   handleSubmit = (values) => {
-    this.props.addSubject({
+    this.props.addEquipmentStatus({
       variables: values,
     }).then(({ data }) => {
-      const { createSubject: { name } } = data;
+      const { createEquipmentStatus: { name } } = data;
       alert(`Thêm mới thành công ${name}`);
       this.props.refetch();
       this.handleClose();
@@ -125,7 +125,7 @@ class AddSubjectModal extends Component {
             autoFocus
             name="name"
             component={InputField}
-            label="Tên môn học"
+            label="Tên trạng thái"
             validate={[required, longLength]}
           />
         </div>
@@ -134,24 +134,24 @@ class AddSubjectModal extends Component {
   }
 }
 
-AddSubjectModal.propTypes = {
+AddStatusModal.propTypes = {
   showModal: PropTypes.bool.isRequired,
   error: PropTypes.string,
   reset: PropTypes.func.isRequired,
   closeModal: PropTypes.func.isRequired,
-  addSubject: PropTypes.any,
+  addEquipmentStatus: PropTypes.any,
   refetch: PropTypes.func,
 };
 
-const AddSubjectForm = reduxForm({
-  form: 'AddSubjectForm',
+const AddEStatusForm = reduxForm({
+  form: 'AddEStatusForm',
   asyncValidate,
   touchOnChange: true,
   touchOnBlur: true,
   enableReinitialize: true,
   asyncBlurFields: ['name'],
 })(compose(
-  graphql(addSubjectMutation, { name: 'addSubject' }),
-)(AddSubjectModal));
+  graphql(addEquipmentStatus, { name: 'addEquipmentStatus' }),
+)(AddStatusModal));
 
-export default AddSubjectForm;
+export default AddEStatusForm;
