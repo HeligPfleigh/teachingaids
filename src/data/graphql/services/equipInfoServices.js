@@ -17,7 +17,23 @@ async function updateAmountOfEquipmentType(_id, totalNumber) {
   return EquipmentTypeModel.findById({ _id });
 }
 
+async function createEquipmentType(name, madeFrom, grade, khCode, unit) {
+  if (await EquipmentTypeModel.findOne({ name })) {
+    throw new Error('Loại thiết bị đã tồn tại trong cơ sở dữ liệu');
+  }
+
+  const equipmentInfo = {
+    madeFrom,
+    grade,
+    khCode,
+  };
+  const totalNumber = '0';
+
+  return await EquipmentTypeModel.create({ name, equipmentInfo, totalNumber, unit });
+}
+
 export default {
   getEquipmentTypeById,
   updateAmountOfEquipmentType,
+  createEquipmentType,
 };

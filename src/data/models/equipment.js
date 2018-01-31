@@ -8,6 +8,7 @@ const ObjectId = Schema.Types.ObjectId;
 
 const EquipmentSchema = new Schema({
   barcode: String,
+  sequenceNum: Number,
   equipmentTypeId: String,
   status: String,
   lender: ObjectId,
