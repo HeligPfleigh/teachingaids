@@ -23,6 +23,7 @@ const EquipmentTypeSchema = new Schema({
   subject: String,
   unit: String,
   order: Number,
+  category: String,
 });
 
 // plugins
