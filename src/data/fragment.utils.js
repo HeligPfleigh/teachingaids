@@ -12,6 +12,8 @@ const Fragment = {
         fullName,
         phone,
         birthDay,
+        gender,
+        address,
       }
       email {
         address,

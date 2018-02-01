@@ -145,7 +145,6 @@ class CreateUser extends React.Component {
     let username = `${firstName}.${lastName}`;
     const password = '123456789';
     username = await this.usernameGenerate(username);
-    console.log('ADDUSER', this.props.addUser);
     const user = { email: { address: email }, username, password, profile };
 
     this.props.addUser({
@@ -155,8 +154,7 @@ class CreateUser extends React.Component {
       alert(`Thêm mới thành công ${query}`);
       this.props.refetch();
       this.handleClose();
-    }).catch((e) => {
-      console.log(e);
+    }).catch(() => {
       alert('Thao tác thêm mới thất bại...');
     });
   }
