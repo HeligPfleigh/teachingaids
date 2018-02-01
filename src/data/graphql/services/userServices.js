@@ -95,14 +95,11 @@ async function createUser(params) {
       address: emailAddress,
     },
   } = params;
-
+  console.log({ username });
   if (isUndefined(username)) {
     throw new Error('username is undefined');
   }
 
-  if (isUndefined(password)) {
-    throw new Error('password is undefined');
-  }
 
   if (isUndefined(emailAddress)) {
     throw new Error('email is undefined');
@@ -124,6 +121,7 @@ async function createUser(params) {
 
   const activeCode = idRandom();
   params.email.code = activeCode;
+  params.email.verified = true;
 
   params.profile.avatar = params.profile.avatar || '/avatar-default.jpg';
 

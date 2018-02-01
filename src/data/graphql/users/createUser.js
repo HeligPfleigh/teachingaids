@@ -18,8 +18,8 @@ export const schema = [
 
   input CreateUserInput {
     email: EmailInput!
-    password: String!
-    username: String!
+    password: String
+    username: String
     profile: ProfileInput!
   }
 
