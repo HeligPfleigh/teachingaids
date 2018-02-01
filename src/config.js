@@ -21,3 +21,4 @@ export const mailer = {
 };
 
 export const barcodePrefix = 'C2TS';
+export const barcodePad = '0000000';

@@ -1,4 +1,5 @@
-import { EquipmentModel, UserModel, EquipmentStatusModel } from '../../models/index.js';
+import { EquipmentModel } from '../../models/index.js';
+import { generateBarcode } from '../../../utils/barcode.util';
 
 async function createEquipment(equipmentTypeId, quantity) {
   const allEquipment = await EquipmentModel.find();
@@ -13,12 +14,7 @@ async function createEquipment(equipmentTypeId, quantity) {
   for (let i = 0; i < quantity; i++) {
     let sequenceNum = startSequenceNum + i;
     let status = 'null';
-
-    // barcode string
-    let str = `${sequenceNum}`;
-    let pad = '0000000';
-    let ans = pad.substring(0, pad.length - str.length) + str;
-    let barcode = `C2TS-${ans}`;
+    let barcode = generateBarcode(sequenceNum);
 
     array.push({ sequenceNum, equipmentTypeId, barcode, status });
   }
@@ -27,15 +23,18 @@ async function createEquipment(equipmentTypeId, quantity) {
 }
 
 async function updateAidEquiment(equipmentId, lender, borrower, status, borrowerTime, returnTime) {
-  if (await EquipmentModel.findOne({ _id: equipmentId }))
-    {return await EquipmentModel.update({ _id: equipmentId },
-    {
-      lender,
-      borrower,
-      borrowerTime,
-      returnTime,
-      status,
-    });}
+  if (await EquipmentModel.findOne({ _id: equipmentId })) {
+    return await EquipmentModel.update(
+      { _id: equipmentId },
+      {
+        lender,
+        borrower,
+        borrowerTime,
+        returnTime,
+        status,
+      },
+    );
+  }
 }
 export default {
   createEquipment,
