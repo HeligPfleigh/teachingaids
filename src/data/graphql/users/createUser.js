@@ -21,20 +21,50 @@ export const schema = [
     password: String
     username: String
     profile: ProfileInput!
-  }`,
+  }
+
+  type changeUserInfoResult {
+    status: String
+    user: User
+    type: String
+  }
+  `,
 ];
 
-export const mutation = [
-  `createUser(
+export const mutation = [`
+  # Create new user
+  createUser(
     user: CreateUserInput!
-  ): User`,
-];
+  ): User
+
+  # Change email user
+  changeUserEmail(
+    password: String!,
+    email: String!
+  ): changeUserInfoResult
+
+`];
 
 export const resolvers = {
   Mutation: {
     async createUser(parent, { user }) {
       const newUser = await UsersService.createUser(user);
       return newUser;
+    },
+    async changeUserEmail({ request }, { password, email }) {
+      if (!request.user) {
+        return {
+          user: {},
+          type: 'error',
+          status: 'Người dùng chưa đăng nhập hệ thống',
+        };
+      }
+
+      return await UsersService.changeUserEmail({
+        email,
+        password,
+        userId: request.user.id,
+      });
     },
   },
 };

@@ -19,6 +19,29 @@ const Fragment = {
       isActive
     }
   `,
+  AidHistoryView: gql`
+    fragment AidHistoryView on AidHistory {
+      _id
+      lender {
+        userId
+        name
+      }
+      borrower {
+        userId
+        name
+        teacherCode
+      }
+      borrowTime
+      returnTime
+      equipment {
+        equipmentTypeId
+        equipmentId
+        name
+        barCode
+      }
+      status
+    }
+  `,
 };
 
 export default Fragment;

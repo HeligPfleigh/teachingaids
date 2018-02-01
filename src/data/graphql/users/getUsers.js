@@ -45,6 +45,9 @@ export const queries = [
 
   # find user by email
   getUserByEmail(email: String!): User
+
+  # check exist user
+  checkExistUser(query: String!): Boolean
 `,
 ];
 
@@ -61,6 +64,9 @@ export const resolvers = {
     },
     async getUserByEmail(parent, { email }) {
       return UserModel.findOne({ 'email.address': email });
+    },
+    async checkExistUser(parent, { query }) {
+      return await UserServices.checkExistUser({ query });
     },
   },
   UserProfile: {
