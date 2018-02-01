@@ -174,38 +174,51 @@ async function activeUser(params) {
   return result;
 }
 
-async function changePassword({ username, password, oldPassword }) {
-  if (isUndefined(username)) {
-    throw new Error('Bạn chưa cung cấp tên đăng nhập');
+async function changeUserPassword({ userId, oldPassword, newPassword }) {
+  if (isUndefined(oldPassword)) {
+    return {
+      user: {},
+      type: 'error',
+      status: 'Bạn chưa cung cấp mật khẩu cũ',
+    };
   }
 
-  if (isUndefined(password)) {
+  if (isUndefined(newPassword)) {
     throw new Error('Bạn chưa cung cấp mật khẩu mới');
   }
 
-  const user = await UserModel.findOne({ username });
+  const user = await UserModel.findById(userId);
   if (isEmpty(user)) {
-    throw new Error('Tài khoản không tồn tại');
+    return {
+      user: {},
+      type: 'error',
+      status: 'Tài khoản không tồn tại',
+    };
   }
 
   if (!isEmpty(oldPassword)) {
-    const validPassword = await bcrypt.compare(oldPassword, user.password.value);
+    const validPassword = await bcrypt.compare(oldPassword, user.password);
     if (!validPassword) {
-      throw new Error('Mật khẩu hiện tại không đúng');
+      return {
+        user: {},
+        type: 'error',
+        status: 'Mật khẩu hiện tại không đúng',
+      };
     }
   }
 
-  const passwordVal = await bcrypt.hashSync(password, bcrypt.genSaltSync(), null);
-  const result = await UserModel.findOneAndUpdate({ username }, {
+  const passwordVal = await bcrypt.hashSync(newPassword, bcrypt.genSaltSync(), null);
+  const result = await UserModel.findOneAndUpdate({ _id: userId }, {
     $set: {
-      'password.code': '',
-      'password.counter': 0,
-      'password.value': passwordVal,
-      'password.updatedAt': new Date(),
+      password: passwordVal,
     },
   });
 
-  return result;
+  return {
+    user: result,
+    type: 'success',
+    status: 'Thay đổi mật khẩu thành công',
+  };
 }
 
 async function changeUserEmail({ userId, password, email }) {
@@ -282,6 +295,6 @@ export default {
   getUser,
   createUser,
   updateProfile,
-  changePassword,
+  changeUserPassword,
   changeUserEmail,
 };

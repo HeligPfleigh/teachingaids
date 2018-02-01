@@ -56,13 +56,13 @@ fi
 MONGODB=$(docker-compose ps -q mongo)
 
 if [ "$MONGODB" == "" ]; then
-  if [ "$c" == "production" ]; then
-    echo "mongo container does not exist"
-    echo "mongo container is starting..."
-    docker-compose -f docker-compose.pro.yml up -d mongo
-  else
-    docker-compose -f docker-compose.yml up -d mongo
-  fi
+  #if [ "$c" == "production" ]; then
+  #  echo "mongo container does not exist"
+  #  echo "mongo container is starting..."
+  #  docker-compose -f docker-compose.pro.yml up -d mongo
+  #else
+  docker-compose -f docker-compose.yml up -d mongo
+  #fi
 else
     docker-compose start mongo
 fi

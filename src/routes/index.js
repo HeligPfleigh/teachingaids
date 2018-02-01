@@ -9,7 +9,7 @@ export default {
     require('./createUser').default,
     require('./managements').default,
     require('./aid').default,
-    // require('./userInfo').default,
+    require('./userInfo').default,
     // require('./register').default,
     require('./aids').default,
 
