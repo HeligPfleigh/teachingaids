@@ -14,6 +14,7 @@ import gql from 'graphql-tag';
 import createApolloClient from '../../core/createApolloClient/createApolloClient.client';
 import { InputField, RadioGroupField, SelectField } from '../../components/ReduxForm';
 import { required, longLength, email as emailValid, phoneNumber } from '../../utils/form.validator.util';
+import { ROLES } from '../../constants';
 
 const FONT_SIZE = 16;
 
@@ -281,11 +282,11 @@ class CreateUser extends React.Component {
                   component={SelectField}
                   onChange={this.handleSelectFieldChange}
                   options={[
-                    { value: 'admin', label: 'Admin' },
-                    { value: 'manager', label: 'Quản lý' },
-                    { value: 'employee', label: 'Nhân viên' },
-                    { value: 'teacher', label: 'Khách' },
-                    { value: 'supervisor', label: 'Supervisor' },
+                    { value: ROLES.ADMINISTRATOR, label: 'Admin' },
+                    { value: ROLES.LIBRARY_MANAGER, label: 'Quản lý' },
+                    { value: ROLES.LIBRARY_EMPLOYEE, label: 'Nhân viên' },
+                    { value: ROLES.TEACHER, label: 'Khách' },
+                    { value: ROLES.SUPERVISOR, label: 'Supervisor' },
                   ]}
                 />
               </div>
