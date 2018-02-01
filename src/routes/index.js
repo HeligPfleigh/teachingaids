@@ -9,6 +9,7 @@ export default {
     require('./managements').default,
     require('./aid').default,
     require('./userInfo').default,
+    // require('./borrowReturn').default,
     // require('./register').default,
     require('./aids').default,
 
