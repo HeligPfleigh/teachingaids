@@ -8,15 +8,8 @@ export default {
     require('./users').default,
     require('./managements').default,
     require('./aid').default,
-<<<<<<< HEAD
-    // require('./userInfo').default,
-=======
     require('./userInfo').default,
-    require('./borrowReturn').default,
-    
-
-    
->>>>>>> update log in interface
+    // require('./borrowReturn').default,
     // require('./register').default,
     require('./aids').default,
 

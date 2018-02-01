@@ -146,8 +146,8 @@ EditSubjectModal.propTypes = {
   refetch: PropTypes.func,
 };
 
-const AddSubjectForm = reduxForm({
-  form: 'AddSubjectForm',
+const UpdateSubjectForm = reduxForm({
+  form: 'UpdateSubjectForm',
   asyncValidate,
   touchOnChange: true,
   touchOnBlur: true,
@@ -157,4 +157,4 @@ const AddSubjectForm = reduxForm({
   graphql(updateSubjectMutation, { name: 'updateSubject' }),
 )(EditSubjectModal));
 
-export default AddSubjectForm;
+export default UpdateSubjectForm;

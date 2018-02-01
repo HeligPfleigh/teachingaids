@@ -122,7 +122,6 @@ class AddSubjectModal extends Component {
         <div>
           <Field
             fullWidth
-            autoFocus
             name="name"
             component={InputField}
             label="Tên môn học"

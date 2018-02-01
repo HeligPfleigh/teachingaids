@@ -108,13 +108,22 @@ GenColumn.propTypes = {
 const COL_TYPE = ['normal', 'add', 'edit', 'delete', 'active', 'redirect', 'print', 'group'];
 
 const columnResults = {
-  [COL_TYPE[0]]: (field, empty = null, item) => {
-    let itemValue = get(item, field.key);
+  [COL_TYPE[0]]: (field, event = null, item) => {
+    let itemValue = field.init || get(item, field.key) || 'xxx';
+    // format data if formatData function exists
     if (field.formatData && (typeof field.formatData === 'function')) {
       itemValue = field.formatData(itemValue);
     }
+    // wrap item with a if event function exists
+    if (field.event && (typeof field.event === 'function')) {
+      const onClickHandler = (e) => {
+        e.preventDefault();
+        event();
+      };
+      itemValue = <a href="#" onClick={onClickHandler}>{itemValue}</a>;
+    }
     // Cot hien thi du lieu
-    return <TableRowColumn style={field.style}>{ field.init || itemValue || 'xxx'}</TableRowColumn>;
+    return <TableRowColumn style={field.style}>{itemValue}</TableRowColumn>;
   },
   [COL_TYPE[1]]: (field, event) => (
     // Cot khoi tao button add

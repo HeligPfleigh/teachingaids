@@ -9,6 +9,7 @@ export const schema = [
     totalNumber: String
     unit: String
     order: String
+    subject: String
   }
 
   type EquipmentInfo {

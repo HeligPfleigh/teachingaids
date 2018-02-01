@@ -28,6 +28,7 @@ class ListAids extends Component {
       { key: 'name', value: 'Tên thiết bị', style: styles.columns.name, public: true, action: 'normal' },
       { key: 'equipmentInfo.grade', value: 'Khối', style: styles.columns.type, public: true, action: 'normal' },
       { key: 'equipmentInfo.khCode', value: 'Mã KH', style: styles.columns.type, public: true, action: 'normal' },
+      { key: 'subject', value: 'Môn học', style: styles.columns.type, public: true, action: 'normal' },
       { key: 'totalNumber', value: 'Số lượng', style: styles.columns.counter, public: true, action: 'normal' },
       { key: 'btnRedirect', value: 'Chi tiết', style: styles.columns.btnRedirect, public: true, action: 'redirect', event: this.redirectPage },
     ];
@@ -76,10 +77,15 @@ const query = gql`
         grade
         khCode
       }
+      subject
     }
   }
 `;
 
-const ListAidsWithData = graphql(query)(ListAids);
+const ListAidsWithData = graphql(query, {
+  options: {
+    fetchPolicy: 'network-only',
+  },
+})(ListAids);
 
 export default ListAidsWithData;

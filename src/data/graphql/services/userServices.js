@@ -2,9 +2,8 @@ import isUndefined from 'lodash/isUndefined';
 import isEmpty from 'lodash/isEmpty';
 import isEqual from 'lodash/isEqual';
 import bcrypt from 'bcrypt';
-import { ObjectId } from 'mongodb';
-import { generate as idRandom } from 'shortid';
 import moment from 'moment';
+import { generate as idRandom } from 'shortid';
 import { UserModel } from '../../models/index.js';
 import { generateUserSearchField } from '../../../utils/removeToneVN.js';
 
@@ -52,38 +51,99 @@ async function checkExistUser({ userId, query }) {
   return true;
 }
 
-async function updateProfile(userId, profile) {
-  if (isUndefined(userId)) {
-    throw new Error('userId is undefined');
-  }
+async function changeUserProfile({ userId, password, profile }) {
+  const result = {
+    user: {},
+    type: 'error',
+    status: 'Cập nhật thông tin người dùng thành công!',
+  };
 
-  if (!await UserModel.findOne({ _id: new ObjectId(userId) })) {
-    throw new Error('userId does not exist');
+  const currentUser = await UserModel.findById(userId);
+  if (!currentUser) {
+    return {
+      ...result,
+      status: 'Người dùng không tồn tại',
+    };
   }
 
   if (isUndefined(profile)) {
-    throw new Error('profile is undefined');
+    return {
+      ...result,
+      status: 'Bạn chưa cung cấp thông tin cần thay đổi',
+    };
   }
 
   if (isUndefined(profile.gender)) {
-    throw new Error('gender is undefined');
-  }
-
-  if (isUndefined(profile.picture)) {
-    throw new Error('picture is undefined');
+    return {
+      ...result,
+      status: 'Thiếu thông tin giới tính',
+    };
   }
 
   if (isUndefined(profile.firstName)) {
-    throw new Error('firstName is undefined');
+    return {
+      ...result,
+      status: 'Chưa nhập họ của người dùng',
+    };
   }
 
   if (isUndefined(profile.lastName)) {
-    throw new Error('lastName is undefined');
+    return {
+      ...result,
+      status: 'Chưa nhập tên người dùng',
+    };
   }
 
-  await UserModel.update({ _id: userId }, { $set: { profile } });
+  if (isUndefined(profile.phone)) {
+    return {
+      ...result,
+      status: 'Chưa nhập số điện thoại',
+    };
+  }
 
-  return UserModel.findOne({ _id: userId });
+  if (isUndefined(profile.birthDay)) {
+    return {
+      ...result,
+      status: 'Chưa cung cấp ngày sinh',
+    };
+  }
+
+  if (isUndefined(profile.address)) {
+    return {
+      ...result,
+      status: 'Chưa nhập địa chỉ người dùng',
+    };
+  }
+
+  if (isUndefined(password)) {
+    return {
+      ...result,
+      status: 'Chưa nhập cung cấp mật khẩu',
+    };
+  }
+
+  const validPassword = await bcrypt.compare(password, currentUser.password);
+  if (!validPassword) {
+    return {
+      ...result,
+      status: 'Mật khẩu hiện tại không đúng',
+    };
+  }
+
+  const newUser = await UserModel.findByIdAndUpdate({
+    _id: userId,
+  }, {
+    $set: {
+      ...currentUser.profile,
+      profile,
+    },
+  });
+
+  return {
+    ...result,
+    type: 'success',
+    user: newUser,
+  };
 }
 
 async function createUser(params) {
@@ -100,9 +160,6 @@ async function createUser(params) {
     throw new Error('username is undefined');
   }
 
-  if (isUndefined(password)) {
-    throw new Error('password is undefined');
-  }
 
   if (isUndefined(emailAddress)) {
     throw new Error('email is undefined');
@@ -124,6 +181,7 @@ async function createUser(params) {
 
   const activeCode = idRandom();
   params.email.code = activeCode;
+  params.email.verified = true;
 
   params.profile.avatar = params.profile.avatar || '/avatar-default.jpg';
 
@@ -176,38 +234,51 @@ async function activeUser(params) {
   return result;
 }
 
-async function changePassword({ username, password, oldPassword }) {
-  if (isUndefined(username)) {
-    throw new Error('Bạn chưa cung cấp tên đăng nhập');
+async function changeUserPassword({ userId, oldPassword, newPassword }) {
+  if (isUndefined(oldPassword)) {
+    return {
+      user: {},
+      type: 'error',
+      status: 'Bạn chưa cung cấp mật khẩu cũ',
+    };
   }
 
-  if (isUndefined(password)) {
+  if (isUndefined(newPassword)) {
     throw new Error('Bạn chưa cung cấp mật khẩu mới');
   }
 
-  const user = await UserModel.findOne({ username });
+  const user = await UserModel.findById(userId);
   if (isEmpty(user)) {
-    throw new Error('Tài khoản không tồn tại');
+    return {
+      user: {},
+      type: 'error',
+      status: 'Tài khoản không tồn tại',
+    };
   }
 
   if (!isEmpty(oldPassword)) {
-    const validPassword = await bcrypt.compare(oldPassword, user.password.value);
+    const validPassword = await bcrypt.compare(oldPassword, user.password);
     if (!validPassword) {
-      throw new Error('Mật khẩu hiện tại không đúng');
+      return {
+        user: {},
+        type: 'error',
+        status: 'Mật khẩu hiện tại không đúng',
+      };
     }
   }
 
-  const passwordVal = await bcrypt.hashSync(password, bcrypt.genSaltSync(), null);
-  const result = await UserModel.findOneAndUpdate({ username }, {
+  const passwordVal = await bcrypt.hashSync(newPassword, bcrypt.genSaltSync(), null);
+  const result = await UserModel.findOneAndUpdate({ _id: userId }, {
     $set: {
-      'password.code': '',
-      'password.counter': 0,
-      'password.value': passwordVal,
-      'password.updatedAt': new Date(),
+      password: passwordVal,
     },
   });
 
-  return result;
+  return {
+    user: result,
+    type: 'success',
+    status: 'Thay đổi mật khẩu thành công',
+  };
 }
 
 async function changeUserEmail({ userId, password, email }) {
@@ -283,7 +354,7 @@ export default {
   activeUser,
   getUser,
   createUser,
-  updateProfile,
-  changePassword,
+  changeUserProfile,
+  changeUserPassword,
   changeUserEmail,
 };

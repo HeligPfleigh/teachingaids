@@ -9,7 +9,7 @@
 
 import React from 'react';
 import TextField from 'material-ui/TextField';
-import { white, blue500 } from 'material-ui/styles/colors';
+import { white, blue800 } from 'material-ui/styles/colors';
 import IconButton from 'material-ui/IconButton';
 import Search from 'material-ui/svg-icons/action/search';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
@@ -30,7 +30,7 @@ const SearchBox = () => {
     },
     textField: {
       color: white,
-      backgroundColor: blue500,
+      backgroundColor: blue800,
       borderRadius: 2,
       height: 35,
       paddingLeft: 25,

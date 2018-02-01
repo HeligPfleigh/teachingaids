@@ -36,5 +36,6 @@ export default {
     fontSize: 24,
     color: fullWhite,
     fontWeight: typography.fontWeightLight,
+    padding: 0,
   },
 };

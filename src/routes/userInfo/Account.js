@@ -3,7 +3,7 @@ import PropTypes from 'prop-types';
 import gql from 'graphql-tag';
 import { graphql } from 'react-apollo';
 import { Card, CardHeader, CardText } from 'material-ui/Card';
-import { cyan900, fullWhite } from 'material-ui/styles/colors';
+import { blue600, fullWhite } from 'material-ui/styles/colors';
 
 import Fragment from '../../data/fragment.utils';
 import UserProfile from './UserProfile';
@@ -42,7 +42,7 @@ class Account extends React.Component {
       title={<strong>{title}</strong>}
       actAsExpander
       showExpandableButton
-      style={{ backgroundColor: cyan900 }}
+      style={{ backgroundColor: blue600 }}
       titleStyle={{ color: fullWhite }}
       iconStyle={{ color: fullWhite }}
     />
@@ -69,7 +69,13 @@ class Account extends React.Component {
         >
           {this.cardHeaderGenerate('Thông tin cá nhân')}
           <CardText expandable>
-            <UserProfile initialValues={{ ...me }} refetch={refetch} />
+            <UserProfile
+              refetch={refetch}
+              initialValues={{
+                ...me.profile,
+                oldPhone: me.profile.phone,
+              }}
+            />
           </CardText>
         </Card>
 

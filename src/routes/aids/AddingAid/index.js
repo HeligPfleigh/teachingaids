@@ -9,6 +9,7 @@ import gql from 'graphql-tag';
 import PropTypes from 'prop-types';
 
 import AddingAidType from './AddingAidType';
+import history from '../../../core/history';
 
 const styles = {
   container: {
@@ -60,6 +61,7 @@ class AddingAid extends Component {
     mutationCreate({ variables: { equipmentTypeId, quantity } })
     .then(() => {
       mutationUpdateQuantity({ variables: { _id, totalNumber } });
+      history.push(`/equipments/detail/${equipmentTypeId}/null`);
     })
     .catch(err => this.setState({ error: err.message }));
 
@@ -97,7 +99,6 @@ class AddingAid extends Component {
     }
 
     if (error) {
-      console.log(error);
       return <div>Một lỗi ngoài dự kiến đã xảy ra. Liên hệ với người quản trị để được giúp đỡ!</div>;
     }
 
@@ -152,7 +153,7 @@ class AddingAid extends Component {
 }
 
 AddingAid.propTypes = {
-  data: PropTypes.objectOf({
+  data: PropTypes.shape({
     error: PropTypes.any,
     getAllEquipment: PropTypes.array,
     loading: PropTypes.bool,
@@ -191,7 +192,11 @@ const mutationUpdateQuantity = gql`
 `;
 
 const AddingAidWithData = compose(
-  graphql(query),
+  graphql(query, {
+    options: {
+      fetchPolicy: 'network-only',
+    },
+  }),
   graphql(mutationCreate, { name: 'mutationCreate' }),
   graphql(mutationUpdateQuantity, { name: 'mutationUpdateQuantity' }),
 )(AddingAid);

@@ -2,8 +2,6 @@ import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Toolbar, ToolbarGroup, ToolbarTitle } from 'material-ui/Toolbar';
 import Paper from 'material-ui/Paper';
-import IconButton from 'material-ui/IconButton';
-import ActionBack from 'material-ui/svg-icons/navigation/arrow-back';
 import { graphql } from 'react-apollo';
 import gql from 'graphql-tag';
 import ReactTooltip from 'react-tooltip';
@@ -12,13 +10,11 @@ import isEmpty from 'lodash/isEmpty';
 import Barcode from 'react-barcode';
 import ReactToPrint from 'react-to-print';
 
-import history from '../../core/history';
 import Modal from '../../components/Modal';
 import Table from '../../components/Table';
 import styles from './styles';
 
-class ListDetailAids extends Component {
-
+class ListDetailByStatus extends Component {
   state = {
     selectItem: null,
   }
@@ -92,11 +88,12 @@ class ListDetailAids extends Component {
 
   render() {
     const {
+      status,
       data: {
         error,
         loading,
         getNameFromID,
-        getAllPerTypeEquipment,
+        getEquipByStatusAndType,
       },
     } = this.props;
 
@@ -108,7 +105,7 @@ class ListDetailAids extends Component {
       return <div>Một lỗi ngoài dự kiến đã xảy ra. Liên hệ với người quản trị để được giúp đỡ!</div>;
     }
 
-    const tableData = getAllPerTypeEquipment;
+    const tableData = getEquipByStatusAndType;
     const equipmentName = getNameFromID.name;
 
     const fields = [
@@ -116,17 +113,7 @@ class ListDetailAids extends Component {
       { key: 'init', value: 'Tên thiết bị', init: equipmentName, style: styles.columns.name, public: true, action: 'normal' },
       { key: 'barcode', value: 'Mã barcode', style: styles.columns.type, public: true, action: 'normal' },
       { key: 'status', value: 'Trạng thái', style: styles.columns.type, public: true, action: 'normal' },
-      // Config button group
-      { key: 'buttonGroup',
-        value: 'Hành động',
-        style: styles.columns.buttonGroup,
-        public: true,
-        action: 'group',
-        children: [
-          { key: 'btnPrint', value: 'In barcode', style: styles.columns.edit, public: true, action: 'print', event: this.showPrintModal },
-          { key: 'btnDelete', value: 'Xóa', style: styles.columns.edit, public: true, action: 'delete', event: this.redirectPage },
-        ],
-      },
+      { key: 'btnPrint', value: 'In barcode', style: styles.columns.edit, public: true, action: 'print', event: this.showPrintModal },
     ];
 
     const { selectItem } = this.state;
@@ -136,18 +123,9 @@ class ListDetailAids extends Component {
         <Toolbar style={styles.subheader}>
           <ToolbarGroup>
             <ToolbarTitle
-              text="Danh sách thiết bị"
+              text={`Danh sách thiết bị ${status === 'null' ? 'vừa thêm mới' : status}`}
               style={styles.textWhiteColor}
             />
-          </ToolbarGroup>
-          <ToolbarGroup>
-            <IconButton
-              iconStyle={styles.textWhiteColor}
-              data-tip="Quay lại trang trước"
-              onClick={() => history.replace('/equipments')}
-            >
-              <ActionBack />
-            </IconButton>
           </ToolbarGroup>
         </Toolbar>
         {
@@ -161,13 +139,14 @@ class ListDetailAids extends Component {
   }
 }
 
-ListDetailAids.propTypes = {
+ListDetailByStatus.propTypes = {
+  status: PropTypes.string,
   data: PropTypes.object,
 };
 
 const query = gql`
-  query RootQuery($equipmentTypeId: String!){
-    getAllPerTypeEquipment(equipmentTypeId: $equipmentTypeId){
+  query RootQuery($equipmentTypeId: String!, $status: String!){
+    getEquipByStatusAndType(equipmentTypeId: $equipmentTypeId, status: $status){
       _id
       barcode
       status
@@ -178,13 +157,15 @@ const query = gql`
   }
 `;
 
-const ListDetailAidsWithData = graphql(query, {
+
+const ListDetailByStatusWithData = graphql(query, {
   options: ownProps => ({
     variables: {
       equipmentTypeId: ownProps.equipmentID,
+      status: ownProps.status,
     },
     fetchPolicy: 'network-only',
   }),
-})(ListDetailAids);
+})(ListDetailByStatus);
 
-export default ListDetailAidsWithData;
+export default ListDetailByStatusWithData;
