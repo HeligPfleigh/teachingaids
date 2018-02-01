@@ -19,7 +19,6 @@ const apolloClient = createApolloClient();
 
 const getPerEquiment = async (equipmentTypeId) => {
   if (equipmentTypeId) {
-    console.log(equipmentTypeId);
     try {
       const { data: { getAllPerTypeEquipment: result } } = await apolloClient.query({
         query: getAllPerTypeEquipment,
@@ -48,18 +47,25 @@ class DevicePage extends Component {
 
   constructor(props) {
     super(props);
-    this.state = { open: false, items: [] };
+    this.state = { open: false, items: [], titleEquipment: '' };
     this.handleRequest = this.handleRequest.bind(this);
     this.handlRemove = this.handlRemove.bind(this);
+    this.handleAdd = this.handleAdd.bind(this);
   }
 
 
   handleRequest(chooseItem) {
     const { equipmentSave } = this.props;
     getPerEquiment(chooseItem._id)
-    .then(data =>
-      this.setState({ ...this.state, items: data.filter(e => !equipmentSave.includes(e)) }));
-    console.log(this.state.items);
+    .then((data) => {
+      this.setState({ ...this.state,
+        items: equipmentSave.length > 0
+        ? data.filter(e => equipmentSave.some(i => i._id !== e._id))
+        : data,
+        titleEquipment: chooseItem.name },
+      );
+    });
+
     this.handleOpen();
   }
 
@@ -69,22 +75,26 @@ class DevicePage extends Component {
     handleSaveEquipment(equipmentSave);
   }
 
-  handleAdd(p) {
-    this.state({ ...this.state, items: this.state.items.filter(e => e._id !== p._id) });
+  handleAdd = (p) => {
+    this.setState({
+      ...this.state,
+      items: this.state.items.filter(e => e._id !== p._id) });
+    this.props.handleSaveEquipment([
+      ...this.props.equipmentSave,
+      p,
+    ]);
   }
 
   // handle modal
-  handleOpen = item => this.setState({ open: true, item });
+  handleOpen = () => this.setState({ open: true });
 
   handleClose = () => this.setState(s => ({ ...s, open: false }));
 
-  handleonChange= e => this.setState({ ...this.state, item: { ...this.state.item, [e.target.name]: e.target.value } })
 
   handleSubmit = () => {
     let { equipmentSave, handleSaveEquipment } = this.props;
-    let { item } = this.state;
-    let found = equipmentSave.findIndex(e => e._id === item._id);
-    equipmentSave[found] = item;
+    // let found = equipmentSave.findIndex(e => e._id === item._id);
+    // equipmentSave[found] = item;
     handleSaveEquipment(equipmentSave);
     this.handleClose();
   }
@@ -100,8 +110,8 @@ class DevicePage extends Component {
     const { getAllEquipment, error, loading } = this.props.equipment;
     const { equipmentSave } = this.props;
 
-    const { items } = this.state;
-    console.log(`this is ${items}`);
+    const { items, titleEquipment } = this.state;
+
 
     const fieldEquipBorrows = [
       { key: 'equipmentInfo.khCode', value: 'Mã KH', action: 'normal', public: true, style: styles.columns.barcode },
@@ -185,7 +195,6 @@ class DevicePage extends Component {
             hintText="Tìm kiếm thiết bị"
           />
         </div>
-
         {
           equipmentSave.length > 0
           &&
@@ -211,6 +220,7 @@ class DevicePage extends Component {
               onRequestClose={this.handleClose}
               autoScrollBodyContent
             >
+              <h5>{titleEquipment}</h5>
               { items && <div>
                 <Table items={items || []} fields={fieldsEquip} />
 

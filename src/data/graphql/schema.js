@@ -50,6 +50,11 @@ import {
 } from './aid_histories/QueriesAidHistories';
 
 import {
+  mutation as m,
+  resolvers as r,
+} from './aid_histories/MutationAidHistories';
+
+import {
   mutation as equipDetailMutation,
   resolvers as mutationEquipDetailResolver,
 } from './equipmentsInfo/mutationEquipDetail';
@@ -90,6 +95,7 @@ export const mutations = [
   ...equipDetailMutation,
   ...equipInfoMutation,
   ...equipmentStatusMutation,
+  ...m,
 ];
 
 export const resolvers = merge(
@@ -104,4 +110,5 @@ export const resolvers = merge(
   mutationEquipInfoResolver,
   equipmentStatusResolver,
   mutationEStatusResolver,
+  r,
 );

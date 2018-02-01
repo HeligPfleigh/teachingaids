@@ -23,7 +23,6 @@ class SearchBar extends Component {
 
     setTimeout(() => {
       this.refs.autocomplete.setState({ searchText: '' });
-      this.refs.autocomplete.focus();
     }, 700);
   }
   render() {

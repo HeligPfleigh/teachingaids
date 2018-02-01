@@ -12,8 +12,13 @@ async function getAidHistoriesOfTeacher(teacherId) {
   return await AidHistoryModel.find({ 'borrower.userId': teacherId });
 }
 
+async function createAidHistories(prams) {
+  return await AidHistoryModel.create({ prams });
+}
+
 export default {
   getAidHistories,
   getAidHistoriesOfEquipmentType,
   getAidHistoriesOfTeacher,
+  createAidHistories,
 };
