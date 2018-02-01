@@ -5,16 +5,19 @@ import { Toolbar, ToolbarGroup, ToolbarTitle } from 'material-ui/Toolbar';
 import Paper from 'material-ui/Paper';
 // import RaisedButton from 'material-ui/RaisedButton';
 // import AutoComplete from 'material-ui/AutoComplete';
+// import FloatingActionButton from 'material-ui/FloatingActionButton';
+// import ActionAutorenew from 'material-ui/svg-icons/action/autorenew';
+import IconButton from 'material-ui/IconButton';
+import Refresh from 'material-ui/svg-icons/navigation/refresh';
 import moment from 'moment';
 import Table from '../../../components/Table';
 import styles from './styles';
 
 class AidHistoryView extends Component {
   render() {
-    const { error, loading, getAidHistories/* , getAllEquipment */ } = this.props;
+    const { error, loading, aidHistoryData, filterByBorrower, filterByEquipment, refreshView /* , getAllEquipment */ } = this.props;
 
     const fields = [
-      // Config columns
       {
         key: 'lender.name',
         value: 'Người cho mượn',
@@ -28,6 +31,7 @@ class AidHistoryView extends Component {
         style: styles.columns.borrowerName,
         public: true,
         action: 'normal',
+        event: item => filterByBorrower(item.borrower.userId),
       },
       {
         key: 'borrower.teacherCode',
@@ -58,6 +62,7 @@ class AidHistoryView extends Component {
         style: styles.columns.equipmentName,
         public: true,
         action: 'normal',
+        event: item => filterByEquipment(item.equipment.equipmentTypeId),
       },
       {
         key: 'equipment.barCode',
@@ -78,13 +83,10 @@ class AidHistoryView extends Component {
     if (loading) {
       return <div>Đang tải dữ liệu ... </div>;
     }
-
     if (error) {
       return <div>Một lỗi ngoài dự kiến đã xảy ra. Liên hệ với người quản trị để được giúp đỡ!</div>;
     }
-
     // const allEquipments = getAllEquipment.map(value => value.name);
-
     return (
       <Paper>
         <Toolbar style={styles.subheader}>
@@ -93,6 +95,13 @@ class AidHistoryView extends Component {
               text="Lịch sử mượn trả"
               style={styles.textWhiteColor}
             />
+            <IconButton
+              iconStyle={styles.textWhiteColor}
+              data-tip="Làm mới dữ liệu"
+              onClick={refreshView}
+            >
+              <Refresh />
+            </IconButton>
           </ToolbarGroup>
           {/* <ToolbarGroup>
             <AutoComplete
@@ -110,8 +119,8 @@ class AidHistoryView extends Component {
           </ToolbarGroup> */}
         </Toolbar>
         {
-          !loading && getAidHistories &&
-          <Table items={getAidHistories || []} fields={fields} />
+          !loading && aidHistoryData &&
+          <Table items={aidHistoryData || []} fields={fields} />
         }
       </Paper>
     );
@@ -120,8 +129,11 @@ class AidHistoryView extends Component {
 
 AidHistoryView.propTypes = {
   error: PropTypes.any,
-  getAidHistories: PropTypes.any,
+  aidHistoryData: PropTypes.any,
   loading: PropTypes.bool,
+  filterByBorrower: PropTypes.func,
+  filterByEquipment: PropTypes.func,
+  refreshView: PropTypes.func,
 };
 
 export default AidHistoryView;

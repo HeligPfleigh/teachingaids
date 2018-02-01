@@ -6,7 +6,7 @@ import { connect } from 'react-redux';
 import _ from 'lodash';
 import AidHistoryView from './AidHistoryView';
 import { ROLES } from '../../../constants';
-import { getAidHistoriesOfTeacherFunc, getAidHistoriesOfEquipmentTypeFunc, getAidHistoriesFunc } from './graphql';
+import { getAidHistoriesOfTeacherFunc, getAidHistoriesFunc } from './graphql';
 
 class AidHistory extends Component {
   constructor(props) {
@@ -18,29 +18,46 @@ class AidHistory extends Component {
   }
 
   async componentDidMount() {
+    await this.refreshView();
+  }
+
+  refreshView = async () => {
     let data = this.state;
     const { user } = this.props;
 
     if ((_.intersection(user.roles, [ROLES.ADMINISTRATOR, ROLES.SUPERVISOR, ROLES.LIBRARY_MANAGER, ROLES.LIBRARY_EMPLOYEE])).length > 0) {
       data = await getAidHistoriesFunc();
-    }
-    if ((_.intersection(user.roles, [ROLES.TEACHER])).length > 0) {
+    } else if ((_.intersection(user.roles, [ROLES.TEACHER])).length > 0) {
       data = await getAidHistoriesOfTeacherFunc(user.id);
     }
-    this.updateView(data);
-  }
-
-  updateView = (data) => {
     this.setState({
       loading: data.loading,
       data: data.result,
     });
   }
 
+  filterByBorrower = (borrowerId) => {
+    this.setState({
+      data: this.state.data.filter(item => item.borrower.userId === borrowerId),
+    });
+  }
+
+  filterByEquipment = (equipmentTypeId) => {
+    this.setState({
+      data: this.state.data.filter(item => item.equipment.equipmentTypeId === equipmentTypeId),
+    });
+  }
+
   render() {
     const { loading, data } = this.state;
     return (
-      <AidHistoryView loading={loading} getAidHistories={data} />
+      <AidHistoryView
+        loading={loading}
+        aidHistoryData={data}
+        filterByBorrower={this.filterByBorrower}
+        filterByEquipment={this.filterByEquipment}
+        refreshView={this.refreshView}
+      />
     );
   }
 }
