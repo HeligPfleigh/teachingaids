@@ -12,6 +12,7 @@ async function createEquipment(equipmentTypeId, quantity) {
   let array = [];
   for (let i = 0; i < quantity; i++) {
     let sequenceNum = startSequenceNum + i;
+    let status = 'null';
 
     // barcode string
     let str = `${sequenceNum}`;
@@ -19,7 +20,7 @@ async function createEquipment(equipmentTypeId, quantity) {
     let ans = pad.substring(0, pad.length - str.length) + str;
     let barcode = `C2TS-${ans}`;
 
-    array.push({ sequenceNum, equipmentTypeId, barcode });
+    array.push({ sequenceNum, equipmentTypeId, barcode, status });
   }
 
   return await EquipmentModel.create(array);

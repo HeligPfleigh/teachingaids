@@ -2,6 +2,7 @@ import React from 'react';
 import ListAids from './ListAids';
 import AddingAid from './AddingAid';
 import ListDetailAids from './ListDetailAids';
+import ListDetailByStatus from './ListDetailByStatus';
 import Layout from '../../components/Layout';
 import { checkAuth } from '../../utils/auth.valid.util';
 
@@ -27,6 +28,15 @@ export default {
         return {
           title: 'Danh sách thiết bị',
           component: <Layout><ListDetailAids equipmentID={params.equipmentID} /></Layout>,
+        };
+      },
+    },
+    {
+      path: '/detail/:equipmentID/:status',
+      action({ params }) {
+        return {
+          title: 'Danh sách thiết bị mới thêm',
+          component: <Layout><ListDetailByStatus equipmentID={params.equipmentID} status={params.status} /></Layout>,
         };
       },
     },

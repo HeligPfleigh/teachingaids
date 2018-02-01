@@ -20,6 +20,7 @@ const EquipmentTypeSchema = new Schema({
   },
   equipmentInfo: EquipmentInfoSchema,
   totalNumber: String,
+  subject: String,
   unit: String,
   order: Number,
 });

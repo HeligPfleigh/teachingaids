@@ -12,7 +12,8 @@ export const mutation = [
     madeFrom: String!,
     grade: String!,
     khCode: String!,
-    unit: String!
+    unit: String!,
+    subject: String!
   ): EquipmentType
   `,
 ];
@@ -22,8 +23,8 @@ export const resolvers = {
     async updateTotalNumberEquipmentInfo(parent, { _id, totalNumber }) {
       return await EquipInfoService.updateAmountOfEquipmentType(_id, totalNumber);
     },
-    async createEquipmentInfo(parent, { name, madeFrom, grade, khCode, unit }) {
-      return await EquipInfoService.createEquipmentType(name, madeFrom, grade, khCode, unit);
+    async createEquipmentInfo(parent, { name, madeFrom, grade, khCode, unit, subject }) {
+      return await EquipInfoService.createEquipmentType(name, madeFrom, grade, khCode, unit, subject);
     },
   },
 };
