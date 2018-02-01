@@ -6,12 +6,10 @@ export default {
     require('./home').default,
     require('./login').default,
     require('./users').default,
-    require('./managements').default,
-    require('./aid').default,
     require('./userInfo').default,
-    // require('./borrowReturn').default,
-    // require('./register').default,
+    require('./managements').default,
     require('./aids').default,
+    require('./equipments').default,
 
     // Wildcard routes, e.g. { path: '*', ... } (must go last)
     require('./notFound').default,

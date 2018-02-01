@@ -1,13 +1,20 @@
+/**
+ * React Starter Kit (https://www.reactstarterkit.com/)
+ *
+ * Copyright © 2014-present Kriasoft, LLC. All rights reserved.
+ *
+ * This source code is licensed under the MIT license found in the
+ * LICENSE.txt file in the root directory of this source tree.
+ */
+
 import React from 'react';
-import ListAids from './ListAids';
-import AddingAid from './AddingAid';
-import ListDetailAids from './ListDetailAids';
-import ListDetailByStatus from './ListDetailByStatus';
+import AidHistory from './history/AidHistory';
+import Transactions from './transactions';
 import Layout from '../../components/Layout';
 import { checkAuth } from '../../utils/auth.valid.util';
 
 export default {
-  path: '/equipments',
+  path: '/aids',
   async action({ store }) {
     const redirect = await checkAuth(store);
     if (redirect) return redirect;
@@ -17,37 +24,25 @@ export default {
       path: '/',
       action() {
         return {
-          title: 'Danh sách thiết bị',
-          component: <Layout><ListAids /></Layout>,
+          title: 'Trang quản lý mượn - trả',
+          component: <Layout><Transactions /></Layout>,
         };
       },
     },
     {
-      path: '/detail/:equipmentID',
-      action({ params }) {
-        return {
-          title: 'Danh sách thiết bị',
-          component: <Layout><ListDetailAids equipmentID={params.equipmentID} /></Layout>,
-        };
-      },
-    },
-    {
-      path: '/detail/:equipmentID/:status',
-      action({ params }) {
-        return {
-          title: 'Danh sách thiết bị mới thêm',
-          component: <Layout><ListDetailByStatus equipmentID={params.equipmentID} status={params.status} /></Layout>,
-        };
-      },
-    },
-    {
-      path: '/create',
-      action() {
-        return {
-          title: 'Thêm thiết bị',
-          component: <Layout><AddingAid /></Layout>,
-        };
-      },
+      path: '/histories',
+      children: [
+        {
+          path: '/',
+          action() {
+            return {
+              title: 'Trang lịch sử mượn - trả',
+              component: <Layout><AidHistory /></Layout>,
+            };
+          },
+        },
+      ],
     },
   ],
+
 };
