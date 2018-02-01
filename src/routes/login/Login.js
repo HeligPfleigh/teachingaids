@@ -152,9 +152,9 @@ class Login extends Component {
             }
             <form autoComplete="off" onSubmit={this.onSubmit}>
               <TextField
+                autoFocus
                 className="form"
                 name="username"
-                autoFocus
                 hintText="Tên đăng nhập"
                 fullWidth
                 errorText={nameErrorText}
@@ -162,11 +162,10 @@ class Login extends Component {
                 onBlur={this.handleChange}
               />
               <TextField
+                fullWidth
                 className="form"
                 name="password"
-                autoFocus
                 hintText="Mật khẩu"
-                fullWidth
                 type="password"
                 errorText={pwdErrorText}
                 onChange={this.handleChange}
