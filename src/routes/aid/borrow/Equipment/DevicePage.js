@@ -56,12 +56,11 @@ class DevicePage extends Component {
 
   handleRequest(chooseItem) {
     const { equipmentSave } = this.props;
+    console.log(equipmentSave);
     getPerEquiment(chooseItem._id)
     .then((data) => {
       this.setState({ ...this.state,
-        items: equipmentSave.length > 0
-        ? data.filter(e => equipmentSave.some(i => i._id !== e._id))
-        : data,
+        items: data,
         titleEquipment: chooseItem.name },
       );
     });
@@ -160,18 +159,18 @@ class DevicePage extends Component {
 
 
     const actions = [
+      // <FlatButton
+      //   label="Cancel"
+      //   primary
+      //   onTouchTap={this.handleClose}
+      // />,
       <FlatButton
-        label="Cancel"
-        primary
-        onTouchTap={this.handleClose}
-      />,
-      <FlatButton
-        label="Submit"
+        label="Ok"
         primary
         keyboardFocused
         name="quantity"
         id="quantity"
-        onTouchTap={this.handleSubmit}
+        onTouchTap={this.handleClose}
       />,
     ];
     if (loading) {

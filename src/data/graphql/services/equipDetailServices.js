@@ -1,4 +1,4 @@
-import { EquipmentModel } from '../../models/index.js';
+import { EquipmentModel, UserModel, EquipmentStatusModel } from '../../models/index.js';
 
 async function createEquipment(equipmentTypeId, quantity) {
   const allEquipment = await EquipmentModel.find();
@@ -26,6 +26,17 @@ async function createEquipment(equipmentTypeId, quantity) {
   return await EquipmentModel.create(array);
 }
 
+async function updateAidEquiment(equipmentId, lender, borrower, status, borrowerTime, returnTime) {
+  if (await EquipmentModel.findOne({ _id: equipmentId }))
+    {return await EquipmentModel.update({ _id: equipmentId },
+    {
+      lender,
+      borrower,
+      borrowerTime,
+      returnTime,
+      status,
+    });}
+}
 export default {
   createEquipment,
 };

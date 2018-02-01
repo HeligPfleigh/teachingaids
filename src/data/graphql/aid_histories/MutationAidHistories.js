@@ -1,21 +1,18 @@
-import createAidHistories from '../services/AidHistoryService';
-
+import AidHistoryService from '../services/AidHistoryService';
 
 export const mutation = [
-  `createAidHistoried(
-   lenserId: String!,
-   borrowerId: String!,
-   equipmentTypeId: String!
-   returnTime: String!
-   borrowTime: String!
-    )`,
+  `createAidHistories(
+    lenderId: String!
+    borrowerId: String!
+  ): AidHistory
+  `,
 ];
 
 export const resolvers = {
   Mutation: {
-    async createAidHistories(parent, prams) {
-      return await createAidHistories(prams);
+    async createAidHistories(parent, { lenderId, borrowerId }) {
+      return await AidHistoryService.createAidHistories(lenderId, borrowerId);
     },
   },
-}
-;
+};
+

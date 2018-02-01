@@ -50,11 +50,6 @@ import {
 } from './aid_histories/QueriesAidHistories';
 
 import {
-  mutation as m,
-  resolvers as r,
-} from './aid_histories/MutationAidHistories';
-
-import {
   mutation as equipDetailMutation,
   resolvers as mutationEquipDetailResolver,
 } from './equipmentsInfo/mutationEquipDetail';
@@ -68,6 +63,11 @@ import {
   mutation as equipmentStatusMutation,
   resolvers as mutationEStatusResolver,
 } from './equipmentStatus/MutationEquipmentStatus';
+
+import {
+  mutation as aidHistoriesMutation,
+  resolvers as aidHistoriesResolers,
+} from './aid_histories/MutationAidHistories';
 
 /** * Build graphql schema ** */
 export const schema = [
@@ -95,7 +95,7 @@ export const mutations = [
   ...equipDetailMutation,
   ...equipInfoMutation,
   ...equipmentStatusMutation,
-  ...m,
+  ...aidHistoriesMutation,
 ];
 
 export const resolvers = merge(
@@ -110,5 +110,5 @@ export const resolvers = merge(
   mutationEquipInfoResolver,
   equipmentStatusResolver,
   mutationEStatusResolver,
-  r,
+  aidHistoriesResolers,
 );
