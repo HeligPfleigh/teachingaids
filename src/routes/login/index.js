@@ -9,7 +9,6 @@
 
 import React from 'react';
 import Login from './Login';
-import ChangePassword from './ChangePassword';
 
 const title = 'Đăng nhập hệ thống';
 export default {
@@ -26,15 +25,6 @@ export default {
         return {
           title,
           component: <Login title={title} />,
-        };
-      },
-    },
-    {
-      path: '/changepassword',
-      action() {
-        return {
-          title: 'Đổi mật khẩu',
-          component: <ChangePassword />,
         };
       },
     },

@@ -105,6 +105,9 @@ class Login extends Component {
       if (!response.ok) {
         throw Error(response.statusText);
       }
+      if (response.isNewUser) {
+        location.href = '/users/changepassword';
+      }
       location.href = '/';
     }).catch(() => {
       this.setState({

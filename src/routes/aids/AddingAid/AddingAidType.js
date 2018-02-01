@@ -37,10 +37,7 @@ class AddingAidType extends Component {
     e.preventDefault();
     const { equipmentName, madeFrom, grade, khCode, unit, subject } = this.state;
     if (equipmentName === '' ||
-        madeFrom === '' ||
-        grade === '' ||
         khCode === '' ||
-        unit === '' ||
         subject === '') {
       this.setState({ error: 'Hãy thêm đủ thông tin các trường' });
       return null;
@@ -53,6 +50,8 @@ class AddingAidType extends Component {
     mutationCreateAidType({ variables: { name, madeFrom, grade, khCode, unit, subject } })
     .then(() => this.setState({ error: 'Thêm mới thành công' }))
     .catch(err => this.setState({ error: err.message }));
+
+    setTimeout(() => this.setState({ error: '' }), 2000);
 
     // reset data
     this.refs.unit.setState({ searchText: '' });
@@ -98,7 +97,7 @@ class AddingAidType extends Component {
 
           <TextField
             name="equipmentName"
-            floatingLabelText="Loại thiết bị"
+            floatingLabelText="Thiết bị (*)"
             fullWidth
             floatingLabelFixed
             onChange={this.handleChange}
@@ -106,7 +105,7 @@ class AddingAidType extends Component {
           />
           <SelectField
             name="subject"
-            floatingLabelText="Môn học"
+            floatingLabelText="Môn học (*)"
             fullWidth
             onChange={this.handleSelectField}
             value={this.state.subject}
@@ -144,7 +143,7 @@ class AddingAidType extends Component {
           />
           <TextField
             name="khCode"
-            floatingLabelText="Mã KH"
+            floatingLabelText="Mã KH (*)"
             fullWidth
             floatingLabelFixed
             onChange={this.handleChange}
@@ -191,7 +190,11 @@ const getSubjects = gql`query getSubjects {
 }`;
 
 const AddingAidTypeWithMutation = compose(
-  graphql(getSubjects),
+  graphql(getSubjects, {
+    options: {
+      fetchPolicy: 'network-only',
+    },
+  }),
   graphql(mutationCreateAidType, { name: 'mutationCreateAidType' }),
 )(AddingAidType);
 
