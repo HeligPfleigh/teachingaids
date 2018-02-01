@@ -99,7 +99,6 @@ class AddingAid extends Component {
     }
 
     if (error) {
-      console.log(error);
       return <div>Một lỗi ngoài dự kiến đã xảy ra. Liên hệ với người quản trị để được giúp đỡ!</div>;
     }
 

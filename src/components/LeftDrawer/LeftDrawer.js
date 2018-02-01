@@ -2,7 +2,7 @@ import React from 'react';
 import PropTypes from 'prop-types';
 import Drawer from 'material-ui/Drawer';
 import { spacing, typography } from 'material-ui/styles';
-import { white, blue600 } from 'material-ui/styles/colors';
+import { white, blue900 } from 'material-ui/styles/colors';
 import MenuItem from 'material-ui/MenuItem';
 // import Avatar from 'material-ui/Avatar';
 import ArrowDropRight from 'material-ui/svg-icons/navigation-arrow-drop-right';
@@ -18,7 +18,7 @@ const styles = {
     color: typography.textFullWhite,
     lineHeight: `${spacing.desktopKeylineIncrement}px`,
     fontWeight: typography.fontWeightLight,
-    backgroundColor: blue600,
+    backgroundColor: blue900,
     paddingLeft: 40,
     height: 56,
   },

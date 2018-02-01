@@ -49,6 +49,12 @@ export const mutation = [`
     newPassword: String!
   ): changeUserInfoResult
 
+  # Change user profile
+  changeUserProfile(
+    password: String!,
+    profile: ProfileInput!
+  ): changeUserInfoResult
+
 `];
 
 export const resolvers = {
@@ -84,6 +90,21 @@ export const resolvers = {
       return await UsersService.changeUserPassword({
         oldPassword,
         newPassword,
+        userId: request.user.id,
+      });
+    },
+    async changeUserProfile({ request }, { password, profile }) {
+      if (!request.user) {
+        return {
+          user: {},
+          type: 'error',
+          status: 'Người dùng chưa đăng nhập hệ thống',
+        };
+      }
+
+      return await UsersService.changeUserProfile({
+        password,
+        profile,
         userId: request.user.id,
       });
     },
