@@ -5,6 +5,8 @@ import { graphql, compose } from 'react-apollo';
 import gql from 'graphql-tag';
 import PropTypes from 'prop-types';
 import AutoComplete from 'material-ui/AutoComplete';
+import SelectField from 'material-ui/SelectField';
+import MenuItem from 'material-ui/MenuItem';
 
 const hintUnitSource = [
   'Tờ',
@@ -27,17 +29,19 @@ class AddingAidType extends Component {
       grade: '',
       khCode: '',
       unit: '',
+      subject: '',
       error: null,
     };
   }
   onSubmit = (e) => {
     e.preventDefault();
-    const { equipmentName, madeFrom, grade, khCode, unit } = this.state;
+    const { equipmentName, madeFrom, grade, khCode, unit, subject } = this.state;
     if (equipmentName === '' ||
         madeFrom === '' ||
         grade === '' ||
         khCode === '' ||
-        unit === '') {
+        unit === '' ||
+        subject === '') {
       this.setState({ error: 'Hãy thêm đủ thông tin các trường' });
       return null;
     }
@@ -46,7 +50,7 @@ class AddingAidType extends Component {
     const { mutationCreateAidType } = this.props;
     const name = equipmentName;
 
-    mutationCreateAidType({ variables: { name, madeFrom, grade, khCode, unit } })
+    mutationCreateAidType({ variables: { name, madeFrom, grade, khCode, unit, subject } })
     .then(() => this.setState({ error: 'Thêm mới thành công' }))
     .catch(err => this.setState({ error: err.message }));
 
@@ -58,6 +62,7 @@ class AddingAidType extends Component {
       grade: '',
       khCode: '',
       unit: '',
+      subject: '',
     });
   }
 
@@ -74,7 +79,19 @@ class AddingAidType extends Component {
     });
   }
 
+  handleSelectField = (event, index, value) => this.setState({ subject: value })
+
   render() {
+    const { data: { error, loading, getSubjects } } = this.props;
+    if (loading) {
+      return <div>Đang tải dữ liệu ... </div>;
+    }
+
+    if (error) {
+      console.log(error);
+      return <div>Một lỗi ngoài dự kiến đã xảy ra. Liên hệ với người quản trị để được giúp đỡ!</div>;
+    }
+
     return (
       <div>
         <div>Thêm loại thiết bị</div>
@@ -88,6 +105,16 @@ class AddingAidType extends Component {
             onChange={this.handleChange}
             value={this.state.equipmentName}
           />
+          <SelectField
+            name="subject"
+            floatingLabelText="Môn học"
+            fullWidth
+            onChange={this.handleSelectField}
+            value={this.state.subject}
+            maxHeight={200}
+          >
+            {getSubjects.map(item => <MenuItem value={item.name} primaryText={item.name} key={item._id} />)}
+          </SelectField>
           <TextField
             name="madeFrom"
             floatingLabelText="Xuất xứ"
@@ -124,14 +151,6 @@ class AddingAidType extends Component {
             onChange={this.handleChange}
             value={this.state.khCode}
           />
-          {/* <TextField
-            name="unit"
-            floatingLabelText="Đơn vị tính(cái, chiếc, ...)"
-            fullWidth
-            floatingLabelFixed
-            onChange={this.handleChange}
-            value={this.state.unit}
-          /> */}
           <RaisedButton
             type="submit"
             label="Thêm"
@@ -146,12 +165,17 @@ class AddingAidType extends Component {
 }
 
 AddingAidType.propTypes = {
+  data: PropTypes.shape({
+    error: PropTypes.any,
+    getSubjects: PropTypes.array,
+    loading: PropTypes.bool,
+  }),
   mutationCreateAidType: PropTypes.func,
 };
 
 const mutationCreateAidType = gql`
-  mutation createEquipmentInfo($name: String!, $madeFrom: String!, $grade: String!, $khCode: String!, $unit: String!){
-    createEquipmentInfo(name: $name, madeFrom: $madeFrom, grade: $grade, khCode: $khCode, unit: $unit){
+  mutation createEquipmentInfo($name: String!, $madeFrom: String!, $grade: String!, $khCode: String!, $unit: String!, $subject: String!){
+    createEquipmentInfo(name: $name, madeFrom: $madeFrom, grade: $grade, khCode: $khCode, unit: $unit, subject: $subject){
       name
       _id
       totalNumber
@@ -159,7 +183,16 @@ const mutationCreateAidType = gql`
   }
 `;
 
+const getSubjects = gql`query getSubjects {
+  getSubjects {
+    _id
+    name
+    uniqueName
+  }
+}`;
+
 const AddingAidTypeWithMutation = compose(
+  graphql(getSubjects),
   graphql(mutationCreateAidType, { name: 'mutationCreateAidType' }),
 )(AddingAidType);
 

@@ -9,19 +9,34 @@
 
 import React from 'react';
 import Login from './Login';
+import ChangePassword from './ChangePassword';
 
 const title = 'Đăng nhập hệ thống';
 export default {
   path: '/login',
 
-  action({ store }) {
-    const state = store.getState();
-    if (state.user) {
-      return { redirect: '/' };
-    }
-    return {
-      title,
-      component: <Login title={title} />,
-    };
-  },
+  children: [
+    {
+      path: '/',
+      action({ store }) {
+        const state = store.getState();
+        if (state.user) {
+          return { redirect: '/' };
+        }
+        return {
+          title,
+          component: <Login title={title} />,
+        };
+      },
+    },
+    {
+      path: '/changepassword',
+      action() {
+        return {
+          title: 'Đổi mật khẩu',
+          component: <ChangePassword />,
+        };
+      },
+    },
+  ],
 };
