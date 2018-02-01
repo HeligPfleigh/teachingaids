@@ -9,6 +9,7 @@
 
 import React from 'react';
 import AidHistory from './history/AidHistory';
+import AidBorrow from './borrow/AidBorrow';
 import Layout from '../../components/Layout';
 import { checkAuth } from '../../utils/auth.valid.util';
 
@@ -25,6 +26,15 @@ export default {
         return {
           title: 'Trang quản lý mượn trả thiết bị',
           component: <Layout>Trang quản lý mượn trả thiết bị</Layout>,
+        };
+      },
+    },
+    {
+      path: '/borrow',
+      action() {
+        return {
+          title: 'Trang quản lý muợn',
+          component: <Layout><AidBorrow /></Layout>,
         };
       },
     },
