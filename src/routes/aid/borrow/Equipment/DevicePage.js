@@ -3,11 +3,10 @@ import PropTypes from 'prop-types';
 import Paper from 'material-ui/Paper';
 import { Toolbar, ToolbarGroup, ToolbarTitle } from 'material-ui/Toolbar';
 import Dialog from 'material-ui/Dialog';
-import { List, ListItem } from 'material-ui/List';
 import FlatButton from 'material-ui/FlatButton';
-import TextField from 'material-ui/TextField';
 import { cyan600, fullWhite } from 'material-ui/styles/colors';
 import ActionExtension from 'material-ui/svg-icons/action/extension';
+
 
 import Table from '../../../../components/Table';
 import SearchBar from '../SearchBar';
@@ -49,16 +48,18 @@ class DevicePage extends Component {
 
   constructor(props) {
     super(props);
-    this.state = { open: false, item: {} };
+    this.state = { open: false, items: [] };
     this.handleRequest = this.handleRequest.bind(this);
     this.handlRemove = this.handlRemove.bind(this);
   }
 
 
   handleRequest(chooseItem) {
+    const { equipmentSave } = this.props;
     getPerEquiment(chooseItem._id)
     .then(data =>
-      this.setState({ ...this.state, items: data }));
+      this.setState({ ...this.state, items: data.filter(e => !equipmentSave.includes(e)) }));
+    console.log(this.state.items);
     this.handleOpen();
   }
 
@@ -66,6 +67,10 @@ class DevicePage extends Component {
     let { equipmentSave, handleSaveEquipment } = this.props;
     equipmentSave = equipmentSave.filter(e => e !== p);
     handleSaveEquipment(equipmentSave);
+  }
+
+  handleAdd(p) {
+    this.state({ ...this.state, items: this.state.items.filter(e => e._id !== p._id) });
   }
 
   // handle modal
@@ -84,15 +89,21 @@ class DevicePage extends Component {
     this.handleClose();
   }
 
-
+  // set title modal
   titleGenerate = () => (
     <h1 style={{ color: fullWhite, backgroundColor: cyan600, marginBottom: 0 }}>
-      <ActionExtension style={{ color: fullWhite }} /> Cập nhập thông tin
+      <ActionExtension style={{ color: fullWhite }} /> Lựa chọn thiết bị
     </h1>
   );
+
   render() {
-    const fields = [
-      { key: 'barcore', value: 'barCode', action: 'normal', public: true, style: styles.columns.barcode },
+    const { getAllEquipment, error, loading } = this.props.equipment;
+    const { equipmentSave } = this.props;
+
+    const { items } = this.state;
+    console.log(`this is ${items}`);
+
+    const fieldEquipBorrows = [
       { key: 'equipmentInfo.khCode', value: 'Mã KH', action: 'normal', public: true, style: styles.columns.barcode },
       { key: 'name', value: 'Tên thiết bị', action: 'normal', public: true, style: styles.columns.name },
       { key: 'quantity', value: 'Số lượng', action: 'normal', public: true, style: styles.columns.quanity },
@@ -114,8 +125,30 @@ class DevicePage extends Component {
         ],
       },
     ];
-    const { getAllEquipment, error, loading } = this.props.equipment;
-    const { equipmentSave } = this.props;
+
+
+    const fieldsEquip = [
+      { key: 'barcode', value: 'barcode', action: 'normal', public: true, style: styles.columns.barcode },
+      {
+        key: 'buttonGroup',
+        value: 'Hành động',
+        style: styles.columns.buttonGroup,
+        public: true,
+        action: 'group',
+        children: [
+          { key: 'btnAdd',
+            value: 'Thêm',
+            style: styles.columns.remove,
+            public: true,
+            action: 'add',
+            event: this.handleAdd,
+
+          },
+        ],
+      },
+    ];
+
+
     const actions = [
       <FlatButton
         label="Cancel"
@@ -165,7 +198,7 @@ class DevicePage extends Component {
                 />
               </ToolbarGroup>
             </Toolbar>
-            <Table items={equipmentSave || []} fields={fields} />
+            <Table items={equipmentSave || []} fields={fieldEquipBorrows} />
           </Paper>
         }
         {
@@ -176,21 +209,12 @@ class DevicePage extends Component {
               modal={false}
               open={this.state.open}
               onRequestClose={this.handleClose}
+              autoScrollBodyContent
             >
-              <div>
-                <TextField
-                  fullWidth
-                  autoFocus
-                  name="quantity"
-                  id="quantity"
-                  type="number"
-                  label="Số lượng"
-                  onChange={this.handleonChange}
-                  value={this.state.quantity}
-                  hintText="Số  lượng"
-                  floatingLabelText={<span style={{ fontSize: 18 }}>Số lương</span>}
-                />
-              </div>
+              { items && <div>
+                <Table items={items || []} fields={fieldsEquip} />
+
+              </div>}
             </Dialog>
           </div>
         }

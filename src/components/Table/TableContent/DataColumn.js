@@ -127,7 +127,7 @@ const columnResults = {
   },
   [COL_TYPE[1]]: (field, event) => (
     // Cot khoi tao button add
-    <GenColumn field={field} event={event}><ActionNoteAdd /></GenColumn>
+    <GenColumn field={field} event={event}><ActionNoteAdd primary /></GenColumn>
   ),
   [COL_TYPE[2]]: (field, event) => (
     // Cot khoi tao button edit

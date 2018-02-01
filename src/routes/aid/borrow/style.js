@@ -27,6 +27,7 @@ export default {
     },
     remove: {
       width: '5%',
+      backgroundColor: 'red',
     },
   },
   btnIcon: {
