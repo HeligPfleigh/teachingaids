@@ -13,3 +13,15 @@ export const ROLES = {
   LIBRARY_EMPLOYEE: 'LIBRARY_EMPLOYEE',
   TEACHER: 'TEACHER',
 };
+
+export const UNITS = {
+  TO: 'Tờ',
+  HOP: 'Hộp',
+  CAI: 'Cái',
+  KHOI: 'Khối',
+  BO: 'Bộ',
+  CHIEC: 'Chiếc',
+  QUA: 'Quả',
+  L: 'l',
+  G: 'g',
+};
