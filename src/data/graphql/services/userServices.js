@@ -19,7 +19,6 @@ async function getUser(userId) {
 async function checkExistUser({ userId, query }) {
   // Case 1: Only check exist user by key
   // -> use verify user with key
-  console.log(userId, query);
   if (userId && !query) {
     try {
       const user = await UserModel.findById(userId);
@@ -90,15 +89,15 @@ async function updateProfile(userId, profile) {
 async function createUser(params) {
   const {
     username,
-    password = 'Mtt2016a@',
+    password,
     profile: { phone },
     email: {
       address: emailAddress,
     },
   } = params;
-
+  console.log({ username });
   if (isUndefined(username)) {
-    params.username = 'hellokiukiu';
+    throw new Error('username is undefined');
   }
 
 

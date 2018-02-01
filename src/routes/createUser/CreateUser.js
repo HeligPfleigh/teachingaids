@@ -1,7 +1,7 @@
 import React from 'react';
 import withStyles from 'isomorphic-style-loader/lib/withStyles';
-import SelectField from 'material-ui/SelectField';
-import MenuItem from 'material-ui/MenuItem';
+// import SelectField from 'material-ui/SelectField';
+// import MenuItem from 'material-ui/MenuItem';
 import isEmpty from 'lodash/isEmpty';
 import AppBar from 'material-ui/AppBar';
 import IconButton from 'material-ui/IconButton';
@@ -12,13 +12,13 @@ import RaisedButton from 'material-ui/RaisedButton';
 import PropTypes from 'prop-types';
 import { graphql, compose } from 'react-apollo';
 import { Field, reduxForm } from 'redux-form';
-import { InputField, RadioGroupField } from '../../components/ReduxForm';
+import { InputField, RadioGroupField, SelectField } from '../../components/ReduxForm';
 import { required, longLength, email as emailValid, phoneNumber } from '../../utils/form.validator.util';
 import { checkUserExist, addUserMutation } from './graphql';
 import createApolloClient from '../../core/createApolloClient/createApolloClient.client';
 
 
-import s from './CreateUserPage.scss';
+import s from './CreateUser.scss';
 
 const FONT_SIZE = 16;
 
@@ -113,22 +113,15 @@ class CreateUser extends React.Component {
     this.setState({ radioButtonValue: event.target.value });
   };
 
-  handleSubmit = (values) => {
-    const { email, firstName, phone, lastName, gender } = values;
-    const profile = { firstName, lastName, gender, phone };
-    const user = { email: { address: email }, profile };
-    console.log(user);
-    this.props.addUser({
-      variables: { user },
-    }).then(({ data }) => {
-      const { CreateUser: { query } } = data;
-      alert(`Thêm mới thành công ${query}`);
-      this.props.refetch();
-      this.handleClose();
-    }).catch(() => {
-      alert('Thao tác thêm mới thất bại...');
-    });
+  usernameGenerate = async (username) => {
+    if (await checkUserExistFunc(username)) {
+      let rdm = 1 + Math.floor((Math.random() * 9));
+      username = `${username}.${rdm}`;
+      this.usernameGenerate(username);
+    } else { return username; }
+    return username;
   }
+
 
   buttonsGenerate = ({ pristine, submitting, handleSubmit, valid }) => [
     <RaisedButton
@@ -145,7 +138,30 @@ class CreateUser extends React.Component {
       disabled={!valid || pristine || submitting}
     />,
   ];
+
+  handleSubmit = async (values) => {
+    const { email, firstName, phone, lastName, gender } = values;
+    const profile = { firstName, lastName, gender, phone };
+    let username = `${firstName}.${lastName}`;
+    const password = '123456789';
+    username = await this.usernameGenerate(username);
+    console.log('ADDUSER', this.props.addUser);
+    const user = { email: { address: email }, username, password, profile };
+
+    this.props.addUser({
+      variables: { user },
+    }).then(({ data }) => {
+      const { CreateUser: { query } } = data;
+      alert(`Thêm mới thành công ${query}`);
+      this.props.refetch();
+      this.handleClose();
+    }).catch((e) => {
+      console.log(e);
+      alert('Thao tác thêm mới thất bại...');
+    });
+  }
   render() {
+    // console.log('adduser', this.props.addUser);
     return (
       <div style={styles.container}>
         <AppBar
@@ -238,7 +254,7 @@ class CreateUser extends React.Component {
             <div className={classNames('row')}>
               <div className={classNames('col-xs-3 col-sm-2 col-md-2')}>
                 <Field
-                  multiline
+                  multiLine
                   name="address"
                   label="Địa chỉ"
                   component={InputField}
@@ -247,33 +263,19 @@ class CreateUser extends React.Component {
             </div>
             <div className={classNames('row')}>
               <div className={classNames('col-xs-3 col-sm-2 col-md-2')}>
-                {/* <Field name="role" component="select">
-                  <option></option>
-                  <option value={0}>Admin</option>
-                  <option value={1}>Quản lý</option>
-                  <option value={2}>Nhân viên</option>
-                  <option value={3}>Khách</option>
-                  <option value={4}>Supervisor</option>
-                </Field> */}
-                {/* <Field
-                  name="phone"
-                  label="Số điện thoại*"
+                <Field
+                  name="roles"
+                  value={this.state.selectFieldvalue}
                   component={SelectField}
                   onChange={this.handleSelectFieldChange}
                   options={[
-                    { value: 1, label: 'Admin' },
-                    { value: 2, label: 'Admin' },
-                    { value: 3, label: 'Admin' },
-                    { value: 4, label: 'Admin' },
+                    { value: 'admin', label: 'Admin' },
+                    { value: 'manager', label: 'Quản lý' },
+                    { value: 'employee', label: 'Nhân viên' },
+                    { value: 'teacher', label: 'Khách' },
+                    { value: 'supervisor', label: 'Supervisor' },
                   ]}
-                /> */}
-                <SelectField value={this.state.selectFieldvalue} onChange={this.handleSelectFieldChange}>
-                  <MenuItem value={0} primaryText="Admin" />
-                  <MenuItem value={1} primaryText="Quản lý" />
-                  <MenuItem value={2} primaryText="Nhân viên" />
-                  <MenuItem value={3} primaryText="Khách" />
-                  <MenuItem value={4} primaryText="Supervisor" />
-                </SelectField>
+                />
               </div>
             </div>
             <div className={classNames('row center-xs')} style={{ margin: 20 }}>

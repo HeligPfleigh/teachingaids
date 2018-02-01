@@ -8,7 +8,7 @@
  */
 
 import React from 'react';
-import CreateUser from './CreateUserPage';
+import CreateUser from './CreateUser';
 import Layout from '../../components/Layout';
 import { checkAuth } from '../../utils/auth.valid.util';
 
