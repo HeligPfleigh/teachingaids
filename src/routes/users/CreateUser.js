@@ -1,7 +1,4 @@
 import React from 'react';
-import withStyles from 'isomorphic-style-loader/lib/withStyles';
-// import SelectField from 'material-ui/SelectField';
-// import MenuItem from 'material-ui/MenuItem';
 import isEmpty from 'lodash/isEmpty';
 import AppBar from 'material-ui/AppBar';
 import IconButton from 'material-ui/IconButton';
@@ -12,13 +9,11 @@ import RaisedButton from 'material-ui/RaisedButton';
 import PropTypes from 'prop-types';
 import { graphql, compose } from 'react-apollo';
 import { Field, reduxForm } from 'redux-form';
+import gql from 'graphql-tag';
+
+import createApolloClient from '../../core/createApolloClient/createApolloClient.client';
 import { InputField, RadioGroupField, SelectField } from '../../components/ReduxForm';
 import { required, longLength, email as emailValid, phoneNumber } from '../../utils/form.validator.util';
-import { checkUserExist, addUserMutation } from './graphql';
-import createApolloClient from '../../core/createApolloClient/createApolloClient.client';
-
-
-import s from './CreateUser.scss';
 
 const FONT_SIZE = 16;
 
@@ -51,6 +46,25 @@ const styles = {
   },
   sexOption: { marginRLeft: 500 },
 };
+
+export const checkUserExist = gql`query checkUserExist ($query: String!) {
+  checkUserExist (query: $query)
+}`;
+
+export const addUserMutation = gql`
+  mutation createUser($user:  CreateUserInput!) {
+    createUser(user: $user) {
+      _id
+      username
+      email
+      profile
+      roles
+      isActive
+      updatedAt
+      createdAt
+    }
+  }
+`;
 
 const apolloClient = createApolloClient();
 
@@ -158,8 +172,8 @@ class CreateUser extends React.Component {
       alert('Thao tác thêm mới thất bại...');
     });
   }
+
   render() {
-    // console.log('adduser', this.props.addUser);
     return (
       <div style={styles.container}>
         <AppBar
@@ -290,7 +304,6 @@ class CreateUser extends React.Component {
 }
 
 CreateUser.propTypes = {
-  addUser: PropTypes.any,
   refetch: PropTypes.func,
 };
 
@@ -302,7 +315,6 @@ const AddUserForm = reduxForm({
   enableReinitialize: true,
   asyncBlurFields: ['phone', 'email'],
 })(compose(
-  withStyles(s),
   graphql(addUserMutation, { name: 'addUser' }),
 )(CreateUser));
 
