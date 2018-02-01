@@ -12,8 +12,8 @@ class AidHistory extends Component {
   constructor(props) {
     super(props);
     this.state = {
-      loading: true,
-      data: null,
+      loading: false,
+      data: [],
     };
   }
 
@@ -32,7 +32,7 @@ class AidHistory extends Component {
     }
     this.setState({
       loading: data.loading,
-      data: data.result,
+      data: data.result || [],
     });
   }
 
