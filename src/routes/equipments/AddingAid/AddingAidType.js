@@ -7,18 +7,13 @@ import PropTypes from 'prop-types';
 import AutoComplete from 'material-ui/AutoComplete';
 import SelectField from 'material-ui/SelectField';
 import MenuItem from 'material-ui/MenuItem';
+import { UNITS } from '../../../constants';
 
-const hintUnitSource = [
-  'Tờ',
-  'Hộp',
-  'Cái',
-  'Khối',
-  'Bộ',
-  'Chiếc',
-  'Quả',
-  'l',
-  'g',
-];
+// Create data source for unit input
+const hintUnitSource = Object.keys(UNITS).map(key => ({
+  text: UNITS[key],
+  value: key,
+}));
 
 class AddingAidType extends Component {
   constructor(props) {
