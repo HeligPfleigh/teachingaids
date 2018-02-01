@@ -48,7 +48,7 @@ class AddingAid extends Component {
     const { data: { getAllEquipment }, mutationCreate, mutationUpdateQuantity } = this.props;
     const allEquipments = getAllEquipment.map(value => value.name);
     if (allEquipments.indexOf(aidType) === -1) {
-      this.setState({ error: 'Loại thiết bị bạn chọn chưa có trong cơ sở dữ liệu. Hãy thêm trong mục Advanced trước!' });
+      this.setState({ error: 'Loại thiết bị bạn chọn chưa có trong cơ sở dữ liệu. Hãy thêm trong mục Bổ sung trước!' });
       return null;
     }
 
@@ -106,15 +106,15 @@ class AddingAid extends Component {
 
     const { openAdvanced } = this.state;
     return (
-      <div style={styles.container} onSubmit={this.onSubmit}>
+      <div style={styles.container}>
         <Paper style={styles.paper}>
-          <form autoComplete="off">
+          <form autoComplete="off" onSubmit={this.onSubmit}>
             <AutoComplete
               name="aidType"
               ref="aidType"
               onChange={this.handleChange}
               onUpdateInput={this.handleUpdateInput}
-              floatingLabelText="Loại thiết bị"
+              floatingLabelText="Thiết bị (*)"
               hintText="Gõ và nhập theo gợi ý"
               floatingLabelFixed
               fullWidth
@@ -124,7 +124,7 @@ class AddingAid extends Component {
             <TextField
               name="quantity"
               hintText="Nhập số lượng cần thêm"
-              floatingLabelText="Số lượng"
+              floatingLabelText="Số lượng (*)"
               fullWidth
               floatingLabelFixed
               onChange={this.handleChange}
@@ -140,7 +140,7 @@ class AddingAid extends Component {
           {this.state.error === '' ? null : this.state.error}
         </Paper>
         <br /><br />
-        <FlatButton label="Advanced" fullWidth onClick={this.handleOpenAdvanced} />
+        <FlatButton label="Bổ sung" fullWidth onClick={this.handleOpenAdvanced} />
         <br /><br />
         {openAdvanced ?
           <Paper style={styles.paper}>
