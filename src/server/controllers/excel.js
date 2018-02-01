@@ -21,19 +21,16 @@ router.get('/excels', async (req, res) => {
   const pathFile = 'src/server/excel_files/excel.xlsx';
   const sheetName = 'Tranh';
   const data = getDataFromExcel(pathFile, sheetName);
+  const equipmentStatus = 'MOI';
 
-  const maxSequenceNum = await getMaxSequenceNum();
-  // let sequenceNum = startSequenceNum + i;
-  let barcode = generateBarcode(maxSequenceNum);
+  let maxSequenceNum = await getMaxSequenceNum();
 
-  // return await EquipmentModel.create(array);
-
-  data.map((item) => {
-    const equipmentType = {
+  await data.map(async (item) => {
+    const equipmentTypeObj = {
       name: item.name,
       equipmentInfo: {
         madeFrom: item.madeFrom,
-        grade: item.grade,
+        grade: item.grade.split(',').map(g => parseInt(g, 10)),
         khCode: item.khCode,
       },
       totalNumber: item.totalNumber,
@@ -41,12 +38,24 @@ router.get('/excels', async (req, res) => {
       unit: item.unit,
       order: item.order,
     };
-    const equipment = {
-      barcode: 'name',
-      sequenceNum: 'sequenceNum',
-      equipmentTypeId: 'totalNumber',
-      status: 'status',
-    };
+    await EquipmentTypeModel.create(equipmentTypeObj, async (error, equipmentType) => {
+      if (error) {
+        console.log(`EquipmentType ERRORRRR!: ${item.name}`);
+      }
+      maxSequenceNum++;
+      const equipmentObj = {
+        barcode: generateBarcode(maxSequenceNum),
+        sequenceNum: maxSequenceNum,
+        equipmentTypeId: equipmentType.id,
+        status: equipmentStatus,
+      };
+      await EquipmentModel.create(equipmentObj, (err) => {
+        if (err) {
+          console.log(`Equipment ERRORRRR!: ${item.name}`);
+        }
+      });
+    });
+
     return true;
   });
   // EquipmentModel.insertMany(arr, (error, docs) => {});
@@ -54,7 +63,6 @@ router.get('/excels', async (req, res) => {
   // workbook.SheetNames.forEach((n, i) => {
   //   console.log(n, i);
   // });
-  // console.log(workbook);
   res.json(data);
 });
 

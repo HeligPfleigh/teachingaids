@@ -7,7 +7,7 @@ const { Schema } = mongoose;
 
 const EquipmentInfoSchema = new Schema({
   madeFrom: String,
-  grade: String,
+  grade: Array,
   khCode: String,
 }, {
   _id: false,
@@ -19,7 +19,7 @@ const EquipmentTypeSchema = new Schema({
     required: true,
   },
   equipmentInfo: EquipmentInfoSchema,
-  totalNumber: String,
+  totalNumber: Number,
   subject: String,
   unit: String,
   order: Number,
