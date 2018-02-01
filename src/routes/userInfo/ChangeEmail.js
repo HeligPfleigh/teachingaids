@@ -61,6 +61,10 @@ const asyncValidate = (fields) => {
 
 class ChangeEmail extends React.Component {
 
+  state = {
+    isEdit: false,
+  }
+
   compareValue = (value) => {
     const { oldEmail } = this.props;
     return value !== oldEmail ? undefined : 'hãy nhập một địa chỉ email mới của bạn';
@@ -68,6 +72,7 @@ class ChangeEmail extends React.Component {
 
   cancel = () => {
     this.props.reset();
+    this.setState({ isEdit: false });
   }
 
   submit = (values) => {
@@ -89,24 +94,24 @@ class ChangeEmail extends React.Component {
   }
 
   render() {
+    const { isEdit } = this.state;
     const { pristine, submitting, handleSubmit, valid } = this.props;
 
     return (
-
       <div className="grid">
         <div className="row">
           <div className="col-xs-offset-1 col-xs-5">
             <Field
               fullWidth
-              autoFocus
               name="newEmail"
               component={InputField}
               label="Địa chỉ mail"
+              disabled={!isEdit}
               validate={[required, longLength, emailValid, this.compareValue]}
             />
           </div>
         </div>
-        <div className="row">
+        { isEdit && <div className="row">
           <div className="col-xs-offset-1 col-xs-5">
             <Field
               fullWidth
@@ -117,22 +122,30 @@ class ChangeEmail extends React.Component {
               validate={[required, longLength, passValid]}
             />
           </div>
-        </div>
+        </div> }
         <div className="row end-xs">
           <div className="col-xs-offset-1 col-xs-5">
-            <RaisedButton
+            { !isEdit && <RaisedButton
+              primary
+              label="Thay đổi thông tin"
+              style={{ marginRight: '10px' }}
+              onTouchTap={() => this.setState({ isEdit: true })}
+            />}
+
+            { isEdit && <RaisedButton
               label="Hủy"
               secondary
               disabled={submitting}
               onTouchTap={this.cancel}
               style={{ marginRight: '10px' }}
-            />
-            <RaisedButton
+            />}
+
+            { isEdit && <RaisedButton
               primary
               label="Cập nhật"
               onTouchTap={handleSubmit(this.submit)}
               disabled={!valid || pristine || submitting}
-            />
+            />}
           </div>
           <div className="col-xs-offset-6" />
         </div>
