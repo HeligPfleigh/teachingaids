@@ -84,15 +84,14 @@ class Subject extends React.Component {
 
     const fields = [
       // Config columns
-      { key: 'uniqueName', value: 'Kí hiệu', style: styles.columns.uniqueName, public: true, action: 'normal', event: this.eventHandler },
-      { key: 'name', value: 'Tên môn học', style: styles.columns.name, public: true, action: 'normal', event: this.eventHandler },
+      { key: 'uniqueName', value: 'Kí hiệu', style: styles.columns.uniqueName, public: true, action: 'normal' },
+      { key: 'name', value: 'Tên môn học', style: styles.columns.name, public: true, action: 'normal' },
       // Config button group
       { key: 'buttonGroup',
         value: 'Hành động',
-        style: styles.columns.buttonGroup,
         public: true,
         action: 'group',
-        event: this.eventHandler,
+        style: styles.columns.buttonGroup,
         children: [
           { key: 'btnEdit', value: 'Sửa', style: styles.columns.edit, public: true, action: 'edit', event: this.editSubject },
           { key: 'btnDelete', value: 'Xóa', style: styles.columns.edit, public: true, action: 'delete', event: this.confirmDelete },
