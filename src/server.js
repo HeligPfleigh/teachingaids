@@ -23,6 +23,7 @@ import configureStore from './store/configureStore';
 import { setRuntimeVariable } from './actions/runtime';
 import { port, auth, databaseUrl } from './config';
 import Mongoose from './data/mongoose';
+import excel from './server/controllers/excel';
 
 // Needed for onTouchTap
 // http://stackoverflow.com/a/34015469/988941
@@ -106,6 +107,7 @@ const graphqlMiddleware = expressGraphQL(req => ({
 }));
 
 app.use('/graphql', graphqlMiddleware);
+app.use(excel);
 
 //
 // Register server-side rendering middleware
