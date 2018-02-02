@@ -41,6 +41,7 @@ const BrowserUsage = props => (
           <ResponsiveContainer>
             <PieChart >
               <Pie
+                dataKey={Math.random()}
                 innerRadius={80}
                 outerRadius={130}
                 data={props.data}

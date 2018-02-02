@@ -31,6 +31,12 @@ import {
   resolvers as equipmentStatusResolver,
 } from './equipmentStatus/QueriesEquipmentStatus';
 
+import {
+  schema as commonServiceSchema,
+  queries as commonServiceQueries,
+  resolvers as commonServiceResolver,
+} from './common/Queries';
+
 /** * Mutations ** */
 import {
   schema as mutationUserSchema,
@@ -78,6 +84,7 @@ export const schema = [
   ...equipmentSchema,
   ...aidHistorySchema,
   ...equipmentStatusSchema,
+  ...commonServiceSchema,
 ];
 
 export const queries = [
@@ -87,6 +94,7 @@ export const queries = [
   ...equipmentQueries,
   ...aidHistoryQueries,
   ...equipmentStatusQueries,
+  ...commonServiceQueries,
 ];
 
 export const mutations = [
@@ -111,4 +119,5 @@ export const resolvers = merge(
   equipmentStatusResolver,
   mutationEStatusResolver,
   aidHistoriesResolers,
+  commonServiceResolver,
 );

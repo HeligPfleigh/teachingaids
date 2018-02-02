@@ -1,44 +1,49 @@
 import gql from 'graphql-tag';
+import Fragment from '../../../data/fragment.utils';
 
-
-export const getUser = gql`
-    query {
-        getUsers{
+export const searchEquipmentQuery = gql`
+  query searchEquipment($query: String) {
+    searchEquipment(query: $query) {
+      type
+      items {
         _id
-        username
-        profile {
-            fullName
-            gender
-            phone
-        }
-        email {
-            address
-        }
-        }
+        barcode
+        equipmentTypeId
+        typeName
+        status
+      }
     }
+  }
 `;
 
-export const getAllEquipment = gql`
-    query {
-        getAllEquipment {
-        _id
-        name
-        totalNumber
-        unit
-        order
-        equipmentInfo {
-            khCode
-          }
-        }
+export const getUsers = gql`query getUsers {
+  getUsers {
+    ...UserView
+  }
+}
+${Fragment.UserView}`;
+
+export const getAllEquipmentQuery = gql`
+  query {
+    getAllEquipment {
+      _id
+      name
+      totalNumber
+      unit
+      order
+      equipmentInfo {
+        khCode
+      }
     }
+  }
 `;
 export const getAllPerTypeEquipment = gql`
-    query getAllPerTypeEquipment($equipmentTypeId: String!){
-        getAllPerTypeEquipment(equipmentTypeId: $equipmentTypeId) {
-            _id
-            barcode
-            sequenceNum
-            equipmentTypeId
-        }
+  query getAllPerTypeEquipment($equipmentTypeId: String!){
+    getAllPerTypeEquipment(equipmentTypeId: $equipmentTypeId) {
+      _id
+      barcode
+      sequenceNum
+      equipmentTypeId
+    }
   }
 `;

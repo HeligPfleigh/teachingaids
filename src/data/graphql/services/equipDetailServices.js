@@ -24,18 +24,18 @@ async function createEquipment(equipmentTypeId, quantity) {
 
 async function updateAidEquiment(equipmentId, lender, borrower, status, borrowerTime, returnTime) {
   if (await EquipmentModel.findOne({ _id: equipmentId })) {
-    return await EquipmentModel.update(
-      { _id: equipmentId },
-      {
-        lender,
-        borrower,
-        borrowerTime,
-        returnTime,
-        status,
-      },
-    );
+    return await EquipmentModel.update({
+      _id: equipmentId,
+    }, {
+      lender,
+      borrower,
+      borrowerTime,
+      returnTime,
+      status,
+    });
   }
 }
 export default {
   createEquipment,
+  updateAidEquiment,
 };

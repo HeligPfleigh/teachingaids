@@ -5,6 +5,7 @@ const Fragment = {
     fragment UserView on User {
       _id,
       username,
+      fullName,
       profile {
         avatar,
         firstName,

@@ -1,92 +1,67 @@
 import React from 'react';
 import PropTypes from 'prop-types';
-import { graphql, compose } from 'react-apollo';
 import { connect } from 'react-redux';
-import {
-  Step,
-  Stepper,
-  StepLabel,
-} from 'material-ui/Stepper';
 import RaisedButton from 'material-ui/RaisedButton';
-import FlatButton from 'material-ui/FlatButton';
-import InfoPage from './Info/InfoPage';
-import DevicePage from './Equipment/DevicePage';
-import { getUser, getAllEquipment } from './graphql';
+import { Step, Stepper, StepLabel } from 'material-ui/Stepper';
 
-class AidBorrow extends React.Component {
+import UserInfoStep from './UserInfo/UserInfoStep';
+import DevicesStep from './Equipment/DevicesStep';
+import { handleNext, handlePrev, resetTransaction } from '../../../actions/transactions';
 
-  static propTypes={
-    users: PropTypes.object.isRequired,
-    equipment: PropTypes.object.isRequired,
-  }
+@connect(({ transactions }) => ({
+  stepIndex: transactions.stepIndex,
+  finished: transactions.finished,
+  isNextStep: transactions.isNextStep,
+}), dispatch => ({
+  handleNext: stepIndex => dispatch(handleNext(stepIndex)),
+  handlePrev: stepIndex => dispatch(handlePrev(stepIndex)),
+  resetTransaction: () => dispatch(resetTransaction()),
+}))
+class Transactions extends React.Component {
 
-  constructor(props) {
-    super(props);
-    this.handleSaveInfo = this.handleSaveInfo.bind(this);
-    this.handleSaveEquipment = this.handleSaveEquipment.bind(this);
-  }
-  state = {
-    finished: false,
-    stepIndex: 0,
-    infoSave: null,
-    equipmentSave: [],
-    next: false,
-    next1: false,
-  };
+  // getStepContent = (stepIndex) => {
+  //   switch (stepIndex) {
+  //     case 0:
+  //       return <InfoPage />;
+  //     case 1:
+  //       return <DevicesStep />;
+  //     default:
+  //       return <div>{"You're a long way from home sonny jim!"}</div>;
+  //   }
+  // }
 
-  getStepContent(stepIndex) {
-    const { users, equipment } = this.props;
-    const { infoSave, equipmentSave } = this.state;
-    // console.log(users);
+  getStepContent = (stepIndex) => {
     switch (stepIndex) {
       case 0:
-        return (<InfoPage
-          users={users}
-          infoSave={infoSave}
-          handleSaveInfo={this.handleSaveInfo}
-        />);
+        return <UserInfoStep />;
       case 1:
-        return (<DevicePage
-          equipment={equipment}
-          equipmentSave={equipmentSave}
-          handleSaveEquipment={this.handleSaveEquipment}
-        />);
+        return <DevicesStep />;
       default:
-        console.log(this.state.equipmentSave);
-        return <div>You're a long way from home sonny jim!</div>;
+        return 'You\'re a long way from home sonny jim!';
     }
   }
 
-  handleSaveInfo = infoSave => this.setState({ ...this.state, infoSave, next: true });
-
-  handleSaveEquipment = equipmentSave => this.setState({
-    ...this.state,
-    equipmentSave,
-    next1: equipmentSave.length > 0 });
-
-  handlePrev = () => {
-    const { stepIndex } = this.state;
-    if (stepIndex > 0) {
-      this.setState({ stepIndex: stepIndex - 1 });
-    }
-  };
+  resetTransaction = () => {
+    this.props.resetTransaction();
+  }
 
   handleNext = () => {
-    const { stepIndex } = this.state;
-    this.setState({
-      stepIndex: stepIndex + 1,
-      finished: stepIndex >= 2,
-    });
+    const { stepIndex } = this.props;
+    this.props.handleNext(stepIndex);
+  }
+
+  handlePrev = () => {
+    const { stepIndex } = this.props;
+    this.props.handlePrev(stepIndex);
   };
 
   render() {
-    const { finished, stepIndex, next, next1 } = this.state;
-    const contentStyle = { margin: '0 16px' };
+    const { finished, stepIndex, isNextStep } = this.props;
     return (
       <div style={{ width: '95%', margin: 'auto' }}>
         <Stepper activeStep={stepIndex}>
           <Step>
-            <StepLabel>Thông tin người mượn</StepLabel>
+            <StepLabel>Thông tin người dùng</StepLabel>
           </Step>
           <Step>
             <StepLabel>Các thiết bị</StepLabel>
@@ -96,7 +71,7 @@ class AidBorrow extends React.Component {
           </Step>
         </Stepper>
 
-        <div style={contentStyle}>
+        <div style={{ margin: '0 16px' }}>
 
           {finished ? (
             <div>this is finished</div>
@@ -104,25 +79,26 @@ class AidBorrow extends React.Component {
             <div>
               <div>{this.getStepContent(stepIndex)}</div>
 
-              <div style={{ marginTop: 12 }}>
-                {
-                  stepIndex !== 0
-                  &&
-                  <FlatButton
-                    label="Back"
-                    onClick={this.handlePrev}
-                    style={{ marginRight: 12 }}
-                  />
-                }
-                {
-                 ((stepIndex === 0 && next) || (next1))
-                 &&
-                 <RaisedButton
-                   label={stepIndex === 2 ? 'Finish' : 'Next'}
-                   primary
-                   onClick={this.handleNext}
-                 />
-                }
+              <div style={{ marginTop: '25px' }}>
+                <RaisedButton
+                  label="Hủy thao tác"
+                  secondary
+                  disabled={stepIndex < 1}
+                  onClick={this.resetTransaction}
+                  style={{ marginRight: 12 }}
+                />
+                <RaisedButton
+                  label="Quay lại"
+                  disabled={stepIndex === 0}
+                  onClick={this.handlePrev}
+                  style={{ marginRight: 12 }}
+                />
+                <RaisedButton
+                  primary
+                  disabled={!isNextStep}
+                  onClick={this.handleNext}
+                  label={stepIndex === 2 ? 'Hoàn thành' : 'Tiếp tục'}
+                />
               </div>
             </div>
           )}
@@ -131,11 +107,14 @@ class AidBorrow extends React.Component {
     );
   }
 }
-const mapStateToProps = state => ({
-  user: state.user,
-});
 
-export default compose(
-    graphql(getUser, { name: 'users' }),
-    graphql(getAllEquipment, { name: 'equipment' }),
-    connect(mapStateToProps))(AidBorrow);
+Transactions.propTypes = {
+  isNextStep: PropTypes.bool,
+  stepIndex: PropTypes.number,
+  finished: PropTypes.bool,
+  handleNext: PropTypes.func,
+  handlePrev: PropTypes.func,
+  resetTransaction: PropTypes.func,
+};
+
+export default Transactions;

@@ -8,6 +8,7 @@ export const schema = [
     username: String
     email: EmailSchema
     profile: UserProfile
+    fullName: String
     roles: [String]
     isActive: String
     updatedAt: String
@@ -77,6 +78,9 @@ export const resolvers = {
   User: {
     isActive(user) {
       return user && user.isActive ? 'Active' : 'InActive';
+    },
+    fullName({ profile }) {
+      return `${(profile && profile.firstName) || 'no'} ${(profile && profile.lastName) || 'name'} - ${(profile && profile.phone) || 'name'}`;
     },
   },
 };

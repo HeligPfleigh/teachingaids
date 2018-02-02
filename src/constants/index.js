@@ -2,10 +2,6 @@
 
 export const SET_RUNTIME_VARIABLE = 'SET_RUNTIME_VARIABLE';
 
-export const POST_TYPES = ['STATUS', 'EVENT'];
-
-export const NOTIFY_TYPES = ['LIKES', 'COMMENTS', 'NEW_POST'];
-
 export const ROLES = {
   ADMINISTRATOR: 'ADMINISTRATOR',
   SUPERVISOR: 'SUPERVISOR',
@@ -25,3 +21,13 @@ export const UNITS = {
   L: 'l',
   G: 'g',
 };
+
+export const CHANGE_INDEX_STEP = 'CHANGE_INDEX_STEP';
+
+export const ADD_USER_FORM = 'ADD_USER_FORM';
+
+export const RESET_TRANSACTION = 'RESET_TRANSACTION';
+
+export const SELECT_EQUIPMENT = 'SELECT_EQUIPMENT';
+
+export const REMOVE_EQUIPMENT = 'REMOVE_EQUIPMENT';

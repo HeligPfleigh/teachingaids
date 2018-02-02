@@ -6,97 +6,105 @@ import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
 import { cyan600, fullWhite } from 'material-ui/styles/colors';
 import ActionExtension from 'material-ui/svg-icons/action/extension';
+import { connect } from 'react-redux';
+import { graphql, compose } from 'react-apollo';
+import isEmpty from 'lodash/isEmpty';
+import isString from 'lodash/isString';
+import isEqual from 'lodash/isEqual';
+import differenceWith from 'lodash/differenceWith';
 
 
 import Table from '../../../../components/Table';
 import SearchBar from '../SearchBar';
 import styles from '../style';
 import createApolloClient from '../../../../core/createApolloClient/createApolloClient.client';
-import { getAllPerTypeEquipment } from '../graphql';
+import { selectEquipment, removeEquipment } from '../../../../actions/transactions';
+import { searchEquipmentQuery, getAllEquipmentQuery } from '../graphql';
 
 
 const apolloClient = createApolloClient();
 
-const getPerEquiment = async (equipmentTypeId) => {
-  if (equipmentTypeId) {
+const getPerEquiment = async (query) => {
+  if (query) {
     try {
-      const { data: { getAllPerTypeEquipment: result } } = await apolloClient.query({
-        query: getAllPerTypeEquipment,
-        variables: { equipmentTypeId },
+      const { data: { searchEquipment: result } } = await apolloClient.query({
+        query: searchEquipmentQuery,
+        variables: { query },
+        options: {
+          fetchPolicy: 'network-only',
+        },
       });
       return result;
     } catch (error) {
-      return;
+      return false;
     }
   }
   return false;
 };
 
-
+@compose(
+  graphql(getAllEquipmentQuery, { name: 'dataSource' }),
+  connect(({ transactions }) => ({
+    selectItems: transactions.selectItems,
+  }), dispatch => ({
+    dispatch,
+    selectEquipment: item => dispatch(selectEquipment(item)),
+    removeEquipment: item => dispatch(removeEquipment(item)),
+  })),
+)
 class DevicePage extends Component {
 
   static propTypes = {
-    equipment: PropTypes.shape({
-      getAllEquipment: PropTypes.array.isRequired,
-      error: PropTypes.object,
-      loading: PropTypes.bool,
-    }),
-    handleSaveEquipment: PropTypes.func,
-    equipmentSave: PropTypes.array,
+    dataSource: PropTypes.object,
+    selectItems: PropTypes.any,
+    selectEquipment: PropTypes.func,
+    removeEquipment: PropTypes.func,
   }
 
   constructor(props) {
     super(props);
     this.state = { open: false, items: [], titleEquipment: '' };
-    this.handleRequest = this.handleRequest.bind(this);
-    this.handlRemove = this.handlRemove.bind(this);
-    this.handleAdd = this.handleAdd.bind(this);
   }
 
+  handleSelection = (result, titleEquipment) => {
+    if (result.items.length > 1) {
+      const items = differenceWith(result.items, this.props.selectItems, isEqual);
 
-  handleRequest(chooseItem) {
-    const { equipmentSave } = this.props;
-    console.log(equipmentSave);
-    getPerEquiment(chooseItem._id)
-    .then((data) => {
-      this.setState({ ...this.state,
-        items: data,
-        titleEquipment: chooseItem.name },
-      );
-    });
-
-    this.handleOpen();
+      this.setState({ ...this.state, items, titleEquipment });
+      this.handleOpen();
+    } else {
+      this.props.selectEquipment(result.items[0]);
+    }
   }
 
-  handlRemove(p) {
-    let { equipmentSave, handleSaveEquipment } = this.props;
-    equipmentSave = equipmentSave.filter(e => e !== p);
-    handleSaveEquipment(equipmentSave);
+  handleRequest = (chooseItem) => {
+    if (!isEmpty(chooseItem)) {
+      if (isString(chooseItem)) {
+        getPerEquiment(chooseItem).then(result =>
+          this.handleSelection(result, chooseItem.name),
+        );
+      } else {
+        getPerEquiment(chooseItem._id.toString()).then(
+          result => this.handleSelection(result, chooseItem.name),
+        );
+      }
+    }
   }
 
   handleAdd = (p) => {
-    this.setState({
-      ...this.state,
-      items: this.state.items.filter(e => e._id !== p._id) });
-    this.props.handleSaveEquipment([
-      ...this.props.equipmentSave,
-      p,
-    ]);
+    const newItems = (this.state.items || []).filter(e => e !== p);
+    this.setState(preState => ({
+      ...preState,
+      items: newItems,
+    }), () => this.props.selectEquipment(p));
   }
+
+  handlRemove = p => this.props.removeEquipment(p);
 
   // handle modal
   handleOpen = () => this.setState({ open: true });
 
   handleClose = () => this.setState(s => ({ ...s, open: false }));
-
-
-  handleSubmit = () => {
-    let { equipmentSave, handleSaveEquipment } = this.props;
-    // let found = equipmentSave.findIndex(e => e._id === item._id);
-    // equipmentSave[found] = item;
-    handleSaveEquipment(equipmentSave);
-    this.handleClose();
-  }
 
   // set title modal
   titleGenerate = () => (
@@ -106,11 +114,8 @@ class DevicePage extends Component {
   );
 
   render() {
-    const { getAllEquipment, error, loading } = this.props.equipment;
-    const { equipmentSave } = this.props;
-
     const { items, titleEquipment } = this.state;
-
+    const { dataSource: { getAllEquipment, error, loading }, selectItems } = this.props;
 
     const fieldEquipBorrows = [
       { key: 'equipmentInfo.khCode', value: 'Mã KH', action: 'normal', public: true, style: styles.columns.barcode },
@@ -135,7 +140,6 @@ class DevicePage extends Component {
       },
     ];
 
-
     const fieldsEquip = [
       { key: 'barcode', value: 'barcode', action: 'normal', public: true, style: styles.columns.barcode },
       {
@@ -151,19 +155,12 @@ class DevicePage extends Component {
             public: true,
             action: 'add',
             event: this.handleAdd,
-
           },
         ],
       },
     ];
 
-
     const actions = [
-      // <FlatButton
-      //   label="Cancel"
-      //   primary
-      //   onTouchTap={this.handleClose}
-      // />,
       <FlatButton
         label="Ok"
         primary
@@ -173,19 +170,18 @@ class DevicePage extends Component {
         onTouchTap={this.handleClose}
       />,
     ];
+
     if (loading) {
-      return (
-        <p>Loading...</p>
-      );
+      return <div>Đang tải dữ liệu...</div>;
     }
+
     if (error) {
-      return (
-        <p>Có lỗi</p>
-      );
+      return <div>Có lỗi</div>;
     }
+
     return (
       <div>
-        <div>
+        <div style={{ paddingBottom: '25px' }}>
           <SearchBar
             dataSource={getAllEquipment}
             handleRequest={this.handleRequest}
@@ -195,9 +191,9 @@ class DevicePage extends Component {
           />
         </div>
         {
-          equipmentSave.length > 0
+          selectItems.length > 0
           &&
-          <Paper >
+          <Paper>
             <Toolbar style={styles.subheader}>
               <ToolbarGroup>
                 <ToolbarTitle
@@ -206,7 +202,7 @@ class DevicePage extends Component {
                 />
               </ToolbarGroup>
             </Toolbar>
-            <Table items={equipmentSave || []} fields={fieldEquipBorrows} />
+            <Table items={selectItems || []} fields={fieldEquipBorrows} />
           </Paper>
         }
         {
@@ -231,6 +227,5 @@ class DevicePage extends Component {
     );
   }
 }
-
 
 export default DevicePage;
