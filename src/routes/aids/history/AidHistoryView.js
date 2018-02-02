@@ -46,7 +46,7 @@ class AidHistoryView extends Component {
         style: styles.columns.borrowTime,
         public: true,
         action: 'normal',
-        formatData: item => moment(item).format('D-MM-Y HH:mm'),
+        formatData: item => moment(item).format('DD-MM-Y HH:mm'),
       },
       {
         key: 'returnTime',
@@ -54,7 +54,7 @@ class AidHistoryView extends Component {
         style: styles.columns.returnTime,
         public: true,
         action: 'normal',
-        formatData: item => moment(item).format('D-MM-Y H:mm'),
+        formatData: item => moment(item).format('DD-MM-Y H:mm'),
       },
       {
         key: 'equipment.name',
