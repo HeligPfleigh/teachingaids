@@ -29,15 +29,22 @@ export default function transactions(state = initState, action) {
         user: action.user,
       };
 
-    case SELECT_EQUIPMENT:
-      return {
-        ...state,
-        isNextStep: true,
-        selectItems: [
-          ...state.selectItems,
-          ...[action.item],
-        ],
-      };
+    case SELECT_EQUIPMENT: {
+      const { selectItems } = state;
+      const { item } = action;
+      if (item) {
+        const callback = ({ _id }) => _id.toString() === item._id.toString();
+        const isExistItem = (selectItems || []).findIndex(callback) > -1;
+
+        return {
+          ...state,
+          isNextStep: true,
+          selectItems: isExistItem ? selectItems : [...selectItems, ...[action.item]],
+        };
+      }
+
+      return state;
+    }
 
     case REMOVE_EQUIPMENT: {
       const newSelectItems = state.selectItems.filter(e => e !== action.item);

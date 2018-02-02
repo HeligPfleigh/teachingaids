@@ -36,6 +36,7 @@ const AidHistorySchema = new Schema({
   borrowTime: Date,
   returnTime: Date,
   equipment: equipmentHistorySchema,
+  statusId: String,
   status: String,
 });
 
