@@ -10,11 +10,13 @@ import gql from 'graphql-tag';
 import PropTypes from 'prop-types';
 import Dialog from 'material-ui/Dialog';
 import FlatButton from 'material-ui/FlatButton';
+import withStyles from 'isomorphic-style-loader/lib/withStyles';
 
 import { formValid, comparePassword } from '../../utils/form.validator.util';
 import history from '../../core/history';
 import themeDefault from '../../components/Layout/Material-Theme';
 import Fragment from '../../data/fragment.utils';
+import s from './ChangePassword.scss';
 
 const styles = {
   loginContainer: {
@@ -240,4 +242,4 @@ const changePasswordQuery = gql`
 
 const ChangePasswordWithMutation = graphql(changePasswordQuery, { name: 'changePassword' })(ChangePassword);
 
-export default ChangePasswordWithMutation;
+export default withStyles(s)(ChangePasswordWithMutation);

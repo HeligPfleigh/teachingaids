@@ -81,11 +81,10 @@ app.post('/login', (req, res, next) => {
     if (!user) { return res.status(401).json({ ok: false }); }
     return req.logIn(user, (error) => {
       if (error) { return res.status(401).json({ ok: false }); }
-      console.log(user);
       const expiresIn = 60 * 60 * 24 * 180; // 180 days
       const token = jwt.sign(req.user, auth.jwt.secret, { expiresIn });
       res.cookie('id_token', token, { maxAge: 1000 * expiresIn });
-      res.status(200).json({ ok: true, isNewUser: user.isNew });
+      res.status(200).json({ ok: true, isNewUser: user.isNewUser });
       return next();
     });
   })(req, res, next);

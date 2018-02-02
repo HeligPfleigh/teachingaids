@@ -105,15 +105,20 @@ class Login extends Component {
       if (!response.ok) {
         throw Error(response.statusText);
       }
-      if (response.isNewUser) {
-        location.href = '/users/changepassword';
-      }
-      location.href = '/';
+      return response.json();
     }).catch(() => {
       this.setState({
         error: true,
       });
-    });
+    })
+    .then((res) => {
+      if (res.isNewUser) {
+        location.href = '/users/changepassword';
+      } else {
+        location.href = '/';
+      }
+    })
+    ;
     return false;
   };
 
