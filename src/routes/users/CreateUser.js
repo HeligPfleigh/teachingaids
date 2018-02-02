@@ -10,7 +10,7 @@ import PropTypes from 'prop-types';
 import { graphql, compose } from 'react-apollo';
 import { Field, reduxForm } from 'redux-form';
 import gql from 'graphql-tag';
-
+import history from '../../core/history';
 import createApolloClient from '../../core/createApolloClient/createApolloClient.client';
 import { InputField, RadioGroupField, SelectField } from '../../components/ReduxForm';
 import { required, longLength, email as emailValid, phoneNumber } from '../../utils/form.validator.util';
@@ -55,14 +55,23 @@ export const checkUserExist = gql`query checkUserExist ($query: String!) {
 export const addUserMutation = gql`
   mutation createUser($user:  CreateUserInput!) {
     createUser(user: $user) {
-      _id
-      username
-      email
-      profile
-      roles
+      _id,
+      username,
+      fullName,
+      profile {
+        avatar,
+        firstName,
+        lastName,
+        fullName,
+        phone,
+        birthDay,
+        gender,
+        address,
+      }
+      email {
+        address,
+      }
       isActive
-      updatedAt
-      createdAt
     }
   }
 `;
@@ -111,12 +120,8 @@ class CreateUser extends React.Component {
     super(props);
 
     this.state = {
-      radioButtonValue: 'male',
-      selectFieldvalue: 0,
-      lastnameErrorText: '',
-      firstnameErrorText: '',
-      emailErrorText: '',
-      phoneErrorText: '',
+      radioButtonValue: true,
+      selectFieldvalue: ROLES.LIBRARY_EMPLOYEE,
     };
   }
 
@@ -157,18 +162,16 @@ class CreateUser extends React.Component {
   handleSubmit = async (values) => {
     const { email, firstName, phone, lastName, gender } = values;
     const profile = { firstName, lastName, gender, phone };
-    let username = `${firstName}.${lastName}`;
+    let usernameInput = `${firstName}.${lastName}`;
     const password = '123456789';
-    username = await this.usernameGenerate(username);
-    const user = { email: { address: email }, username, password, profile };
+    usernameInput = await this.usernameGenerate(usernameInput);
+    const user = { email: { address: email }, username: usernameInput, password, profile };
 
     this.props.addUser({
       variables: { user },
-    }).then(({ data }) => {
-      const { CreateUser: { query } } = data;
-      alert(`Thêm mới thành công ${query}`);
-      this.props.refetch();
-      this.handleClose();
+    }).then(() => {
+      alert('Thêm mới thành công');
+      history.push('/users');
     }).catch(() => {
       alert('Thao tác thêm mới thất bại...');
     });
@@ -214,6 +217,7 @@ class CreateUser extends React.Component {
                   fullWidth
                   name="gender"
                   component={RadioGroupField}
+                  value={this.state.radioButtonValue}
                   options={[
                   { value: true, label: 'Nam' },
                   { value: false, label: 'Nữ' },
@@ -305,7 +309,7 @@ class CreateUser extends React.Component {
 }
 
 CreateUser.propTypes = {
-  refetch: PropTypes.func,
+  addUser: PropTypes.func,
 };
 
 const AddUserForm = reduxForm({
