@@ -5,7 +5,7 @@ import bcrypt from 'bcrypt';
 import moment from 'moment';
 import { generate as idRandom } from 'shortid';
 import { UserModel } from '../../models/index.js';
-import { generateUserSearchField } from '../../../utils/removeToneVN.js';
+import removeToneVN, { generateUserSearchField } from '../../../utils/removeToneVN.js';
 
 async function getUser(userId) {
   const user = await UserModel.findOne({ _id: userId });
@@ -165,8 +165,13 @@ async function createUser(params) {
     throw new Error('email is undefined');
   }
 
-  if (await UserModel.findOne({ username })) {
-    throw new Error('username is exist');
+  const { firstName, lastName } = params.profile;
+  let newUserName = `${removeToneVN(lastName.replace(' ', ''))}.${removeToneVN(firstName.replace(' ', ''))}`;
+  newUserName = newUserName.replace(' ', '').toLowerCase();
+
+  if (await UserModel.findOne({ newUserName })) {
+    newUserName = `${newUserName}.${Math.random(1000)}`;
+    // throw new Error('username is exist');
   }
 
   if (await UserModel.findOne({ 'profile.phone': phone })) {
@@ -178,6 +183,8 @@ async function createUser(params) {
   }
 
   params.password = await bcrypt.hashSync(password, bcrypt.genSaltSync(), null);
+
+  params.username = newUserName;
 
   const activeCode = idRandom();
   params.email.code = activeCode;

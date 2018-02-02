@@ -163,7 +163,7 @@ class CreateUser extends React.Component {
     const { email, firstName, phone, lastName, gender } = values;
     const profile = { firstName, lastName, gender, phone };
     let usernameInput = `${firstName}.${lastName}`;
-    const password = '123456789';
+    const password = 'Abcd2018a@';
     usernameInput = await this.usernameGenerate(usernameInput);
     const user = { email: { address: email }, username: usernameInput, password, profile };
 
