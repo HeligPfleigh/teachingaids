@@ -6,8 +6,7 @@ export const schema = [
   type EquipmentResult {
     _id: String
     barcode: String
-    equipmentTypeId: String
-    typeName: String
+    equipmentType: EquipmentType
     status: String
   }
 
@@ -32,8 +31,8 @@ export const resolvers = {
     },
   },
   EquipmentResult: {
-    typeName({ equipmentTypeId }) {
-      return EquipmentTypeModel.findById(equipmentTypeId).select('name');
+    equipmentType({ equipmentTypeId }) {
+      return EquipmentTypeModel.findById(equipmentTypeId).select('name unit subject');
     },
   },
 };

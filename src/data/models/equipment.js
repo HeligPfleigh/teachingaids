@@ -10,6 +10,7 @@ const EquipmentSchema = new Schema({
   barcode: String,
   sequenceNum: Number,
   equipmentTypeId: String,
+  statusId: String,
   status: String,
   lender: ObjectId,
   borrower: ObjectId,

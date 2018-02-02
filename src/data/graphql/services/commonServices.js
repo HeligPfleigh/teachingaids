@@ -3,6 +3,9 @@ import map from 'lodash/map';
 import {
   EquipmentModel,
   EquipmentTypeModel,
+  AidHistoryModel,
+  UserModel,
+  EquipmentStatusModel,
 } from '../../models/index.js';
 
 async function searchEquipment(query) {
@@ -56,6 +59,90 @@ async function searchEquipment(query) {
   return result;
 }
 
+async function transaction({ ownerUser, userId, items }) {
+  const result = {
+    type: 'error',
+    status: 'Thao tác mượn trả đã được xử lý thành công!',
+  };
+
+  if (isEmpty(userId) || isEmpty(items)) {
+    return {
+      ...result,
+      status: 'Lỗi thiếu tham số',
+    };
+  }
+
+  try {
+    const lender = await UserModel.findById(ownerUser);
+    if (isEmpty(lender)) {
+      return {
+        ...result,
+        status: 'Người cho mượn không tồn tại trên hệ thống',
+      };
+    }
+
+    const borrower = await UserModel.findById(userId);
+    if (isEmpty(borrower)) {
+      return {
+        ...result,
+        status: 'Người mượn không tồn tại trên hệ thống',
+      };
+    }
+
+    const returned = await EquipmentStatusModel.findOne({ name: 'Đã trả' });
+    const borrowed = await EquipmentStatusModel.findOne({ name: 'Đã mượn' });
+
+    const equipments = await EquipmentModel.find({ _id: { $in: items } });
+    await equipments.forEach(async (item) => {
+      const statusId = isEmpty(item.statusId) && (item.status !== 'Đã mượn') ? borrowed._id : returned._id;
+      const status = isEmpty(item.statusId) && (item.status !== 'Đã mượn') ? borrowed.name : returned.name;
+
+      // update equipment status
+      await EquipmentModel.findByIdAndUpdate({ _id: item._id }, {
+        $set: {
+          statusId,
+          status,
+        },
+      });
+
+      const equipmentType = await EquipmentTypeModel.findById(item.equipmentTypeId);
+
+      // update history status
+      await AidHistoryModel.create({
+        lender: {
+          userId: lender._id,
+          name: `${lender.profile.firstName} ${lender.profile.firstName}`,
+        },
+        borrower: {
+          userId: borrower._id,
+          name: `${borrower.profile.firstName} ${borrower.profile.firstName}`,
+        },
+        borrowTime: new Date(),
+        returnTime: null,
+        equipment: {
+          equipmentId: item._id,
+          equipmentTypeId: equipmentType._id,
+          name: equipmentType.name,
+          barCode: item.barcode,
+        },
+        statusId,
+        status,
+      });
+    });
+
+    return {
+      ...result,
+      type: 'success',
+    };
+  } catch (error) {
+    return {
+      ...result,
+      status: 'Lỗi không xác định',
+    };
+  }
+}
+
 export default {
+  transaction,
   searchEquipment,
 };
