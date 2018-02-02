@@ -69,8 +69,9 @@ class DevicePage extends Component {
   handleSelection = (result, titleEquipment) => {
     if (result.items.length > 1) {
       const items = differenceWith(result.items, this.props.selectItems, isEqual);
-
-      this.setState({ ...this.state, items, titleEquipment });
+      const blackList = ['Đã mượn', 'Đang bảo trì', 'Đang hỏng', 'Thanh lý', 'Đã mượn'];
+      const newItems = items.filter(e => isEmpty(e.status) || blackList.indexOf(e.status) < 0);
+      this.setState({ ...this.state, items: newItems, titleEquipment });
       this.handleOpen();
     } else {
       this.props.selectEquipment(result.items[0]);
@@ -92,11 +93,11 @@ class DevicePage extends Component {
   }
 
   handleAdd = (p) => {
+    this.props.selectEquipment(p);
+
+    // reload data modal table
     const newItems = (this.state.items || []).filter(e => e !== p);
-    this.setState(preState => ({
-      ...preState,
-      items: newItems,
-    }), () => this.props.selectEquipment(p));
+    this.setState({ items: newItems });
   }
 
   handlRemove = p => this.props.removeEquipment(p);
@@ -118,10 +119,9 @@ class DevicePage extends Component {
     const { dataSource: { getAllEquipment, error, loading }, selectItems } = this.props;
 
     const fieldEquipBorrows = [
-      { key: 'equipmentInfo.khCode', value: 'Mã KH', action: 'normal', public: true, style: styles.columns.barcode },
-      { key: 'name', value: 'Tên thiết bị', action: 'normal', public: true, style: styles.columns.name },
-      { key: 'quantity', value: 'Số lượng', action: 'normal', public: true, style: styles.columns.quanity },
-      { key: 'unit', value: 'Đơn vị', action: 'normal', public: true, style: styles.columns.unit },
+      { key: 'equipmentType.name', value: 'Tên thiết bị', action: 'normal', public: true, style: styles.columns.name },
+      { key: 'barcode', value: 'Mã barcode', action: 'normal', public: true, style: styles.columns.barcode },
+      { key: 'equipmentType.unit', value: 'Đơn vị', action: 'normal', public: true, style: styles.columns.unit },
       {
         key: 'buttonGroup',
         value: 'Hành động',
@@ -179,6 +179,10 @@ class DevicePage extends Component {
       return <div>Có lỗi</div>;
     }
 
+    const statusName = 'Đã mượn';
+    const oldSelectItems = selectItems.filter(e => e.status === statusName);
+    const newSelectItems = differenceWith(selectItems, oldSelectItems, isEqual);
+
     return (
       <div>
         <div style={{ paddingBottom: '25px' }}>
@@ -190,39 +194,48 @@ class DevicePage extends Component {
             hintText="Tìm kiếm thiết bị"
           />
         </div>
+
         {
-          selectItems.length > 0
-          &&
+          newSelectItems.length > 0 &&
           <Paper>
             <Toolbar style={styles.subheader}>
               <ToolbarGroup>
                 <ToolbarTitle
-                  text="Thông tin thiết bị"
+                  text="Danh sách thiết bị sẽ được mượn"
                   style={styles.textWhiteColor}
                 />
               </ToolbarGroup>
             </Toolbar>
-            <Table items={selectItems || []} fields={fieldEquipBorrows} />
+            <Table items={newSelectItems || []} fields={fieldEquipBorrows} />
           </Paper>
         }
-        {
-          <div>
-            <Dialog
-              title={this.titleGenerate()}
-              actions={actions}
-              modal={false}
-              open={this.state.open}
-              onRequestClose={this.handleClose}
-              autoScrollBodyContent
-            >
-              <h5>{titleEquipment}</h5>
-              { items && <div>
-                <Table items={items || []} fields={fieldsEquip} />
 
-              </div>}
-            </Dialog>
-          </div>
+        {
+          oldSelectItems.length > 0 &&
+          <Paper>
+            <Toolbar style={styles.subheader}>
+              <ToolbarGroup>
+                <ToolbarTitle
+                  text="Danh sách thiết bị sẽ được trả"
+                  style={styles.textWhiteColor}
+                />
+              </ToolbarGroup>
+            </Toolbar>
+            <Table items={oldSelectItems || []} fields={fieldEquipBorrows} />
+          </Paper>
         }
+
+        { this.state.open && <Dialog
+          title={this.titleGenerate()}
+          actions={actions}
+          modal={false}
+          open={this.state.open}
+          onRequestClose={this.handleClose}
+          autoScrollBodyContent
+        >
+          <h5>{titleEquipment}</h5>
+          <Table items={items || []} fields={fieldsEquip} />
+        </Dialog> }
       </div>
     );
   }

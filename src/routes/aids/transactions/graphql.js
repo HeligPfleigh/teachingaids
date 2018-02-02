@@ -8,8 +8,11 @@ export const searchEquipmentQuery = gql`
       items {
         _id
         barcode
-        equipmentTypeId
-        typeName
+        equipmentType {
+          name
+          unit
+          subject
+        }
         status
       }
     }
@@ -37,6 +40,7 @@ export const getAllEquipmentQuery = gql`
     }
   }
 `;
+
 export const getAllPerTypeEquipment = gql`
   query getAllPerTypeEquipment($equipmentTypeId: String!){
     getAllPerTypeEquipment(equipmentTypeId: $equipmentTypeId) {
@@ -44,6 +48,15 @@ export const getAllPerTypeEquipment = gql`
       barcode
       sequenceNum
       equipmentTypeId
+    }
+  }
+`;
+
+export const transactionMutation = gql`
+  mutation transaction($input: TransactionInput!) {
+    transaction(input: $input) {
+      type
+      status
     }
   }
 `;
