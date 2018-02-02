@@ -49,6 +49,9 @@ export const queries = [
 
   # check exist user
   checkExistUser(query: String!): Boolean
+
+  #get users numbers
+  getUserNumber: Int
 `,
 ];
 
@@ -69,6 +72,10 @@ export const resolvers = {
     async checkExistUser(parent, { query }) {
       return await UserServices.checkExistUser({ query });
     },
+    async getUserNumber() {
+      let array = await UserModel.find();
+      return array.length
+    }
   },
   UserProfile: {
     fullName(profile) {

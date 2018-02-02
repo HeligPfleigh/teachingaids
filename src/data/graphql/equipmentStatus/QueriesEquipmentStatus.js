@@ -1,4 +1,5 @@
 import EquipmentStatusServices from '../services/equipmentStatusServices';
+import { EquipmentStatusModel } from '../../models/index.js';
 
 export const schema = [
   `
@@ -20,6 +21,9 @@ export const queries = [
 
   # list all equipment status in db
   getEquipmentStatus: [EquipmentStatus]
+
+  #get all the borrowed equipment to counnt
+  getNumberBorrowedEquipment(name: String): Int
 `,
 ];
 
@@ -34,5 +38,9 @@ export const resolvers = {
     async getEquipmentStatusById(parent, { _id }) {
       return await EquipmentStatusServices.getEquipmentStatusById(_id);
     },
+    async getNumberBorrowedEquipment(parent, { name }){
+      let array = await EquipmentStatusModel.find({name : "Đã mượn"});
+      return array.length
+    }
   },
 };
