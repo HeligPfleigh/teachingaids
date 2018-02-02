@@ -57,9 +57,9 @@ const data = {
         { text: 'Danh sách người dùng', icon: <GridOn />, link: '/users' },
       ],
     },
-    {
-      text: 'Lịch sử mượn trả', icon: <ActionHistory />, link: '/histories',
-    },
+    // {
+    //   text: 'Lịch sử mượn trả', icon: <ActionHistory />, link: '/histories',
+    // },
     {
       text: 'Thông tin tài khoản', icon: <PermIdentity />, link: '/account',
     },
