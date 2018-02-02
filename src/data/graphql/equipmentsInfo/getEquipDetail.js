@@ -19,6 +19,11 @@ export const queries = [
 
   # get equipment has equipmentTypeId and status
   getEquipByStatusAndType(equipmentTypeId: String!, status: String!): [Equipments]
+
+  #get all the equipment to counnt
+  getNumberEquipment: Int
+  
+
 `,
 ];
 
@@ -30,5 +35,9 @@ export const resolvers = {
     async getEquipByStatusAndType(parent, { equipmentTypeId, status }) {
       return EquipmentModel.find({ equipmentTypeId, status });
     },
+    async getNumberEquipment() {
+       let array = await EquipmentModel.find();
+        return array.length;
+    }
   },
 };

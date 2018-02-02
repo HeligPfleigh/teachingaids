@@ -8,13 +8,11 @@ import { pink500, grey200, grey500 } from 'material-ui/styles/colors';
 import { Toolbar, ToolbarGroup, ToolbarTitle } from 'material-ui/Toolbar';
 import RaisedButton from 'material-ui/RaisedButton';
 import {Link, Router, Route} from 'react-router-dom';
-import Borrow from './borrow.js';
-import Returning from './return.js';
-import s from './borrowReturn.scss';
 import { TextField } from 'material-ui/TextField';
 import createBrowserHistory from 'history/createBrowserHistory';
-import history from '../../core/history.js';
+import history from '../../../core/history.js';
 import Paper from 'material-ui/Paper';
+import s from './muonTra.scss';
 
 const styles = {
   floatingActionButton: {
@@ -48,23 +46,20 @@ const styles = {
 };
 
 
-class BorrowReturn extends React.Component {
-  clickToBorrow(){
-    history.push('/buildings/borrow')
-  }
+class MuonTra extends React.Component {
   clickToReturn(){
-    history.push('/buildings/return')
-}
+    history.push('/aids/return')
+  }
   render() {    
     return (
       <div className="wrapper">
         <Paper zDepth={1}>
-          <RaisedButton onClick={this.clickToBorrow.bind(this)} label="Mượn" primary={true} className="nut"></RaisedButton>
-          <RaisedButton onClick={this.clickToReturn.bind(this)} label="Trả" primary={true} className="nut"></RaisedButton>
+          <RaisedButton className="nut" label="Mượn" primary={true} ></RaisedButton>
+          <RaisedButton className="nut" onClick={this.clickToReturn.bind(this)} label="Trả" primary={true} ></RaisedButton>
         </Paper>
       </div>
     )
   }
 }
 
-export default withStyles(s)(BorrowReturn);
+export default withStyles(s)(MuonTra);
