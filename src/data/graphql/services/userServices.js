@@ -186,6 +186,7 @@ async function createUser(params) {
   params.profile.avatar = params.profile.avatar || '/avatar-default.jpg';
 
   params.search = generateUserSearchField(params);
+  params.isNewUser = true;
 
   const user = await UserModel.create(params);
 
@@ -271,6 +272,7 @@ async function changeUserPassword({ userId, oldPassword, newPassword }) {
   const result = await UserModel.findOneAndUpdate({ _id: userId }, {
     $set: {
       password: passwordVal,
+      isNewUser: false,
     },
   });
 

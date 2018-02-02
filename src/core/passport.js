@@ -48,6 +48,7 @@ passport.use(new LocalStrategy({
       profile: user.profile || {},
       email: user.email.address || '',
       roles: user.roles || [],
+      isNewUser: user.isNewUser,
     });
   };
 
