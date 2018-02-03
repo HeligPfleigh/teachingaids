@@ -19,7 +19,7 @@ const styles = {
     lineHeight: `${spacing.desktopKeylineIncrement}px`,
     fontWeight: typography.fontWeightLight,
     backgroundColor: blue900,
-    paddingLeft: 40,
+    textAlign: 'center',
     height: 56,
   },
   menuItem: {
@@ -58,7 +58,7 @@ const LeftDrawer = (props) => {
       open={navDrawerOpen}
     >
       <div style={styles.logo}>
-          Administrator
+          THCS SƠN TÂY
         </div>
       { /* <div style={styles.avatar.div}>
         <Avatar

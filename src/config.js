@@ -20,5 +20,5 @@ export const mailer = {
   from: '"SNS SERVICE" <sns.mail.center@gmail.com>',
 };
 
-export const barcodePrefix = 'C2TS';
+export const barcodePrefix = 'C2ST';
 export const barcodePad = '0000000';

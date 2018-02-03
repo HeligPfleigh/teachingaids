@@ -1,5 +1,6 @@
 import { barcodePrefix, barcodePad } from '../config';
 
+/* eslint-disable import/prefer-default-export */
 export const generateBarcode = (sequenceNum) => {
   let str = `${sequenceNum}`;
   let pad = barcodePad;
