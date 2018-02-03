@@ -12,11 +12,19 @@ import AidHistory from './history/AidHistory';
 import Transactions from './transactions';
 import Layout from '../../components/Layout';
 import { checkAuth } from '../../utils/auth.valid.util';
+import { ROLES } from '../../constants';
+
+const pageRoles = [
+  ROLES.ADMINISTRATOR,
+  ROLES.SUPERVISOR,
+  ROLES.LIBRARY_MANAGER,
+  ROLES.LIBRARY_EMPLOYEE,
+];
 
 export default {
   path: '/aids',
   async action({ store }) {
-    const redirect = await checkAuth(store);
+    const redirect = await checkAuth(store, pageRoles);
     if (redirect) return redirect;
   },
   children: [

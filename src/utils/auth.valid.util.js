@@ -1,4 +1,5 @@
-import _ from 'lodash';
+import isEmpty from 'lodash/isEmpty';
+import intersection from 'lodash/intersection';
 
 export const requireRole = role => (route) => {
   const newRoute = {
@@ -35,17 +36,23 @@ export const requireAuth = (route) => {
     },
   };
   const children = route && route.children;
-  if (!_.isEmpty(children)) {
+  if (!isEmpty(children)) {
     newRoute.children = children.map(childRoute => requireAuth(childRoute));
   }
   return newRoute;
 };
 
-export const checkAuth = (store) => {
+export const checkAuth = (store, pageRoles = []) => {
   const state = store.getState();
-  if (!state.user || !state.user.id) {
+  if (!state.user || !state.user.id || !state.user.roles) {
     return {
       redirect: '/login',
+    };
+  }
+  const { user } = state;
+  if (!isEmpty(pageRoles) && intersection(user.roles, pageRoles).length < 1) {
+    return {
+      redirect: '/notFound',
     };
   }
   return false;

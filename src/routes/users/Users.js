@@ -8,6 +8,9 @@ import Table from '../../components/Table';
 
 const styles = {
   columns: {
+    username: {
+      width: '12%',
+    },
     name: {
       width: '20%',
     },
@@ -52,7 +55,7 @@ class Users extends React.Component {
 
     const fields = [
       // Config columns
-      { key: 'username', value: 'Tên đăng nhập', style: styles.columns.type, public: true, action: 'normal' },
+      { key: 'username', value: 'Tên đăng nhập', style: styles.columns.username, public: true, action: 'normal' },
       { key: 'profile.fullName', value: 'Họ và tên', style: styles.columns.name, public: true, action: 'normal' },
       { key: 'profile.phone', value: 'Số điện thoại', style: styles.columns.type, public: true, action: 'normal' },
       { key: 'isActive', value: 'Trạng thái', style: styles.columns.category, public: true, action: 'normal' },

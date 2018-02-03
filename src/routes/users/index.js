@@ -4,11 +4,14 @@ import CreateUser from './CreateUser';
 import Layout from '../../components/Layout';
 import ChangePassword from './ChangePassword';
 import { checkAuth } from '../../utils/auth.valid.util';
+import { ROLES } from '../../constants';
+
+const pageRoles = [ROLES.ADMINISTRATOR, ROLES.SUPERVISOR];
 
 export default {
   path: '/users',
   async action({ store }) {
-    const redirect = await checkAuth(store);
+    const redirect = await checkAuth(store, pageRoles);
     if (redirect) return redirect;
   },
   children: [

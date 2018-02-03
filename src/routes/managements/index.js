@@ -11,11 +11,14 @@ import React from 'react';
 import Home from './Home';
 import Layout from '../../components/Layout';
 import { checkAuth } from '../../utils/auth.valid.util';
+import { ROLES } from '../../constants';
+
+const pageRoles = [ROLES.ADMINISTRATOR, ROLES.SUPERVISOR];
 
 export default {
   path: '/managements',
   async action({ store }) {
-    const redirect = await checkAuth(store);
+    const redirect = await checkAuth(store, pageRoles);
     if (redirect) return redirect;
   },
   children: [

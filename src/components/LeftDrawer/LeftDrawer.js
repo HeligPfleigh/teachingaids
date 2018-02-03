@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import Drawer from 'material-ui/Drawer';
 import { spacing, typography } from 'material-ui/styles';
@@ -7,6 +7,9 @@ import MenuItem from 'material-ui/MenuItem';
 // import Avatar from 'material-ui/Avatar';
 import ArrowDropRight from 'material-ui/svg-icons/navigation-arrow-drop-right';
 import { generate as generateKey } from 'shortid';
+import { connect } from 'react-redux';
+import isEmpty from 'lodash/isEmpty';
+import intersection from 'lodash/intersection';
 
 import Link from '../Link';
 import Literal from '../Literal';
@@ -48,19 +51,23 @@ const styles = {
   },
 };
 
+@connect(({ user }) => ({
+  roles: (user && user.roles) || [],
+}))
 // Only support menu two level
-const LeftDrawer = (props) => {
-  const { navDrawerOpen } = props;
+class LeftDrawer extends Component {
+  render() {
+    const { navDrawerOpen, menus, roles } = this.props;
 
-  return (
-    <Drawer
-      docked
-      open={navDrawerOpen}
-    >
-      <div style={styles.logo}>
+    return (
+      <Drawer
+        docked
+        open={navDrawerOpen}
+      >
+        <div style={styles.logo}>
           THCS SƠN TÂY
         </div>
-      { /* <div style={styles.avatar.div}>
+        { /* <div style={styles.avatar.div}>
         <Avatar
           src="http://www.material-ui.com/images/uxceo-128.jpg"
           size={50}
@@ -68,44 +75,49 @@ const LeftDrawer = (props) => {
         />
         <span style={styles.avatar.span}>{props.username}</span>
       </div> */ }
-      <div>
-        {(props.menus || []).map((menu) => {
-          if (menu.children && menu.children.length > 0) {
-            return (<MenuItem
-              key={generateKey()}
-              style={styles.menuItem}
-              primaryText={menu.text}
-              leftIcon={menu.icon}
-              rightIcon={<ArrowDropRight />}
-              menuItems={menu.children.map(child =>
-                <MenuItem
+        <div>
+          {(menus || []).map((menu) => {
+            if (isEmpty(menu.roles) || (intersection(roles, menu.roles).length > 0)) {
+              if (menu.children && menu.children.length > 0) {
+                return (<MenuItem
                   key={generateKey()}
-                  primaryText={child.text}
-                  leftIcon={child.icon}
-                  containerElement={
-                    <Link to={child.link} isRedirect={child.isRedirect || false} />
-                  }
-                />,
-              )}
-              containerElement={<Literal />}
-            />);
-          }
-          return (<MenuItem
-            key={generateKey()}
-            style={styles.menuItem}
-            primaryText={menu.text}
-            leftIcon={menu.icon}
-            containerElement={<Link to={menu.link} isRedirect={menu.isRedirect || false} />}
-          />);
-        })}
-      </div>
-    </Drawer>
-  );
-};
+                  style={styles.menuItem}
+                  primaryText={menu.text}
+                  leftIcon={menu.icon}
+                  rightIcon={<ArrowDropRight />}
+                  menuItems={menu.children.map(child =>
+                    <MenuItem
+                      key={generateKey()}
+                      primaryText={child.text}
+                      leftIcon={child.icon}
+                      containerElement={
+                        <Link to={child.link} isRedirect={child.isRedirect || false} />
+                    }
+                    />,
+                )}
+                  containerElement={<Literal />}
+                />);
+              }
+              return (<MenuItem
+                key={generateKey()}
+                style={styles.menuItem}
+                primaryText={menu.text}
+                leftIcon={menu.icon}
+                containerElement={<Link to={menu.link} isRedirect={menu.isRedirect || false} />}
+              />);
+            }
+            return null;
+          })}
+        </div>
+      </Drawer>
+    );
+  }
+}
 
 LeftDrawer.propTypes = {
   navDrawerOpen: PropTypes.bool,
   menus: PropTypes.array,
+  roles: PropTypes.array,
   // username: PropTypes.string,
 };
 

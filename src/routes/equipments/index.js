@@ -5,11 +5,19 @@ import ListDetailAids from './ListDetailAids';
 import ListDetailByStatus from './ListDetailByStatus';
 import Layout from '../../components/Layout';
 import { checkAuth } from '../../utils/auth.valid.util';
+import { ROLES } from '../../constants';
+
+const pageRoles = [
+  ROLES.ADMINISTRATOR,
+  ROLES.SUPERVISOR,
+  ROLES.LIBRARY_MANAGER,
+  ROLES.LIBRARY_EMPLOYEE,
+];
 
 export default {
   path: '/equipments',
   async action({ store }) {
-    const redirect = await checkAuth(store);
+    const redirect = await checkAuth(store, pageRoles);
     if (redirect) return redirect;
   },
   children: [
