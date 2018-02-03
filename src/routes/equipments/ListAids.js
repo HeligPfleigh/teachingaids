@@ -1,10 +1,11 @@
 import React, { Component } from 'react';
 import PropTypes from 'prop-types';
 import { Toolbar, ToolbarGroup, ToolbarTitle } from 'material-ui/Toolbar';
+import InfiniteScroll from 'react-infinite-scroller';
 import Paper from 'material-ui/Paper';
-import { graphql } from 'react-apollo';
+import { graphql, compose } from 'react-apollo';
 import gql from 'graphql-tag';
-
+import update from 'immutability-helper';
 import history from '../../core/history';
 import Table from '../../components/Table';
 import styles from './styles';
@@ -21,7 +22,7 @@ class ListAids extends Component {
   };
 
   render() {
-    const { data: { error, loading, getAllEquipment } } = this.props;
+    const { data: { error, loading, equipments }, loadMoreRows } = this.props;
 
     const fields = [
       // Config columns
@@ -41,6 +42,11 @@ class ListAids extends Component {
       return <div>Một lỗi ngoài dự kiến đã xảy ra. Liên hệ với người quản trị để được giúp đỡ!</div>;
     }
 
+    let hasNextPage = false;
+    if (equipments && equipments.pageInfo) {
+      hasNextPage = equipments.pageInfo.hasNextPage;
+    }
+
     return (
       <Paper>
         <Toolbar style={styles.subheader}>
@@ -52,8 +58,14 @@ class ListAids extends Component {
           </ToolbarGroup>
         </Toolbar>
         {
-          !loading && getAllEquipment &&
-          <Table items={getAllEquipment || []} fields={fields} />
+          !loading && equipments &&
+          <InfiniteScroll
+            loadMore={loadMoreRows}
+            hasMore={hasNextPage}
+            loader={<div className="loader">Loading ...</div>}
+          >
+            <Table items={equipments.edges || []} fields={fields} />
+          </InfiniteScroll>
         }
       </Paper>
     );
@@ -62,30 +74,54 @@ class ListAids extends Component {
 
 ListAids.propTypes = {
   data: PropTypes.object,
+  loadMoreRows: PropTypes.func.isRequired,
 };
 
 const query = gql`
-  query {
-    getAllEquipment{
-      _id
-      name
-      totalNumber
-      unit
-      order
-      equipmentInfo{
-        madeFrom
-        grade
-        khCode
+  query equipments($limit: Int, $page: Int) {
+    equipments(limit: $limit, page: $page) {
+      edges {
+        _id
+        name
+        totalNumber
+        unit
+        order
+        subject
       }
-      subject
+      pageInfo {
+        page
+        hasNextPage
+        total
+        limit
+      }
     }
   }
 `;
 
-const ListAidsWithData = graphql(query, {
-  options: {
-    fetchPolicy: 'network-only',
-  },
-})(ListAids);
-
-export default ListAidsWithData;
+export default compose(
+  graphql(query, {
+    options: () => ({
+      variables: { page: 1, limit: 20 },
+      fetchPolicy: 'network-only',
+    }),
+    props: ({ data }) => {
+      const { fetchMore, equipments } = data;
+      const page = (equipments && equipments.pageInfo && equipments.pageInfo.page) || 1;
+      const limit = (equipments && equipments.pageInfo && equipments.pageInfo.limit) || 20;
+      const loadMoreRows = () => fetchMore({
+        variables: { page, limit },
+        updateQuery: (previousResult, { fetchMoreResult }) => {
+          const newEdges = fetchMoreResult.equipments.edges;
+          const pageInfo = fetchMoreResult.equipments.pageInfo;
+          return update(previousResult, {
+            equipments: {
+              edges: { $push: newEdges },
+              pageInfo: { $set: pageInfo },
+            },
+          });
+        },
+      });
+      return { data, loadMoreRows };
+    },
+  }),
+)(ListAids);
