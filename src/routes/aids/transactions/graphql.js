@@ -2,9 +2,11 @@ import gql from 'graphql-tag';
 import Fragment from '../../../data/fragment.utils';
 
 export const searchEquipmentQuery = gql`
-  query searchEquipment($query: String) {
-    searchEquipment(query: $query) {
+  query searchEquipment($borrowerId: String, $query: String) {
+    searchEquipment(borrowerId: $borrowerId, query: $query) {
       type
+      error
+      message
       items {
         _id
         barcode

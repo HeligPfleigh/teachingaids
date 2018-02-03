@@ -60,7 +60,7 @@
     "react-tap-event-plugin": "^2.0.1",
     "react-to-print": "^1.0.4",
     "react-tooltip": "^3.4.0",
-    "recharts": "^1.0.0-beta.10",
+    "recharts": "^0.20.8",
     "redux": "^3.6.0",
     "redux-form": "^7.0.4",
     "redux-logger": "^2.7.4",
