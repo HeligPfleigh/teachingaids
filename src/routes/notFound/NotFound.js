@@ -33,7 +33,7 @@ class NotFound extends React.Component {
   render() {
     return (
       <Paper style={style} zDepth={1}>
-        <h1>{this.props.title}</h1>
+        <h1>Lỗi truy cập hệ thống</h1>
         <h2>Rất tiếc! Bạn không có quyền truy cập địa chỉ này.</h2>
         <h3>Vui lòng liên hệ Ban quản để biết thêm thông tin</h3>
         <h3>Xin chân thành cảm ơn</h3>
