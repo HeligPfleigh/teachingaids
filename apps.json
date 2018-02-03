@@ -1,0 +1,13 @@
+{
+  "apps": [
+    {
+      "name": "teachingaidsman",
+      "instances": 2,
+      "exec_mode": "cluster",
+      "script": "build/server.js",
+      "env": {
+        "PORT": "8080"
+      }
+    }
+  ]
+}
