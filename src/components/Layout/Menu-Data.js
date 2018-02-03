@@ -11,8 +11,7 @@ import PowerSettings from 'material-ui/svg-icons/action/power-settings-new';
 import Devices from 'material-ui/svg-icons/device/devices';
 import NoteAdd from 'material-ui/svg-icons/action/note-add';
 import AccountBalance from 'material-ui/svg-icons/action/account-balance';
-// import Assessment from 'material-ui/svg-icons/action/assessment';
-// import ContentAddBox from 'material-ui/svg-icons/content/add-box';
+import { ROLES } from '../../constants';
 
 const data = {
   menus: [
@@ -27,6 +26,7 @@ const data = {
         { text: 'Gới thiệu chung', icon: <ActionBook />, link: '/managements' },
         { text: 'Danh mục chung', icon: <GridOn />, link: '/managements/subjects' },
       ],
+      roles: [ROLES.ADMINISTRATOR, ROLES.SUPERVISOR],
     },
     {
       text: 'Mượn - Trả',
@@ -37,6 +37,7 @@ const data = {
         // { text: 'Danh sách nhắc nhở', icon: <ContentAddBox />, link: '/aids/create' },
         { text: 'Lịch sử mượn trả', icon: <ActionHistory />, link: '/aids/histories' },
       ],
+      roles: [ROLES.ADMINISTRATOR, ROLES.SUPERVISOR, ROLES.LIBRARY_MANAGER, ROLES.LIBRARY_EMPLOYEE],
     },
     {
       text: 'Trang thiết bị',
@@ -47,6 +48,7 @@ const data = {
         { text: 'Danh sách thiết bị', icon: <GridOn />, link: '/equipments' },
         // { text: 'Thống kê thiết bị', icon: <Assessment />, link: '/equipments/statistic' },
       ],
+      roles: [ROLES.ADMINISTRATOR, ROLES.SUPERVISOR, ROLES.LIBRARY_MANAGER, ROLES.LIBRARY_EMPLOYEE],
     },
     {
       text: 'Người dùng',
@@ -56,6 +58,7 @@ const data = {
         { text: 'Thêm mới', icon: <NoteAdd />, link: '/users/create' },
         { text: 'Danh sách người dùng', icon: <GridOn />, link: '/users' },
       ],
+      roles: [ROLES.ADMINISTRATOR, ROLES.SUPERVISOR],
     },
     // {
     //   text: 'Lịch sử mượn trả', icon: <ActionHistory />, link: '/histories',
