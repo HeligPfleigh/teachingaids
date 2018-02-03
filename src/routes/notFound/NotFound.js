@@ -34,10 +34,12 @@ class NotFound extends React.Component {
     return (
       <Paper style={style} zDepth={1}>
         <h1>{this.props.title}</h1>
-        <h2>Sorry, the page you were trying to view does not exist.</h2>
+        <h2>Rất tiếc! Bạn không có quyền truy cập địa chỉ này.</h2>
+        <h3>Vui lòng liên hệ Ban quản để biết thêm thông tin</h3>
+        <h3>Xin chân thành cảm ơn</h3>
         <FlatButton
           secondary
-          label="Go home"
+          label="Về trang chủ"
           keyboardFocused
           onTouchTap={() => history.push('/')}
         />

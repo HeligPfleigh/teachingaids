@@ -23,7 +23,8 @@ passport.use(new LocalStrategy({
   // passReqToCallback: true,
 }, (username, password, done) => {
   const fooBar = async () => {
-    const user = await UserModel.findOne({ username });
+    const pattern = { $regex: new RegExp(`^${username.toLowerCase()}$`, 'i') };
+    const user = await UserModel.findOne({ username: pattern });
     if (!user) {
       const error = {
         name: 'IncorrectUsernameError',
