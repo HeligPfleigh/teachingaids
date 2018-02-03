@@ -50,7 +50,6 @@ export const resolvers = {
       return EquipmentTypeModel.find();
     },
     async equipments(context, { page = 1, limit = 3 }) {
-      console.log({ limit, page });
       const skip = (page - 1) * limit;
       const count = await EquipmentTypeModel.find().count();
       const data = await EquipmentTypeModel.find().skip(skip).limit(limit);

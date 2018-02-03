@@ -8,8 +8,10 @@ import {
   EquipmentStatusModel,
 } from '../../models/index.js';
 
-async function searchEquipment(query) {
+async function searchEquipment({ borrowerId, query }) {
   const result = {
+    error: false,
+    message: '',
     type: 'equipment',
     items: [],
   };
@@ -18,24 +20,36 @@ async function searchEquipment(query) {
     return result;
   }
 
+  const pattern = {
+    $regex: new RegExp(`${query.trim()}`, 'gi'),
+  };
+
   let items = await EquipmentModel.find({
     $or: [
-      { barcode: query },
+      { barcode: pattern },
       { equipmentTypeId: query },
     ],
   });
 
   if (!isEmpty(items)) {
+    if (items.length === 1 && !isEmpty(borrowerId)) {
+      if (!isEmpty(items[0].borrower)
+        && (items[0].borrower.toString() !== borrowerId.toString())
+      ) {
+        return {
+          ...result,
+          error: true,
+          message: 'Người trả không phải là người mượn..!',
+        };
+      }
+    }
+
     return {
       ...result,
       items,
       type: items.length > 1 ? 'equipmentType' : 'equipment',
     };
   }
-
-  const pattern = {
-    $regex: new RegExp(`${query.trim()}`, 'gi'),
-  };
 
   items = await EquipmentTypeModel.find({
     $or: [
@@ -89,19 +103,23 @@ async function transaction({ ownerUser, userId, items }) {
       };
     }
 
-    const returned = await EquipmentStatusModel.findOne({ name: 'Đã trả' });
+    const returned = await EquipmentStatusModel.findOne({ name: 'Có sẵn' });
     const borrowed = await EquipmentStatusModel.findOne({ name: 'Đã mượn' });
 
     const equipments = await EquipmentModel.find({ _id: { $in: items } });
     await equipments.forEach(async (item) => {
-      const statusId = isEmpty(item.statusId) && (item.status !== 'Đã mượn') ? borrowed._id : returned._id;
-      const status = isEmpty(item.statusId) && (item.status !== 'Đã mượn') ? borrowed.name : returned.name;
+      const statusId = isEmpty(item.statusId) || (item.status !== 'Đã mượn') ? borrowed._id : returned._id;
+      const status = isEmpty(item.statusId) || (item.status !== 'Đã mượn') ? borrowed.name : returned.name;
 
       // update equipment status
       await EquipmentModel.findByIdAndUpdate({ _id: item._id }, {
         $set: {
           statusId,
           status,
+          lender: lender._id,
+          borrower: status === 'Đã mượn' ? userId : null,
+          borrowTime: status === 'Đã mượn' ? new Date() : null,
+          returnTime: status === 'Đã mượn' ? null : new Date(),
         },
       });
 

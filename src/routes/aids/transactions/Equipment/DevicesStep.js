@@ -12,11 +12,13 @@ import isEmpty from 'lodash/isEmpty';
 import isString from 'lodash/isString';
 import isEqual from 'lodash/isEqual';
 import differenceWith from 'lodash/differenceWith';
+import RaisedButton from 'material-ui/RaisedButton';
 
 
 import Table from '../../../../components/Table';
 import SearchBar from '../SearchBar';
 import styles from '../style';
+import Modal from '../../../../components/Modal';
 import createApolloClient from '../../../../core/createApolloClient/createApolloClient.client';
 import { selectEquipment, removeEquipment } from '../../../../actions/transactions';
 import { searchEquipmentQuery, getAllEquipmentQuery } from '../graphql';
@@ -24,27 +26,33 @@ import { searchEquipmentQuery, getAllEquipmentQuery } from '../graphql';
 
 const apolloClient = createApolloClient();
 
-const getPerEquiment = async (query) => {
+const getPerEquiment = async (borrowerId, query) => {
+  const errResult = {
+    error: false,
+    message: '',
+    type: 'equipment',
+    items: [],
+  };
+
   if (query) {
     try {
       const { data: { searchEquipment: result } } = await apolloClient.query({
         query: searchEquipmentQuery,
-        variables: { query },
-        options: {
-          fetchPolicy: 'network-only',
-        },
+        variables: { borrowerId, query },
+        fetchPolicy: 'network-only',
       });
       return result;
     } catch (error) {
-      return false;
+      return errResult;
     }
   }
-  return false;
+  return errResult;
 };
 
 @compose(
   graphql(getAllEquipmentQuery, { name: 'dataSource' }),
   connect(({ transactions }) => ({
+    userInfo: transactions.user,
     selectItems: transactions.selectItems,
   }), dispatch => ({
     dispatch,
@@ -55,6 +63,7 @@ const getPerEquiment = async (query) => {
 class DevicePage extends Component {
 
   static propTypes = {
+    userInfo: PropTypes.object,
     dataSource: PropTypes.object,
     selectItems: PropTypes.any,
     selectEquipment: PropTypes.func,
@@ -63,13 +72,27 @@ class DevicePage extends Component {
 
   constructor(props) {
     super(props);
-    this.state = { open: false, items: [], titleEquipment: '' };
+    this.state = {
+      error: false,
+      modelContent: '',
+      open: false,
+      items: [],
+      titleEquipment: '',
+    };
   }
 
   handleSelection = (result, titleEquipment) => {
+    if (result.error) {
+      this.setState({
+        error: result.error,
+        modelContent: result.message,
+      });
+      return;
+    }
+
     if (result.items.length > 1) {
       const items = differenceWith(result.items, this.props.selectItems, isEqual);
-      const blackList = ['Đã mượn', 'Đang bảo trì', 'Đang hỏng', 'Thanh lý', 'Đã mượn'];
+      const blackList = ['Đã mượn', 'Đang bảo trì', 'Đang hỏng', 'Thanh lý'];
       const newItems = items.filter(e => isEmpty(e.status) || blackList.indexOf(e.status) < 0);
       this.setState({ ...this.state, items: newItems, titleEquipment });
       this.handleOpen();
@@ -79,13 +102,14 @@ class DevicePage extends Component {
   }
 
   handleRequest = (chooseItem) => {
+    const { userInfo: { _id: borrowerId } } = this.props;
     if (!isEmpty(chooseItem)) {
       if (isString(chooseItem)) {
-        getPerEquiment(chooseItem).then(result =>
+        getPerEquiment(borrowerId, chooseItem).then(result =>
           this.handleSelection(result, chooseItem.name),
         );
       } else {
-        getPerEquiment(chooseItem._id.toString()).then(
+        getPerEquiment(borrowerId, chooseItem._id.toString()).then(
           result => this.handleSelection(result, chooseItem.name),
         );
       }
@@ -236,6 +260,24 @@ class DevicePage extends Component {
           <h5>{titleEquipment}</h5>
           <Table items={items || []} fields={fieldsEquip} />
         </Dialog> }
+
+        {
+          this.state.error &&
+          <Modal
+            isOpen={this.state.error}
+            title="Thông báo lỗi!"
+            actions={[
+              <RaisedButton
+                secondary
+                label="Đóng cửa sổ"
+                keyboardFocused
+                onTouchTap={() => this.setState({ error: false, modelContent: '' })}
+              />,
+            ]}
+          >
+            { this.state.modelContent }
+          </Modal>
+        }
       </div>
     );
   }

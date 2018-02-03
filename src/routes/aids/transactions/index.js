@@ -95,7 +95,6 @@ class Transactions extends React.Component {
           input: { userId: _id, items: ids },
         },
       }).then(({ data }) => {
-        console.log(data);
         const { transaction: { status, type } } = data;
         this.setState({
           modelContent: status,
@@ -115,7 +114,7 @@ class Transactions extends React.Component {
     const actions = [
       <RaisedButton
         secondary
-        label="Hủy"
+        label="Đóng cửa sổ"
         keyboardFocused
         onTouchTap={this.handleClose}
       />,

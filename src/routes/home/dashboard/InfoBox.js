@@ -61,9 +61,9 @@ class InfoBox extends React.Component {
 
 InfoBox.propTypes = {
   Icon: PropTypes.any,
-  color: PropTypes.string,
-  title: PropTypes.string,
-  value: PropTypes.string,
+  color: PropTypes.any,
+  title: PropTypes.any,
+  value: PropTypes.any,
 };
 
 export default InfoBox;
