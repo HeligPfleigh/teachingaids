@@ -11,6 +11,8 @@ export const schema = [
   }
 
   type EquipmentSearchResult {
+    error: Boolean
+    message: String
     type: String!
     items: [EquipmentResult]
   }
@@ -20,14 +22,14 @@ export const schema = [
 export const queries = [
   `
   # search equipments
-  searchEquipment(query: String): EquipmentSearchResult
+  searchEquipment(borrowerId: String, query: String): EquipmentSearchResult
 `,
 ];
 
 export const resolvers = {
   RootQuery: {
-    async searchEquipment(parent, { query }) {
-      return await CommonServices.searchEquipment(query);
+    async searchEquipment(parent, { borrowerId, query }) {
+      return await CommonServices.searchEquipment({ borrowerId, query });
     },
   },
   EquipmentResult: {
