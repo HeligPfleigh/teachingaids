@@ -5,7 +5,6 @@ import InfiniteScroll from 'react-infinite-scroller';
 import Paper from 'material-ui/Paper';
 import { graphql, compose } from 'react-apollo';
 import gql from 'graphql-tag';
-import throttle from 'lodash/throttle';
 import update from 'immutability-helper';
 import history from '../../core/history';
 import Table from '../../components/Table';
@@ -99,50 +98,30 @@ const query = gql`
   }
 `;
 
-const ListAidsWithData = graphql(query, {
-  options: {
-    fetchPolicy: 'network-only',
-  },
-})(ListAids);
-
-
 export default compose(
   graphql(query, {
-    variables: {
-      limit: 20,
-      page: 1,
-    },
     options: () => ({
+      variables: { page: 1, limit: 20 },
       fetchPolicy: 'network-only',
     }),
     props: ({ data }) => {
-      const { fetchMore } = data;
-      const loadMoreRows = fetchMore({
-        variables: {
-          limit: (data.equipments && data.equipments.pageInfo && data.equipments.pageInfo.limit) || 20,
-          page: (data.equipments && data.equipments.pageInfo && data.equipments.pageInfo.page) || 1,
-        },
+      const { fetchMore, equipments } = data;
+      const page = (equipments && equipments.pageInfo && equipments.pageInfo.page) || 1;
+      const limit = (equipments && equipments.pageInfo && equipments.pageInfo.limit) || 20;
+      const loadMoreRows = () => fetchMore({
+        variables: { page, limit },
         updateQuery: (previousResult, { fetchMoreResult }) => {
           const newEdges = fetchMoreResult.equipments.edges;
           const pageInfo = fetchMoreResult.equipments.pageInfo;
           return update(previousResult, {
             equipments: {
-              edges: {
-                $push: newEdges,
-              },
-              pageInfo: {
-                $set: pageInfo,
-              },
+              edges: { $push: newEdges },
+              pageInfo: { $set: pageInfo },
             },
           });
         },
       });
-
-      return {
-        data,
-        loadMoreRows,
-      };
+      return { data, loadMoreRows };
     },
   }),
-)(ListAidsWithData);
-
+)(ListAids);
