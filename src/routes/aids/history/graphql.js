@@ -36,6 +36,7 @@ export const getAidHistoriesOfTeacherFunc = async (teacherId) => {
     const { data: { getAidHistoriesOfTeacher: result }, loading } = await apolloClient.query({
       query: getAidHistoriesOfTeacher,
       variables: { teacherId },
+      fetchPolicy: 'network-only',
     });
     return { result, loading };
   }
@@ -47,6 +48,7 @@ export const getAidHistoriesOfEquipmentTypeFunc = async (equipmentTypeId) => {
     const { data: { getAidHistoriesOfEquipmentType: result }, loading } = await apolloClient.query({
       query: getAidHistoriesOfEquipmentType,
       variables: { equipmentTypeId },
+      fetchPolicy: 'network-only',
     });
     return { result, loading };
   }
@@ -56,6 +58,7 @@ export const getAidHistoriesOfEquipmentTypeFunc = async (equipmentTypeId) => {
 export const getAidHistoriesFunc = async () => {
   const { data: { getAidHistories: result }, loading } = await apolloClient.query({
     query: getAidHistories,
+    fetchPolicy: 'network-only',
   });
   return { result, loading };
 };

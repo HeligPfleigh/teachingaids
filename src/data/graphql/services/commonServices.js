@@ -103,13 +103,14 @@ async function transaction({ ownerUser, userId, items }) {
       };
     }
 
-    const returned = await EquipmentStatusModel.findOne({ name: 'Có sẵn' });
+    const availabled = await EquipmentStatusModel.findOne({ name: 'Có sẵn' });
     const borrowed = await EquipmentStatusModel.findOne({ name: 'Đã mượn' });
+    const returned = await EquipmentStatusModel.findOne({ name: 'Đã trả' });
 
     const equipments = await EquipmentModel.find({ _id: { $in: items } });
     await equipments.forEach(async (item) => {
-      const statusId = isEmpty(item.statusId) || (item.status !== 'Đã mượn') ? borrowed._id : returned._id;
-      const status = isEmpty(item.statusId) || (item.status !== 'Đã mượn') ? borrowed.name : returned.name;
+      const statusId = isEmpty(item.statusId) || (item.status !== 'Đã mượn') ? borrowed._id : availabled._id;
+      const status = isEmpty(item.statusId) || (item.status !== 'Đã mượn') ? borrowed.name : availabled.name;
 
       // update equipment status
       await EquipmentModel.findByIdAndUpdate({ _id: item._id }, {
@@ -129,22 +130,22 @@ async function transaction({ ownerUser, userId, items }) {
       await AidHistoryModel.create({
         lender: {
           userId: lender._id,
-          name: `${lender.profile.firstName} ${lender.profile.firstName}`,
+          name: `${lender.profile.firstName} ${lender.profile.lastName}`,
         },
         borrower: {
           userId: borrower._id,
-          name: `${borrower.profile.firstName} ${borrower.profile.firstName}`,
+          name: `${borrower.profile.firstName} ${borrower.profile.lastName}`,
         },
-        borrowTime: new Date(),
-        returnTime: null,
+        borrowTime: isEmpty(item.statusId) || (item.status !== 'Đã mượn') ? null : new Date(),
+        returnTime: isEmpty(item.statusId) || (item.status !== 'Đã mượn') ? new Date() : null,
         equipment: {
           equipmentId: item._id,
           equipmentTypeId: equipmentType._id,
           name: equipmentType.name,
           barCode: item.barcode,
         },
-        statusId,
-        status,
+        statusId: isEmpty(item.statusId) || (item.status !== 'Đã mượn') ? borrowed._id : returned._id,
+        status: isEmpty(item.statusId) || (item.status !== 'Đã mượn') ? borrowed.name : returned.name,
       });
     });
 
