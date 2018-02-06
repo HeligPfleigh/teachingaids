@@ -1,15 +1,15 @@
 import { AidHistoryModel, UserModel, EquipmentModel } from '../../models';
 
 async function getAidHistories() {
-  return await AidHistoryModel.find();
+  return await AidHistoryModel.find().sort({ createdAt: -1 });
 }
 
 async function getAidHistoriesOfEquipmentType(equipmentTypeId) {
-  return await AidHistoryModel.find({ 'equipment.equipmentTypeId': equipmentTypeId });
+  return await AidHistoryModel.find({ 'equipment.equipmentTypeId': equipmentTypeId }).sort({ createdAt: -1 });
 }
 
 async function getAidHistoriesOfTeacher(teacherId) {
-  return await AidHistoryModel.find({ 'borrower.userId': teacherId });
+  return await AidHistoryModel.find({ 'borrower.userId': teacherId }).sort({ createdAt: -1 });
 }
 
 async function createAidHistories(lenderId, borrowerId, borrowTime, returnTime, status, equipmentId) {

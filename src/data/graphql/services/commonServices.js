@@ -103,14 +103,18 @@ async function transaction({ ownerUser, userId, items }) {
       };
     }
 
-    const availabled = await EquipmentStatusModel.findOne({ name: 'Có sẵn' });
-    const borrowed = await EquipmentStatusModel.findOne({ name: 'Đã mượn' });
-    const returned = await EquipmentStatusModel.findOne({ name: 'Đã trả' });
+    const availabledLabel = 'Có sẵn';
+    const borrowedLable = 'Đã mượn';
+    const returnedLabel = 'Đã trả';
+
+    const availabled = await EquipmentStatusModel.findOne({ name: availabledLabel });
+    const borrowed = await EquipmentStatusModel.findOne({ name: borrowedLable });
+    const returned = await EquipmentStatusModel.findOne({ name: returnedLabel });
 
     const equipments = await EquipmentModel.find({ _id: { $in: items } });
     await equipments.forEach(async (item) => {
-      const statusId = isEmpty(item.statusId) || (item.status !== 'Đã mượn') ? borrowed._id : availabled._id;
-      const status = isEmpty(item.statusId) || (item.status !== 'Đã mượn') ? borrowed.name : availabled.name;
+      const statusId = isEmpty(item.statusId) || (item.status !== borrowedLable) ? borrowed._id : availabled._id;
+      const status = isEmpty(item.statusId) || (item.status !== borrowedLable) ? borrowed.name : availabled.name;
 
       // update equipment status
       await EquipmentModel.findByIdAndUpdate({ _id: item._id }, {
@@ -118,9 +122,9 @@ async function transaction({ ownerUser, userId, items }) {
           statusId,
           status,
           lender: lender._id,
-          borrower: status === 'Đã mượn' ? userId : null,
-          borrowTime: status === 'Đã mượn' ? new Date() : null,
-          returnTime: status === 'Đã mượn' ? null : new Date(),
+          borrower: status === borrowedLable ? userId : null,
+          borrowTime: status === borrowedLable ? new Date() : null,
+          returnTime: status === borrowedLable ? null : new Date(),
         },
       });
 
@@ -136,16 +140,16 @@ async function transaction({ ownerUser, userId, items }) {
           userId: borrower._id,
           name: `${borrower.profile.firstName} ${borrower.profile.lastName}`,
         },
-        borrowTime: isEmpty(item.statusId) || (item.status !== 'Đã mượn') ? null : new Date(),
-        returnTime: isEmpty(item.statusId) || (item.status !== 'Đã mượn') ? new Date() : null,
+        borrowTime: status === borrowedLable ? new Date() : null,
+        returnTime: status === borrowedLable ? null : new Date(),
         equipment: {
           equipmentId: item._id,
           equipmentTypeId: equipmentType._id,
           name: equipmentType.name,
           barCode: item.barcode,
         },
-        statusId: isEmpty(item.statusId) || (item.status !== 'Đã mượn') ? borrowed._id : returned._id,
-        status: isEmpty(item.statusId) || (item.status !== 'Đã mượn') ? borrowed.name : returned.name,
+        statusId: status === borrowedLable ? borrowed._id : returned._id,
+        status: status === borrowedLable ? borrowed.name : returned.name,
       });
     });
 
